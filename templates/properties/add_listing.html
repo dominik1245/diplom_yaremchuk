@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Додати оголошення — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Додати оголошення</li>
+    </ol>
+</nav>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h4 mb-0" style="color: var(--text);">Додати нове оголошення</h1>
+    <form method="post" action="{% url 'properties:logout' %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Вийти з облікового запису</button>
+    </form>
+</div>
+<div class="card card-premium mb-4 border overflow-hidden add-listing-block" style="border-color: var(--border) !important;">
+    <div class="add-listing-header d-flex align-items-center py-3 px-3" style="cursor: pointer; background: var(--bg-card); border-bottom: 1px solid var(--border);" data-bs-toggle="collapse" data-bs-target="#addListingCollapse" aria-expanded="false" aria-controls="addListingCollapse">
+        <span class="add-listing-icon me-2 align-self-start flex-shrink-0" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        <div class="flex-grow-1 min-width-0">
+            <h2 class="h5 mb-1" style="color: var(--text);">Додати оголошення</h2>
+            <p class="add-listing-header-desc mb-0 small text-muted">Заповніть усі поля. Після збереження потрібно буде оплатити публікацію банківською карткою.</p>
+        </div>
+        <span class="add-listing-chevron ms-2 flex-shrink-0" aria-hidden="true"></span>
+    </div>
+    <div id="addListingCollapse" class="collapse">
+        <div class="card-body">
+            <p class="text-muted small mb-4">Заповніть усі поля. Після збереження потрібно буде оплатити публікацію банківською карткою.</p>
+    <form method="post" action="" enctype="multipart/form-data" class="add-listing-form">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-12">
+                <label for="id_name" class="form-label small" style="color: var(--text);">Назва *</label>
+                {{ form.name }}
+                {% if form.name.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small" style="color: var(--text);">Тип *</label>
+                {{ form.listing_type }}
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small" style="color: var(--text);">Рівень доступності</label>
+                {{ form.mobility_level }}
+                <a href="{% url 'properties:accessibility_levels' %}" class="small ms-1" style="color: var(--accent);">Що це?</a>
+            </div>
+            <div class="col-12">
+                <label class="form-label small" style="color: var(--text);">Адреса *</label>
+                {{ form.address }}
+                {% if form.address.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.address.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small" style="color: var(--text);">Місто</label>
+                {{ form.city }}
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small" style="color: var(--text);">Ціна (грн)</label>
+                {{ form.price }}
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="form-label small" style="color: var(--text);">Кімнат</label>
+                {{ form.rooms }}
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="form-label small" style="color: var(--text);">Площа (м²)</label>
+                {{ form.area_sqm }}
+            </div>
+            <div class="col-12">
+                <label class="form-label small" style="color: var(--text);">Опис</label>
+                {{ form.description }}
+            </div>
+            <div class="row g-3 mb-5 pb-2 row-photo-amenities">
+                <div class="col-12 col-md-4 col-lg-3 photo-col">
+                    <label class="form-label small d-block" style="color: var(--text);">Фото</label>
+                    {{ form.photo }}
+                </div>
+                <div class="col-12 col-md-8 col-lg-9 amenities-col">
+                    <label class="form-label small d-block mb-2" style="color: var(--text); border: none; background: transparent;">Зручності</label>
+                    <div class="amenities-horizontal">
+                        {{ form.features }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 pt-5 mt-5 pb-3 border-top" style="border-color: var(--border) !important;">
+                <div class="d-flex flex-column flex-sm-row gap-3 align-items-stretch">
+                    <button type="submit" class="btn btn-primary btn-lg flex-sm-fill px-4 py-2">Зберегти та перейти до оплати</button>
+                    <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary btn-lg flex-sm-fill px-4 py-2 text-center d-flex align-items-center justify-content-center">Скасувати</a>
+                </div>
+            </div>
+        </div>
+    </form>
+        </div>
+    </div>
+</div>
+</div>
+<style>
+.add-listing-block .add-listing-header { user-select: none; }
+.add-listing-header-desc { font-size: 0.8125rem; line-height: 1.4; max-width: 420px; }
+.add-listing-icon { flex-shrink: 0; color: var(--accent); display: inline-flex; align-items: center; }
+.add-listing-chevron { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; }
+.add-listing-header[aria-expanded="true"] .add-listing-chevron { transform: rotate(180deg); }
+.amenities-horizontal,
+.amenities-horizontal ul,
+.amenities-horizontal #id_features,
+#id_features { border: none !important; border-top: none !important; box-shadow: none !important; outline: none !important; }
+.amenities-horizontal ul,
+.amenities-horizontal #id_features,
+#id_features { display: flex !important; flex-wrap: wrap !important; flex-direction: row !important; gap: 0.75rem 1rem !important; list-style: none !important; padding-left: 0 !important; margin: 0 !important; width: 100%; align-items: center; }
+.amenities-horizontal ul li,
+.amenities-horizontal #id_features li,
+#id_features li { display: inline-flex !important; margin: 0 !important; flex-shrink: 0; border: none !important; min-width: min-content; }
+.amenities-horizontal label,
+.amenities-horizontal .form-check,
+#id_features label { margin-bottom: 0 !important; cursor: pointer; color: var(--text); display: inline-flex !important; align-items: center; gap: 0.35rem; white-space: nowrap; border: none !important; overflow: visible; }
+.amenities-horizontal .form-check-input { flex-shrink: 0; }
+/* прибрати білу смугу, не обрізати контент зручностей */
+.add-listing-form .row-photo-amenities { border: none !important; overflow: visible; }
+.add-listing-form .row-photo-amenities .photo-col { overflow: hidden; min-width: 0; max-width: 100%; }
+.add-listing-form .row-photo-amenities .photo-col input[type="file"] { max-width: 100%; width: 100%; background: var(--bg-card) !important; }
+.add-listing-form .row-photo-amenities .amenities-col { overflow: visible; min-width: 0; }
+.add-listing-form .row-photo-amenities .amenities-col { border: none !important; background: transparent !important; position: relative; z-index: 1; }
+.add-listing-form .amenities-horizontal { overflow: visible !important; }
+.add-listing-form .amenities-col .form-label { border: none !important; box-shadow: none !important; background: transparent !important; }
+.add-listing-form .amenities-col .amenities-horizontal { background: transparent !important; }
+.add-listing-form .amenities-col .amenities-horizontal::before,
+.add-listing-form .amenities-col .amenities-horizontal::after { display: none !important; content: none !important; }
+#id_features::before, #id_features::after { display: none !important; content: none !important; }
+#id_features { background: transparent !important; }
+</style>
+{% endblock %}

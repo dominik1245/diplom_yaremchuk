@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}FAQ — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">FAQ</li>
+    </ol>
+</nav>
+<div class="text-center mb-4">
+    <h1 class="mb-2" style="color: var(--text);">Питання та відповіді</h1>
+    <p class="text-muted small mb-0">Каталог, аудит та рівні доступності.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="accordion accordion-faq" id="faqAccordion">
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1" style="color: var(--text);">
+                        Що таке «рівень доступності» і як його обрати?
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Рівні доступності — це п'ять типів потреб (від «майже без обмежень» до «потрібен повний безбар'єрний простір»). На сторінці <a href="{% url 'properties:accessibility_levels' %}">Рівні доступності</a> описано, кому підходить кожен рівень. У каталозі можна фільтрувати оголошення за обраним рівнем, щоб бачити лише підходящі варіанти.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                        Як потрапляють оголошення в каталог?
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Оголошення додаються через адмін-панель платформи. Частина об'єктів надходить від партнерів-ріелторів та застройників, частину додають наші консультанти після звернень користувачів. Кожен об'єкт може мати прив'язаний аудит доступності, проведений нашим експертом.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                        Що означає бал аудиту (наприклад, 8/10)?
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Аудит оцінює вхід, ліфт (ширина кабіни), санвузол (тип та пристосування), пороги та наявність радіусу для розвороту крісла. Загальний бал — усереднена оцінка за цими критеріями. 9–10 — дуже добре пристосований об'єкт, 6–8 — прийнятно з обмеженнями, нижче — потребує серйозних змін або не підходить для крісла колісного.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                        Як замовити аудит для своєї квартири?
+                    </button>
+                </h2>
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Якщо об'єкт вже є в каталозі — перейдіть на сторінку оголошення та натисніть «Додати аудит» або «Редагувати аудит». Якщо об'єкта ще немає — напишіть нам через <a href="{% url 'properties:contact' %}">Контакти</a>, ми додамо об'єкт та узгодимо виїзд аудитора. Форма аудитора призначена для експертів, які заповнюють результати замірів.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                        Чи є платним підбір житла та консультації?
+                    </button>
+                </h2>
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Перегляд каталогу та використання фільтрів — безкоштовні. Консультація та підбір варіантів індивідуально можуть бути платними за тарифами компанії. Деталі та вартість аудиту доступності обговорюються при зверненні. Напишіть нам через форму контактів — ми підкажемо актуальні умови.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq6" aria-expanded="false" aria-controls="faq6">
+                        Чому ви використовуєте «рівні доступності», а не діагнози?
+                    </button>
+                </h2>
+                <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Ми описуємо потреби в доступному середовищі, а не медичні чи соціальні мітки. Це зручніше для пошуку (наприклад, «житло для пересування на кріслі колісному») і поважає право людини не розголошувати діагноз. Термінологія узгоджена з підходами ООН та провідних громадських організацій.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq7" aria-expanded="false" aria-controls="faq7">
+                        Чи можна додати своє оголошення в каталог?
+                    </button>
+                </h2>
+                <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Так. Напишіть нам через <a href="{% url 'properties:contact' %}">форму контактів</a>, вкажіть адресу, тип угоди (продаж/оренда), фото та опис. Ми додамо оголошення в каталог. За бажанням можна замовити виїзд аудитора для оцінки доступності — тоді оголошення отримає бал і буде кориснішим для користувачів.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq8" aria-expanded="false" aria-controls="faq8">
+                        Що таке «критичні точки» у фільтрі каталогу (ліфт 80 см, душ-трап, без порогів)?
+                    </button>
+                </h2>
+                <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">
+                        Це параметри, які часто вирішальні для людей, які пересуваються на кріслі колісному: ширина кабіни ліфта понад 80 см дає змогу заїхати в кріслі; душ-трап (без порога) у санвузлі робить миття безпечним; відсутність високих порогів у квартирі спрощує пересування. Якщо ви оберете ці чекбокси, каталог покаже лише оголошення з пройденим аудитом, де ці умови виконані.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'properties:contact' %}" class="btn btn-primary btn-sm">Задати питання</a>
+</div>
+</div>
+{% endblock %}

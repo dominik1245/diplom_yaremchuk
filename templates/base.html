@@ -1,0 +1,424 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}mobi home{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Платформа підбору та оголошень доступного житла. Знайдіть квартиру без бар'єрів — mobi home.{% endblock %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root, [data-theme="light"] {
+            --bg: #faf8f5;
+            --bg-card: #ffffff;
+            --bg-card-hover: #fdfcfa;
+            --text: #1f1d1a;
+            --text-muted: #6b6560;
+            --accent: #b86f50;
+            --accent-hover: #9d5e42;
+            --accent-soft: rgba(184, 111, 80, 0.12);
+            --border: #e8e4df;
+            --nav-bg: rgba(255,255,255,0.92);
+            --nav-border: #eeeae5;
+            --footer-bg: #2c2824;
+            --footer-text: #e8e4e0;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 24px rgba(28,25,23,0.06);
+            --shadow-hover: 0 12px 40px rgba(28,25,23,0.1);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1.15);
+            --section-alt: #f5f3f0;
+            --section-light: rgba(0,0,0,0.02);
+            --text-bright: var(--text);
+        }
+        [data-theme="dark"] {
+            --bg: #1a1816;
+            --bg-card: #242220;
+            --bg-card-hover: #2a2826;
+            --text: #f0ede8;
+            --text-muted: #a8a29c;
+            --accent: #d49278;
+            --accent-hover: #e8a88a;
+            --accent-soft: rgba(212, 146, 120, 0.15);
+            --border: #3a3632;
+            --nav-bg: rgba(26,24,22,0.95);
+            --nav-border: #2a2826;
+            --footer-bg: #12100e;
+            --footer-text: #c4bfb8;
+            --shadow: 0 4px 24px rgba(0,0,0,0.2);
+            --shadow-hover: 0 12px 40px rgba(0,0,0,0.35);
+            /* світлі акценти в темній темі */
+            --section-alt: #1f1d1b;
+            --section-light: rgba(255,255,255,0.03);
+            --text-bright: #e8e4e0;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: var(--font); font-size: 1rem; line-height: 1.65; color: var(--text); background: var(--bg); margin: 0; -webkit-font-smoothing: antialiased; }
+        h1, h2, h3, h4, h5, h6, p, span, a, label, .btn, .breadcrumb, .nav-link, .card-title, .card-text { text-shadow: none !important; }
+        h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 { color: var(--text) !important; }
+        h1, .h1 { font-size: clamp(2rem, 4.5vw, 2.75rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
+        h2, .h2 { font-size: clamp(1.5rem, 2.5vw, 1.875rem); font-weight: 600; letter-spacing: -0.01em; }
+        h3, .h3 { font-size: 1.125rem; font-weight: 600; }
+        main, main p, main .lead { color: var(--text); }
+        main p { font-size: 1rem; line-height: 1.65; }
+        .card-text, .card-body p, main .text-muted { font-size: 1rem; line-height: 1.6; }
+        small, .small { font-size: 0.9375rem; line-height: 1.5; }
+        /* Читабельність у формах і анкетах */
+        .form-label { font-size: 1rem; font-weight: 500; color: var(--text) !important; }
+        .form-control, .form-select { font-size: 1rem; color: var(--text); background: var(--bg-card); border-color: var(--border); line-height: 1.5; }
+        .form-control::placeholder { color: var(--text-muted); opacity: 0.9; }
+        textarea.form-control { line-height: 1.6; min-height: 2.5rem; }
+        main a:not(.btn) { color: var(--accent); }
+        main a:not(.btn):hover { color: var(--accent-hover); }
+        .card-premium .card-title, .card-premium .card-text, .card-premium .card-body { color: var(--text) !important; }
+        .card-premium .card-body .text-muted { color: var(--text-muted) !important; }
+        [data-theme="dark"] .text-muted { color: #b8b2aa !important; }
+        [data-theme="dark"] .card-premium .card-body .text-muted { color: #b8b2aa !important; }
+        .alert {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+            border-width: 1px;
+            border-style: solid;
+            padding: 0.875rem 1rem;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .alert, .alert * { color: inherit; opacity: 1; }
+        .alert-success {
+            background: #f5ebe6;
+            border-color: var(--accent);
+            color: #2c221c !important;
+        }
+        [data-theme="dark"] .alert-success { background: #3d2e26; color: #f5ebe6 !important; border-color: var(--accent); }
+        .alert-info {
+            background: #d6eef8;
+            border-color: #0aa2c0;
+            color: #0a3d4a !important;
+        }
+        [data-theme="dark"] .alert-info { background: #0d3d4a; border-color: #0dcaf0; color: #e0f6fc !important; }
+        .alert-warning {
+            background: #f5ecd4;
+            border-color: #d4a005;
+            color: #4a3d02 !important;
+        }
+        [data-theme="dark"] .alert-warning { background: #4a4010; border-color: #ffc107; color: #f5ecd4 !important; }
+        .alert-danger, .alert-error {
+            background: #f5d8d8;
+            border-color: #c82333;
+            color: #5c2020 !important;
+        }
+        [data-theme="dark"] .alert-danger, [data-theme="dark"] .alert-error { background: #4a2020; border-color: #dc3545; color: #fde0e0 !important; }
+        .alert .btn-close { opacity: 0.9; }
+        .alert-success .btn-close { filter: brightness(0); }
+        .alert-info .btn-close, .alert-warning .btn-close, .alert-danger .btn-close, .alert-error .btn-close { filter: brightness(0); }
+        [data-theme="dark"] .alert-success .btn-close { filter: brightness(0); }
+        [data-theme="dark"] .alert-info .btn-close, [data-theme="dark"] .alert-warning .btn-close, [data-theme="dark"] .alert-danger .btn-close, [data-theme="dark"] .alert-error .btn-close { filter: brightness(0) invert(1); }
+        .btn-outline-secondary { color: var(--text-muted) !important; border-color: var(--border); background: var(--bg-card); }
+        .btn-outline-secondary:hover { color: var(--text) !important; background: var(--border); border-color: var(--border); }
+        select.form-select option { background: var(--bg-card); color: var(--text); }
+        .invalid-feedback { color: #dc3545 !important; }
+        label { color: var(--text) !important; }
+
+        .site-nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--nav-border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s, border-color 0.3s;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+        }
+        [data-theme="dark"] .site-nav { box-shadow: 0 1px 0 rgba(0,0,0,0.15); }
+        .site-nav .brand {
+            font-weight: 700;
+            font-size: 1.3125rem;
+            color: var(--text) !important;
+            text-decoration: none;
+            letter-spacing: -0.025em;
+            transition: color 0.2s ease;
+        }
+        .site-nav .brand:hover { color: var(--accent) !important; }
+        .site-nav .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            padding: 0.5rem 0.75rem !important;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            transition: color 0.2s, background 0.2s;
+        }
+        .site-nav .nav-link:hover { color: var(--text) !important; background: var(--accent-soft); }
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .theme-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+        main { min-height: 50vh; padding: 1.5rem 0 2.5rem; }
+        .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+        @media (min-width: 768px) { .wrap { padding-left: 2rem; padding-right: 2rem; } }
+        .section-alt { background: var(--section-alt); }
+
+        .card-premium {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: box-shadow 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth), border-color 0.5s var(--ease-smooth);
+        }
+        .card-premium:hover { box-shadow: var(--shadow-hover); border-color: var(--accent-soft); }
+        [data-theme="dark"] .card-premium:hover { box-shadow: var(--shadow-hover), 0 0 0 1px rgba(212, 146, 120, 0.2); }
+        .card-premium img { transition: transform 0.6s var(--ease-smooth); }
+        .card-premium:hover img { transform: scale(1.05); }
+        /* Блок фото в картках оголошень: однакові пропорції, фото завжди заповнюють область */
+        .listing-card-img-wrap {
+            height: 200px;
+            background: var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .listing-card-img-wrap img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s var(--ease-smooth);
+        }
+        .card-header-premium {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border: none;
+            border-radius: 0;
+        }
+        .btn-level-action {
+            background: var(--bg-card);
+            color: var(--footer-bg);
+            border: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+        }
+        .btn-level-action:hover { background: var(--accent-soft); color: var(--accent); }
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-primary:hover { background: var(--accent-hover); color: #fff; transform: translateY(-1px); }
+        .btn-outline-primary {
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+        .btn-outline-primary:hover { background: var(--accent); color: #fff; }
+        .form-control, .form-select {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.65rem 1rem;
+            background: var(--bg-card);
+            color: var(--text);
+        }
+        .form-control::placeholder { color: var(--text-muted); opacity: 0.8; }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            background: var(--bg-card);
+            color: var(--text);
+        }
+        .form-label { color: var(--text) !important; }
+        input[type="file"] { color: var(--text) !important; }
+        input[type="file"]::file-selector-button { background: var(--accent-soft); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.35rem 0.75rem; }
+        .form-check-label { color: var(--text) !important; }
+        .text-muted { color: var(--text-muted) !important; }
+        .small { color: inherit; }
+        main .small { color: var(--text-muted); }
+        .breadcrumb {
+            --bs-breadcrumb-divider: "/";
+            --bs-breadcrumb-divider-color: var(--text-muted);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            padding: 0.75rem 0 1rem;
+            margin-bottom: 0;
+            background: transparent;
+        }
+        .breadcrumb-item { color: var(--text-muted); }
+        .breadcrumb-item a { color: var(--accent); text-decoration: none; }
+        .breadcrumb-item a:hover { text-decoration: underline; text-underline-offset: 2px; }
+        .breadcrumb-item.active { color: var(--text) !important; font-weight: 500; }
+        .breadcrumb-item + .breadcrumb-item::before { opacity: 0.7; font-weight: 400; }
+        .accordion-button { background: var(--bg-card) !important; color: var(--text) !important; border-color: var(--border) !important; }
+        .accordion-button:not(.collapsed) { background: var(--accent-soft) !important; color: var(--text) !important; }
+        .accordion-body { background: var(--bg-card); color: var(--text); }
+        .accordion-button::after { filter: invert(0); }
+        [data-theme="dark"] .accordion-button::after { filter: invert(1); }
+        .pagination .page-link { background: var(--bg-card); color: var(--text); border-color: var(--border); }
+        .pagination .page-item.active .page-link { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .pagination .page-link:hover { background: var(--accent-soft); color: var(--text); }
+        .badge-score-high { background: var(--accent); color: #fff; }
+        .badge-score-mid { background: var(--accent-soft); color: var(--accent); }
+        .badge-score-low { background: var(--text-muted); color: #fff; }
+        .badge-score-none { background: var(--border); color: var(--text-muted); }
+
+        .listing-badge { font-size: 0.8125rem; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: var(--radius-sm); letter-spacing: 0.02em; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .listing-badge--sale { background: #198754; color: #fff; }
+        .listing-badge--rent { background: #0d6efd; color: #fff; }
+        .listing-badge-audit { font-size: 0.75rem; font-weight: 600; padding: 0.35rem 0.6rem; border-radius: var(--radius-sm); background: rgba(0,0,0,0.65); color: #fff; }
+        .listing-card-audit-line { font-size: 0.8125rem; color: var(--text-muted); }
+
+        footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 3rem 0 2rem;
+            margin-top: 0;
+        }
+        footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+        footer a:hover { color: #fff; }
+        .table thead { background: var(--footer-bg); color: var(--footer-text); }
+        .pagination .page-link { border-radius: var(--radius-sm); }
+        .accordion-button { border-radius: var(--radius-sm) !important; }
+        .accordion-item { border-radius: var(--radius-sm); }
+
+        .animate-on-scroll { opacity: 0; transform: translateY(14px); transition: opacity 0.75s var(--ease-smooth), transform 0.75s var(--ease-smooth); }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) { .animate-on-scroll { opacity: 1; transform: none; transition: none; } }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="site-nav">
+        <div class="wrap d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <a class="brand" href="{% url 'properties:index' %}">mobi home</a>
+            <nav class="d-none d-lg-flex align-items-center flex-wrap gap-1">
+                <a class="nav-link" href="{% url 'properties:index' %}">Головна</a>
+                <a class="nav-link" href="{% url 'properties:about' %}">Про нас</a>
+                <a class="nav-link" href="{% url 'properties:home' %}">Каталог</a>
+                <a class="nav-link" href="{% url 'properties:services' %}">Послуги</a>
+                <a class="nav-link" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
+                <a class="nav-link" href="{% url 'properties:contact' %}">Контакти</a>
+                <a class="nav-link" href="{% url 'properties:register' %}">Реєстрація</a>
+                </nav>
+            <button class="navbar-toggler d-lg-none border-0 p-2 ms-auto rounded-2" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse" aria-controls="navCollapse" aria-expanded="false" aria-label="Меню" style="background: var(--accent-soft);">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse d-lg-none" id="navCollapse">
+            <div class="wrap py-3 border-top" style="border-color: var(--border) !important;">
+                <a class="d-block py-2 nav-link" href="{% url 'properties:index' %}">Головна</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:about' %}">Про нас</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:home' %}">Каталог</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:services' %}">Послуги</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:contact' %}">Контакти</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:register' %}">Реєстрація</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="{% block main_class %}{% endblock %}">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show m-3 m-lg-4 rounded-2" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="wrap">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="brand text-white mb-2" style="font-size: 1.125rem;">mobi home</div>
+                    <p class="small mb-0 opacity-80">Платформа підбору та оголошень житла без бар'єрів.</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="small mb-2 fw-600 opacity-80">Платформа</p>
+                    <a href="{% url 'properties:index' %}" class="d-block small mb-1">Головна</a>
+                    <a href="{% url 'properties:about' %}" class="d-block small mb-1">Про нас</a>
+                    <a href="{% url 'properties:home' %}" class="d-block small mb-1">Каталог</a>
+                    <a href="{% url 'properties:contact' %}" class="d-block small mb-1">Контакти</a>
+                </div>
+                <div class="col-md-4">
+                    <p class="small mb-2 fw-600 opacity-80">Контакти</p>
+                    <p class="small mb-1">м. Київ, вул. Хрещатик, 1</p>
+                    <p class="small mb-0"><a href="tel:+380441234567">+38 (044) 123-45-67</a></p>
+                </div>
+            </div>
+            <p class="small mt-4 mb-0 opacity-60">&copy; {% now "Y" %} mobi home</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    (function(){
+        var theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    (function(){
+        var alerts = document.querySelectorAll('.alert-dismissible .btn-close');
+        if (!alerts.length) return;
+        setTimeout(function(){
+            alerts.forEach(function(btn){ btn.click(); });
+        }, 5000);
+    })();
+    (function(){
+        if (!document.querySelectorAll('.animate-on-scroll').length) return;
+        var io = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('is-visible'); }); }, { rootMargin: '0px 0px -5% 0px' });
+        document.querySelectorAll('.animate-on-scroll').forEach(function(el){ io.observe(el); });
+    })();
+    (function(){
+        var c = document.querySelectorAll('[data-count]');
+        if(!c.length) return;
+        var io = new IntersectionObserver(function(entries){
+            entries.forEach(function(e){
+                if(!e.isIntersecting) return;
+                var el = e.target;
+                if(el.dataset.done) return;
+                el.dataset.done = '1';
+                var to = parseInt(el.getAttribute('data-count'),10);
+                if(isNaN(to)) return;
+                var dur = 1200, start = 0, t0 = null;
+                function step(ts){ if(!t0) t0=ts; var p = Math.min((ts-t0)/dur,1), ease = 1-Math.pow(1-p,3), v = Math.round(start+(to-start)*ease); el.textContent=v; if(p<1) requestAnimationFrame(step); }
+                requestAnimationFrame(step);
+            });
+        }, { threshold: 0.2 });
+        c.forEach(function(el){ io.observe(el); });
+    })();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

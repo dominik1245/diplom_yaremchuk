@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}Форма аудитора — mobi home{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Форма аудитора</li>
+    </ol>
+</nav>
+<h1 class="mb-4">Форма аудитора</h1>
+{% if property %}
+    <p class="mb-3">Об'єкт: <strong>{{ property.name }}</strong> ({{ property.address }})</p>
+{% endif %}
+
+<form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% if not property and form.instance.pk is None %}
+        <div class="mb-3">
+            <label for="id_property" class="form-label">Об'єкт нерухомості</label>
+            <select name="property" id="id_property" class="form-select" required>
+                <option value="">Оберіть об'єкт</option>
+                {% for p in properties_list %}
+                    <option value="{{ p.pk }}">{{ p.name }} — {{ p.address }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-6">
+            <fieldset class="card card-premium mb-3">
+                <div class="card-header card-header-premium">Вхід</div>
+                <div class="card-body">
+                    {% for field in form %}
+                        {% if field.name in 'entrance_access entrance_comment' %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-md-6">
+            <fieldset class="card card-premium mb-3">
+                <div class="card-header card-header-premium">Ліфт (заміри в см)</div>
+                <div class="card-body">
+                    {% for field in form %}
+                        {% if field.name in 'lift_width_cm lift_score lift_comment' %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <fieldset class="card card-premium mb-3">
+                <div class="card-header card-header-premium">Санвузол</div>
+                <div class="card-body">
+                    {% for field in form %}
+                        {% if field.name in 'bathroom_type bathroom_comment' %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-md-6">
+            <fieldset class="card card-premium mb-3">
+                <div class="card-header card-header-premium">Пороги (заміри в см)</div>
+                <div class="card-body">
+                    {% for field in form %}
+                        {% if field.name in 'thresholds_max_height_cm thresholds_score thresholds_comment' %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <fieldset class="card card-premium mb-3">
+        <div class="card-header card-header-premium">Радіус для розвороту</div>
+        <div class="card-body">
+            {% for field in form %}
+                {% if field.name in 'turning_radius_exists turning_comment' %}
+                    <div class="mb-3">
+                        {% if field.name == 'turning_radius_exists' %}
+                            <div class="form-check">
+                                {{ field }}
+                                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                        {% else %}
+                            {{ field.label_tag }}
+                            {{ field }}
+                        {% endif %}
+                        {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </fieldset>
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+    {% if property %}
+        <a href="{% url 'properties:property_detail' property.pk %}" class="btn btn-outline-secondary">Скасувати</a>
+    {% else %}
+        <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary">Скасувати</a>
+    {% endif %}
+</form>
+{% endblock %}

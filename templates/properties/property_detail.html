@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% block title %}{{ property.name }} — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ property.name }}</li>
+    </ol>
+</nav>
+
+<div class="card card-premium card-body mb-4" style="color: var(--text);">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
+                <span class="listing-badge {% if property.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ property.get_listing_type_display }}</span>
+                {% if property.city %}<span class="badge bg-secondary">{{ property.city }}</span>{% endif %}
+                {% if property.mobility_level %}<span class="badge bg-secondary">Рівень доступності {{ property.mobility_level }}</span>{% endif %}
+                {% if audit and audit.total_score is not None %}<span class="badge badge-score-high">{{ audit.total_score|floatformat:0 }} балів</span>{% endif %}
+            </div>
+            <h1 class="mb-3" style="color: var(--text);">{{ property.name }}</h1>
+            <p class="text-muted mb-2" style="color: var(--text-muted);">{{ property.address }}</p>
+            <div class="d-flex flex-wrap gap-3 mb-3" style="color: var(--text);">
+                {% if property.price %}
+                    <span><strong>Ціна:</strong> {{ property.price|floatformat:0 }} грн{% if property.listing_type == 'rent' %}/міс{% endif %}</span>
+                {% endif %}
+                {% if property.rooms %}<span><strong>Кімнат:</strong> {{ property.rooms }}</span>{% endif %}
+                {% if property.area_sqm %}<span><strong>Площа:</strong> {{ property.area_sqm }} м²</span>{% endif %}
+            </div>
+            <div class="property-gallery-wrapper mb-4 mt-2">
+                <div id="propertyGallery" class="carousel slide carousel-fade property-gallery" data-bs-ride="carousel" data-bs-interval="5000">
+                    <div class="carousel-inner rounded-3 overflow-hidden shadow-lg">
+                        <div class="carousel-item active">
+                            {% if property.photo %}
+                                <img src="{{ property.photo.url }}" class="d-block w-100" alt="{{ property.name }}">
+                            {% else %}
+                                <img src="{{ property_photos.0 }}" class="d-block w-100" alt="Фото квартири">
+                            {% endif %}
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{{ property_photos.1 }}" class="d-block w-100" alt="Інтер'єр">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{{ property_photos.2 }}" class="d-block w-100" alt="Планування">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyGallery" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Попереднє</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#propertyGallery" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Наступне</span>
+                    </button>
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#propertyGallery" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                        <button type="button" data-bs-target="#propertyGallery" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#propertyGallery" data-bs-slide-to="2"></button>
+                    </div>
+                </div>
+            </div>
+            {% if property.description %}
+                <div class="mb-4" style="color: var(--text);"><strong>Опис:</strong><br>{{ property.description|linebreaks }}</div>
+            {% endif %}
+            {% if property.features.exists %}
+                <p class="mb-2" style="color: var(--text);"><strong>Зручності:</strong> {% for f in property.features.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            {% endif %}
+            <div class="border-top pt-3 mt-3" style="border-color: var(--border) !important;">
+                <p class="text-muted small mb-0" style="color: var(--text-muted);">Зацікавило оголошення? Зв’яжіться з агентом через адмін-панель або додайте контакт у описі.</p>
+                {% if can_edit_audit %}
+                <div class="mt-3 pt-3 border-top" style="border-color: var(--border) !important;">
+                    <a href="{% url 'properties:delete_property' property.pk %}" class="btn btn-outline-danger btn-sm">Видалити оголошення</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if audit %}
+    <div class="audit-card mb-4">
+        <div class="audit-card-body p-0">
+            <div class="audit-collapse-header d-flex align-items-center py-3 px-3" style="cursor: pointer; background: rgba(0,0,0,0.2);" data-bs-toggle="collapse" data-bs-target="#auditCollapse" aria-expanded="false" aria-controls="auditCollapse">
+                <h2 class="audit-card-title mb-0 flex-grow-1">Результати аудиту доступності</h2>
+                <span class="audit-score-block me-3">
+                    <span class="audit-score-label">Загальний бал</span>
+                    <span class="audit-score-value badge-score-{% if audit.total_score >= 9 %}high{% elif audit.total_score >= 6 %}mid{% elif audit.total_score != None %}low{% else %}none{% endif %}">{{ audit.total_score|default:"—" }}</span>
+                    <span class="audit-score-max">/ 10</span>
+                </span>
+                <span class="audit-collapse-icon" aria-hidden="true"></span>
+            </div>
+            <div id="auditCollapse" class="collapse">
+                <div class="px-3 pb-3 pt-1">
+            <div class="audit-table-wrap">
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Критерій</th>
+                            <th>Бал / значення</th>
+                            <th>Статус</th>
+                            <th>Коментар</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in audit_rows %}
+                            <tr>
+                                <td class="audit-cell audit-cell-criterion">{{ row.0 }}</td>
+                                <td class="audit-cell">{{ row.1|default:"—" }}</td>
+                                <td class="audit-cell">
+                                    {% with status=row.2 %}
+                                        {% if status == "Ідеально" %}
+                                            <span class="badge badge-score-high">{{ status }}</span>
+                                        {% elif status == "Потребує покращення" %}
+                                            <span class="badge badge-score-mid">{{ status }}</span>
+                                        {% elif status == "Важкодоступно" or status == "Недоступно" %}
+                                            <span class="badge badge-score-low">{{ status }}</span>
+                                        {% else %}
+                                            <span class="audit-status-text">{{ status }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td class="audit-cell audit-cell-comment">{{ row.3|default:"—" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p class="audit-disclaimer">Результати аудиту є орієнтовними та допомагають оцінити доступність об'єкта.</p>
+            {% if can_edit_audit %}
+            <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-primary btn-sm">Редагувати аудит</a>
+            {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="card audit-card audit-card-empty card-body">
+        <p class="audit-label mb-2">Аудит доступності для цього об'єкта ще не проведено.</p>
+        {% if can_edit_audit %}
+        <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-primary btn-sm">Додати аудит</a>
+        {% endif %}
+    </div>
+{% endif %}
+</div><!-- .wrap -->
+
+<style>
+/* Галерея: пропорційна сторінці, зображення завжди видно */
+.property-gallery-wrapper {
+    width: 100%;
+    max-width: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--border);
+}
+.property-gallery {
+    border-radius: var(--radius);
+    background: var(--border);
+    position: relative;
+}
+/* Пропорційна галерея: не займає надто багато місця, збалансовано з контентом */
+.property-gallery .carousel-inner {
+    width: 100%;
+    height: clamp(220px, 38vw, 360px);
+    min-height: 220px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--border);
+}
+.property-gallery .carousel-item {
+    height: 100%;
+}
+.property-gallery .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: var(--border);
+}
+.property-gallery .carousel-control-prev,
+.property-gallery .carousel-control-next {
+    width: 48px;
+    height: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: rgba(0,0,0,0.4);
+    opacity: 1;
+    backdrop-filter: blur(4px);
+}
+.property-gallery .carousel-control-prev { left: 12px; }
+.property-gallery .carousel-control-next { right: 12px; }
+.property-gallery .carousel-control-prev:hover,
+.property-gallery .carousel-control-next:hover { background: rgba(0,0,0,0.6); }
+.property-gallery .carousel-indicators { margin-bottom: 12px; }
+.property-gallery .carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    border: none;
+}
+.property-gallery .carousel-indicators button.active { background-color: #fff; }
+
+/* Блок результатів аудиту — комфортний і зрозумілий вигляд */
+.audit-card {
+    background: var(--footer-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.audit-card-header {
+    background: rgba(0,0,0,0.2);
+    color: var(--footer-text);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+.audit-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--footer-text) !important;
+}
+.audit-score-block {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+.audit-score-label {
+    font-size: 0.875rem;
+    color: var(--footer-text);
+    opacity: 0.9;
+}
+.audit-score-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    line-height: 1.2;
+}
+.audit-score-value.badge-score-high { background: var(--accent); color: #fff; }
+.audit-score-value.badge-score-mid { background: var(--accent-soft); color: var(--accent); }
+.audit-score-value.badge-score-low { background: var(--text-muted); color: #fff; }
+.audit-score-value.badge-score-none { background: var(--border); color: var(--text-muted); }
+.audit-score-max {
+    font-size: 0.95rem;
+    opacity: 0.75;
+    color: var(--footer-text);
+}
+.audit-card-body {
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 1.5rem;
+}
+.audit-collapse-header { user-select: none; }
+.audit-collapse-header .audit-score-block { display: flex; align-items: baseline; gap: 0.25rem; }
+.audit-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.9; }
+.audit-collapse-header[aria-expanded="true"] .audit-collapse-icon { transform: rotate(180deg); }
+.audit-table-wrap {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+}
+.audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--footer-text);
+    font-size: 0.9375rem;
+}
+.audit-table thead th {
+    background: rgba(0,0,0,0.25);
+    color: var(--footer-text);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+.audit-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+}
+.audit-table tbody tr:last-child { border-bottom: none; }
+.audit-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+.audit-table tbody td {
+    padding: 0.875rem 1rem;
+    color: var(--footer-text);
+    vertical-align: top;
+}
+.audit-cell-criterion { font-weight: 500; }
+.audit-cell-comment { color: var(--footer-text); opacity: 0.9; }
+.audit-status-text { color: var(--footer-text); }
+.audit-disclaimer {
+    font-size: 0.8125rem;
+    color: var(--footer-text);
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+.audit-card-empty .audit-label { color: var(--footer-text) !important; }
+[data-theme="light"] .audit-card { background: #2c2824; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+[data-theme="light"] .audit-card-header,
+[data-theme="light"] .audit-card-body,
+[data-theme="light"] .audit-card-title,
+[data-theme="light"] .audit-score-label,
+[data-theme="light"] .audit-score-max,
+[data-theme="light"] .audit-collapse-header .audit-card-title,
+[data-theme="light"] .audit-disclaimer,
+[data-theme="light"] .audit-card-empty .audit-label { color: #e8e4e0 !important; }
+[data-theme="light"] .audit-table thead th,
+[data-theme="light"] .audit-table tbody td { color: #e8e4e0 !important; }
+[data-theme="light"] .audit-table tbody tr:hover { background: rgba(255,255,255,0.06); }
+</style>
+{% endblock %}

@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block title %}Каталог — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Каталог</li>
+    </ol>
+</nav>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h1 class="mb-0" style="color: var(--text);">Каталог житла</h1>
+    <p class="text-muted mb-0" style="color: var(--text-muted);">Знайдено: <strong style="color: var(--text);">{{ total_count }}</strong> оголошень</p>
+</div>
+
+<div class="card card-premium mb-4 animate-on-scroll filter-block border overflow-hidden" style="border-color: var(--border) !important;">
+    <div class="card-header py-3 d-flex align-items-center {% if query or listing_type or city or rooms or price_min or price_max or mobility or filter_lift or filter_shower or filter_no_thresholds or selected_features %}filter-expanded{% endif %}" style="background: var(--bg-card); border-color: var(--border); cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="{% if query or listing_type or city or rooms or price_min or price_max or mobility or filter_lift or filter_shower or filter_no_thresholds or selected_features %}true{% else %}false{% endif %}" aria-controls="filterCollapse" id="filterToggle">
+        <span class="filter-block-icon me-2" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </span>
+        <h2 class="h6 mb-0 text-truncate flex-grow-1" style="color: var(--text);">Пошук і фільтри</h2>
+        <span class="accordion-collapse-icon ms-2" aria-hidden="true"></span>
+    </div>
+    <div id="filterCollapse" class="collapse {% if query or listing_type or city or rooms or price_min or price_max or mobility or filter_lift or filter_shower or filter_no_thresholds or selected_features %}show{% endif %}" data-bs-parent="">
+        <div class="card-body">
+<form method="get" class="mb-0">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <label for="q" class="form-label small mb-1">Пошук</label>
+            <input type="search" name="q" id="q" class="form-control form-control-sm" value="{{ query }}" placeholder="Назва, адреса, місто...">
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <label for="type" class="form-label small mb-1">Тип</label>
+            <select name="type" id="type" class="form-select form-select-sm">
+                <option value="">Усі</option>
+                <option value="sale" {% if listing_type == 'sale' %}selected{% endif %}>Продаж</option>
+                <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Оренда</option>
+            </select>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <label for="city" class="form-label small mb-1">Місто</label>
+            <select name="city" id="city" class="form-select form-select-sm">
+                <option value="">Усі міста</option>
+                {% for c in cities %}
+                    <option value="{{ c }}" {% if city == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-4 col-sm-3 col-md-2">
+            <label for="rooms" class="form-label small mb-1">Кімнат від</label>
+            <input type="number" name="rooms" id="rooms" class="form-control form-control-sm" value="{{ rooms }}" min="1" max="10" placeholder="—">
+        </div>
+        <div class="col-4 col-sm-3 col-md-2">
+            <label for="price_min" class="form-label small mb-1">Ціна від</label>
+            <input type="number" name="price_min" id="price_min" class="form-control form-control-sm" value="{{ price_min }}" min="0" placeholder="грн">
+        </div>
+        <div class="col-4 col-sm-3 col-md-2">
+            <label for="price_max" class="form-label small mb-1">Ціна до</label>
+            <input type="number" name="price_max" id="price_max" class="form-control form-control-sm" value="{{ price_max }}" min="0" placeholder="грн">
+        </div>
+        <div class="col-12 col-md-6 col-lg-2">
+            <label for="mobility" class="form-label small mb-1">Рівень доступності</label>
+            <select name="mobility" id="mobility" class="form-select form-select-sm">
+                <option value="">Усі</option>
+                {% for L in mobility_levels %}
+                    <option value="{{ L.id }}" {% if mobility == L.id|stringformat:"d" %}selected{% endif %}>{{ L.short }}</option>
+                {% endfor %}
+            </select>
+            <a href="{% url 'properties:accessibility_levels' %}" class="small" style="color: var(--accent);">Що це?</a>
+        </div>
+        <div class="col-12">
+            <label class="form-label small mb-1 d-block" style="color: var(--text);">Доступність</label>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" name="lift_80" value="1" id="lift_80" {% if filter_lift %}checked{% endif %}>
+                    <label class="form-check-label" for="lift_80" style="color: var(--text);">Ліфт &gt; 80 см</label>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" name="shower_drain" value="1" id="shower_drain" {% if filter_shower %}checked{% endif %}>
+                    <label class="form-check-label" for="shower_drain" style="color: var(--text);">Душ-трап</label>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" name="no_thresholds" value="1" id="no_thresholds" {% if filter_no_thresholds %}checked{% endif %}>
+                    <label class="form-check-label" for="no_thresholds" style="color: var(--text);">Без порогів</label>
+                </div>
+            </div>
+        </div>
+        {% if features %}
+        <div class="col-12">
+            <label class="form-label small mb-1 d-block" style="color: var(--text);">Зручності</label>
+            <div class="d-flex flex-wrap gap-2">
+                {% for f in features %}
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" name="feature" value="{{ f.id }}" id="f{{ f.id }}" {% if f.id in selected_features %}checked{% endif %}>
+                        <label class="form-check-label" for="f{{ f.id }}" style="color: var(--text);">{{ f.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-12 col-md-4 col-lg-2">
+            <label for="sort" class="form-label small mb-1">Сортування</label>
+            <select name="sort" id="sort" class="form-select form-select-sm">
+                <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Спочатку нові</option>
+                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Ціна ↑</option>
+                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Ціна ↓</option>
+                <option value="score" {% if sort == 'score' %}selected{% endif %}>За балом</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-6 d-flex align-items-end gap-2 filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm filter-action-btn">Застосувати</button>
+            <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary btn-sm filter-action-btn">Скинути</a>
+        </div>
+    </div>
+</form>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for prop in properties %}
+        <div class="col">
+            <a href="{% url 'properties:property_detail' prop.pk %}" class="text-decoration-none d-block" style="color: inherit;">
+                <div class="card card-premium h-100">
+                    <div class="listing-card-img-wrap position-relative overflow-hidden rounded-top">
+                    {% if prop.photo %}
+                        <img src="{{ prop.photo.url }}" class="card-img-top" alt="{{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ prop.listing_photo_url }}';">
+                    {% else %}
+                        <img src="{{ prop.listing_photo_url }}" class="card-img-top" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
+                    {% endif %}
+                        <div class="position-absolute top-0 start-0 p-2 d-flex gap-1 flex-wrap">
+                            <span class="listing-badge {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ prop.get_listing_type_display }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="h5 card-title mb-1">{{ prop.name }}</h2>
+                        {% if prop.city %}<p class="card-text small text-muted mb-1">{{ prop.city }}</p>{% endif %}
+                        <p class="card-text small text-muted mb-2">{{ prop.address|truncatewords:8 }}</p>
+                        <div class="d-flex flex-wrap gap-2 small mb-2">
+                            {% if prop.rooms %}<span>{{ prop.rooms }} кімн.</span>{% endif %}
+                            {% if prop.area_sqm %}<span>{{ prop.area_sqm }} м²</span>{% endif %}
+                            {% if prop.price %}
+                                <strong class="ms-auto">{{ prop.price|floatformat:0 }} грн{% if prop.listing_type == 'rent' %}/міс{% endif %}</strong>
+                            {% endif %}
+                        </div>
+                        {% if prop.features.exists %}
+                            <div class="small text-muted mb-2">
+                                {% for f in prop.features.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if prop.audit or prop.mobility_level %}<p class="listing-card-audit-line mb-0 small">{% if prop.audit and prop.audit.total_score is not None %}Аудит: {{ prop.audit.total_score|floatformat:0 }} балів{% if prop.mobility_level %} · Рівень {{ prop.mobility_level }}{% endif %}{% elif prop.mobility_level %}Рівень доступності {{ prop.mobility_level }}{% endif %}</p>{% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="card card-premium card-body text-center py-5">
+                <p class="text-muted mb-0">За вашими критеріями нічого не знайдено. Змініть фільтри або <a href="{% url 'properties:home' %}">скиньте їх</a>.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+    <nav aria-label="Пагінація" class="mt-4">
+        <ul class="pagination justify-content-center flex-wrap mb-0">
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if listing_type %}&type={{ listing_type }}{% endif %}{% if city %}&city={{ city }}{% endif %}{% if rooms %}&rooms={{ rooms }}{% endif %}{% if price_min %}&price_min={{ price_min }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if mobility %}&mobility={{ mobility }}{% endif %}{% if filter_lift %}&lift_80=1{% endif %}{% if filter_shower %}&shower_drain=1{% endif %}{% if filter_no_thresholds %}&no_thresholds=1{% endif %}{% for fid in selected_features %}&feature={{ fid }}{% endfor %}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}
+
+{% if map_cities %}
+<div class="card card-premium mt-4">
+    <div class="card-header card-header-premium py-3">
+        <h2 class="h6 mb-0">Карта: де є оголошення</h2>
+    </div>
+    <div class="card-body p-0">
+        <div id="map" style="height: 320px; width: 100%;"></div>
+    </div>
+</div>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{% if map_cities %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+{% endif %}
+<style>
+.filter-actions .filter-action-btn { min-width: 8rem; text-align: center; }
+.filter-block .card-header { user-select: none; }
+.filter-block-icon { flex-shrink: 0; color: var(--accent); display: inline-flex; align-items: center; }
+.filter-block .accordion-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; }
+.filter-block .card-header[aria-expanded="true"] .accordion-collapse-icon,
+.filter-block .card-header.filter-expanded .accordion-collapse-icon { transform: rotate(180deg); }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{% if map_cities %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function() {
+    var mapCities = {{ map_cities_json|safe }};
+    if (!mapCities || !document.getElementById('map')) return;
+    var map = L.map('map').setView([49.0, 32.0], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    mapCities.forEach(function(item) {
+        var msg = item.city + ': ' + item.count + ' оголошень';
+        L.marker([item.lat, item.lng]).addTo(map).bindPopup(msg);
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}

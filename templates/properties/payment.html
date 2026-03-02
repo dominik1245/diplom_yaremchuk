@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Оплата — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:add_listing' %}">Додати оголошення</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Оплата</li>
+    </ol>
+</nav>
+<h1 class="h4 mb-2" style="color: var(--text);">Оплата публікації</h1>
+<p class="text-muted small mb-4">Оголошення: <strong style="color: var(--text);">{{ property.name }}</strong>. Після успішної оплати оголошення з’явиться в каталозі.</p>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card card-premium card-body">
+            <h2 class="h6 mb-3" style="color: var(--text);">Банківська картка</h2>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_card_holder" class="form-label small" style="color: var(--text);">{{ form.card_holder.label }} *</label>
+                    {{ form.card_holder }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_number" class="form-label small" style="color: var(--text);">{{ form.card_number.label }} *</label>
+                    {{ form.card_number }}
+                </div>
+                <div class="row g-2">
+                    <div class="col-4">
+                        <label for="id_expiry_month" class="form-label small" style="color: var(--text);">{{ form.expiry_month.label }}</label>
+                        {{ form.expiry_month }}
+                    </div>
+                    <div class="col-4">
+                        <label for="id_expiry_year" class="form-label small" style="color: var(--text);">{{ form.expiry_year.label }}</label>
+                        {{ form.expiry_year }}
+                    </div>
+                    <div class="col-4">
+                        <label for="id_cvc" class="form-label small" style="color: var(--text);">{{ form.cvc.label }}</label>
+                        {{ form.cvc }}
+                    </div>
+                </div>
+                {% if form.errors %}<div class="invalid-feedback d-block small mt-2" style="color: var(--accent);">Перевірте заповнені поля.</div>{% endif %}
+                <div class="mt-4">
+                    <div class="d-flex flex-column flex-sm-row gap-3 align-items-stretch">
+                        <button type="submit" class="btn btn-primary btn-lg flex-sm-fill px-4 py-2">Оплатити та опублікувати</button>
+                        <a href="{% url 'properties:property_detail' property.pk %}" class="btn btn-outline-secondary btn-lg flex-sm-fill px-4 py-2 text-center d-flex align-items-center justify-content-center">Пізніше</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-6 mt-4 mt-lg-0">
+        <div class="card card-premium card-body">
+            <p class="small text-muted mb-0">Оплата здійснюється в тестовому режимі. Після натискання «Оплатити та опублікувати» оголошення буде одразу опубліковано в каталозі.</p>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

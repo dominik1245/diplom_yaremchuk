@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block title %}Про компанію — mobi home{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Про нас</li>
+    </ol>
+</nav>
+
+<div class="row align-items-center mb-5">
+    <div class="col-lg-6 mb-4 mb-lg-0 animate-on-scroll">
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="Офіс та команда" class="img-fluid rounded-4 shadow" style="object-fit: cover; max-height: 400px; width: 100%;">
+    </div>
+    <div class="col-lg-6 animate-on-scroll animate-on-scroll-delay-1 about-intro">
+        <p class="section-label mb-2">Наша історія</p>
+        <h1 class="mb-4">Про платформу mobi home</h1>
+        <p class="lead text-muted">mobi home — платформа підбору та оголошень житла, придатного для людей з особливими потребами та їхніх родин по всій Україні.</p>
+        <p>З 2019 року ми збираємо в одному каталозі квартири та будинки, перевірені за критеріями доступності: ширина ліфта, висота порогів, тип санвузлу, наявність радіусу для розвороту крісла колісного. Частина об'єктів має офіційний аудит — тоді в оголошенні вказано бал та рівень доступності.</p>
+        <p>Ми описуємо житло за <strong>рівнями доступності</strong> (від базового до універсального безбар'єрного), без прив'язки до діагнозів. Користувач обирає підходящий рівень і фільтрує каталог за своїми потребами. Консультації та виїзди аудиторів допомагають оцінити об'єкт перед орендою або купівлею.</p>
+        <p class="mb-0">Місія компанії — зробити пошук доступного житла прозорим і зручним: єдина методика оцінки, відкриті критерії та співпраця з ріелторами, застройниками та громадськими організаціями.</p>
+    </div>
+</div>
+
+<section class="py-5" style="background: linear-gradient(180deg, #ffffff 0%, var(--color-pale) 100%);">
+    <div class="wrap">
+        <div class="row g-3 text-center mb-5 animate-on-scroll justify-content-center">
+            <div class="col-4 col-md-2 animate-on-scroll"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">5+</span><span class="small text-muted">років на ринку</span></div>
+            <div class="col-4 col-md-2 animate-on-scroll animate-on-scroll-delay-1"><span class="d-block fw-bold fs-4" style="color: var(--color-accent);">5</span><span class="small text-muted">рівнів доступності</span></div>
+            <div class="col-4 col-md-2 animate-on-scroll animate-on-scroll-delay-2"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">10+</span><span class="small text-muted">міст України</span></div>
+            <div class="col-4 col-md-2"><span class="d-block fw-bold fs-4" style="color: var(--color-accent);">100%</span><span class="small text-muted">відкрита методика</span></div>
+            <div class="col-4 col-md-2"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">24/7</span><span class="small text-muted">каталог онлайн</span></div>
+        </div>
+        <h2 class="text-center mb-5 animate-on-scroll">Наші цінності</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(90, 124, 89, 0.2);">
+                        <span style="font-size: 1.75rem;">♿</span>
+                    </div>
+                    <h3 class="h5">Доступність</h3>
+                    <p class="small text-muted mb-0">Житло має відповідати реальним потребам людей з особливими потребами, а не лише на папері.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-1">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(90, 124, 89, 0.2);">
+                        <span style="font-size: 1.75rem;">✓</span>
+                    </div>
+                    <h3 class="h5">Чесність</h3>
+                    <p class="small text-muted mb-0">Аудит проводимо за єдиними критеріями. Результати не прикрашаємо.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-2">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(201, 162, 39, 0.2);">
+                        <span style="font-size: 1.75rem;">🤝</span>
+                    </div>
+                    <h3 class="h5">Партнерство</h3>
+                    <p class="small text-muted mb-0">Працюємо з застройниками, ріелторами та громадськими організаціями для розширення пропозиції доступного житла.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-3">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(90, 124, 89, 0.15);">
+                        <span style="font-size: 1.75rem;">🏠</span>
+                    </div>
+                    <h3 class="h5">Гідність</h3>
+                    <p class="small text-muted mb-0">Кожна людина має право на комфортне та безпечне житло. Наша мова та підхід відображають цю цінність.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 about-team">
+    <div class="container">
+        <h2 class="text-center mb-5">Команда</h2>
+        <div class="row g-2 g-md-3 justify-content-center about-team-row">
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card card-premium overflow-hidden team-card">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400" alt="Олег Шевченко" class="card-img-top team-card-img">
+                    <div class="card-body text-center">
+                        <h3 class="h6 mb-1">Олег Шевченко</h3>
+                        <p class="small text-muted mb-0">Експерт з доступності</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card card-premium overflow-hidden team-card">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Марія Петренко" class="card-img-top team-card-img team-card-img--woman">
+                    <div class="card-body text-center">
+                        <h3 class="h6 mb-1">Марія Петренко</h3>
+                        <p class="small text-muted mb-0">Консультант з нерухомості</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card card-premium overflow-hidden team-card">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" alt="Дмитро Мельник" class="card-img-top team-card-img">
+                    <div class="card-body text-center">
+                        <h3 class="h6 mb-1">Дмитро Мельник</h3>
+                        <p class="small text-muted mb-0">Аудитор доступності</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="text-center mb-5">
+    <a href="{% url 'properties:contact' %}" class="btn btn-primary btn-lg">Зв'язатися з нами</a>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.about-intro {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.about-intro .section-label { font-size: 0.9375rem; font-weight: 600; }
+.about-intro h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); line-height: 1.3; }
+.about-intro .lead { font-size: 1.125rem; line-height: 1.65; font-weight: 500; }
+.about-intro p { margin-bottom: 1rem; }
+.about-intro .text-muted { opacity: 0.95; }
+.about-team .about-team-row { --bs-gutter-x: 0.75rem; }
+.about-team .team-card { max-width: 260px; margin-left: auto; margin-right: auto; }
+.about-team .team-card-img {
+    height: 200px;
+    object-fit: cover;
+    object-position: top center;
+}
+.about-team .team-card-img--woman { object-position: 50% 20%; }
+</style>
+{% endblock %}

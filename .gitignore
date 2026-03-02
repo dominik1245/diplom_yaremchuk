@@ -1,0 +1,14 @@
+# База даних (локальна)
+data/
+*.sqlite3
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Django
+media/
+staticfiles/
+*.log

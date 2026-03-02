@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Послуги — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Послуги</li>
+    </ol>
+</nav>
+<div class="text-center mb-5">
+    <p class="text-uppercase mb-2 small fw-600" style="letter-spacing: 0.12em; color: var(--accent);">Що ми робимо</p>
+    <h1 class="mb-3" style="color: var(--text);">Наші послуги</h1>
+    <p class="text-muted mx-auto mb-0" style="max-width: 560px;">Від підбору житла до аудиту доступності — допомагаємо знайти та перевірити об'єкт під ваші потреби.</p>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-lg-6">
+        <div class="card card-premium h-100 overflow-hidden">
+            <div class="row g-0 h-100">
+                <div class="col-md-5">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500" alt="Підбір житла" class="w-100 h-100" style="object-fit: cover; min-height: 240px;">
+                </div>
+                <div class="col-md-7 d-flex flex-column">
+                    <div class="card-body p-4 flex-grow-1">
+                        <h2 class="h5 mb-2" style="color: var(--text);">Підбір житла</h2>
+                        <p class="text-muted small mb-0">Індивідуальний підбір за критеріями: місто, бюджет, тип угоди, рівень доступності та зручності. Короткий список варіантів та перегляди.</p>
+                    </div>
+                    <div class="card-body pt-0 pb-4">
+                        <a href="{% url 'properties:contact' %}" class="btn btn-primary btn-sm">Замовити</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card card-premium h-100 overflow-hidden">
+            <div class="row g-0 h-100">
+                <div class="col-md-5">
+                    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500" alt="Аудит доступності" class="w-100 h-100" style="object-fit: cover; min-height: 240px;">
+                </div>
+                <div class="col-md-7 d-flex flex-column">
+                    <div class="card-body p-4 flex-grow-1">
+                        <h2 class="h5 mb-2" style="color: var(--text);">Аудит доступності</h2>
+                        <p class="text-muted small mb-0">Виїзд експерта: заміри входу, ліфта, порогів, санвузлу, радіус розвороту. Звіт з балами та рекомендаціями.</p>
+                    </div>
+                    <div class="card-body pt-0 pb-4">
+                        <a href="{% url 'properties:contact' %}" class="btn btn-primary btn-sm">Зв'язатися</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4 justify-content-center services-cards-row">
+    <div class="col-6 col-lg-3">
+        <div class="card card-premium card-body h-100 text-center py-3">
+            <div class="services-icon-box rounded-3 d-flex align-items-center justify-content-center mb-2"><span class="fs-5">📋</span></div>
+            <h3 class="h6 mb-1" style="color: var(--text);">Консультація</h3>
+            <p class="small text-muted mb-0">Пояснюємо рівні доступності та допомагаємо фільтрувати каталог.</p>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card card-premium card-body h-100 text-center py-3">
+            <div class="services-icon-box rounded-3 d-flex align-items-center justify-content-center mb-2"><span class="fs-5">🏢</span></div>
+            <h3 class="h6 mb-1" style="color: var(--text);">Для застройників</h3>
+            <p class="small text-muted mb-0">Аудит новобудов та пристосування під доступність.</p>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card card-premium card-body h-100 text-center py-3">
+            <div class="services-icon-box rounded-3 d-flex align-items-center justify-content-center mb-2"><span class="fs-5">📢</span></div>
+            <h3 class="h6 mb-1" style="color: var(--text);">Зустрічі</h3>
+            <p class="small text-muted mb-0">Лекції для ріелторів та організацій про доступне житло.</p>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card card-premium card-body h-100 text-center py-3">
+            <div class="services-icon-box rounded-3 d-flex align-items-center justify-content-center mb-2"><span class="fs-5">✓</span></div>
+            <h3 class="h6 mb-1" style="color: var(--text);">Індивідуальний підхід</h3>
+            <p class="small text-muted mb-0">Підбір під ваші потреби та бюджет.</p>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <a href="{% url 'properties:contact' %}" class="btn btn-primary">Обговорити послуги</a>
+</div>
+</div>
+<style>
+.services-icon-box {
+    width: 56px;
+    height: 56px;
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+</style>
+{% endblock %}

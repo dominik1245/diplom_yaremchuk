@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Рівні доступності — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Рівні</li>
+    </ol>
+</nav>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="mb-0" style="color: var(--text);">Рівні доступності</h1>
+    <a href="{% url 'properties:home' %}" class="btn btn-primary btn-sm">Перейти до каталогу</a>
+</div>
+<p class="text-muted small mb-4" style="max-width: 640px;">П'ять рівнів за типами потреб — без прив'язки до діагнозів. Оберіть рівень і фільтруйте <a href="{% url 'properties:home' %}" style="color: var(--accent);">каталог</a>.</p>
+
+<div class="row g-3 mb-4">
+{% for level in mobility_levels %}
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card card-premium h-100">
+            <div class="card-header card-header-premium py-2 px-3 d-flex justify-content-between align-items-center">
+                <span class="fw-600" style="color: var(--footer-text);">Рівень {{ level.id }}</span>
+                <a href="{% url 'properties:home' %}?mobility={{ level.id }}" class="btn btn-level-action btn-sm py-1 px-2">Шукати</a>
+            </div>
+            <div class="card-body py-3">
+                <p class="fw-600 mb-1" style="color: var(--text); font-size: 0.95rem;">{{ level.short }}</p>
+                <p class="small text-muted mb-2">{{ level.best_for }}</p>
+                <p class="small mb-0 text-muted" style="opacity: 0.9;">{{ level.filter_help }}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<p class="mb-0">
+    <a href="{% url 'properties:home' %}" class="btn btn-outline-primary btn-sm">← Каталог</a>
+</p>
+</div>
+{% endblock %}
