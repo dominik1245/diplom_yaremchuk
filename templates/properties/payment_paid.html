@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Оплата підвищеної видимості — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:add_listing' %}">Додати оголошення</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'properties:payment' property.pk %}">Публікація</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Оплата</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card card-premium mb-4">
+            <div class="card-body p-4">
+                <h1 class="h5 mb-2" style="color: var(--text);">Підвищена видимість</h1>
+                <p class="text-muted small mb-2">Оголошення: <strong style="color: var(--text);">{{ property.name }}</strong></p>
+                <p class="small mb-3">Оголошення буде опубліковано та показуватиметься <strong>вище в каталозі</strong>.</p>
+                <div class="d-flex align-items-baseline gap-2">
+                    <span class="payment-price" style="font-size: 1.75rem; font-weight: 700; color: var(--accent);">{{ featured_price }} грн</span>
+                    <span class="text-muted small">одноразово</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card card-premium">
+            <div class="card-body p-4">
+                <h2 class="h6 mb-3" style="color: var(--text);">Дані картки</h2>
+                <form method="post" action="" id="paymentForm" class="payment-form">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div class="alert alert-danger py-2 small mb-3">{{ form.non_field_errors.0 }}</div>{% endif %}
+                    <div class="mb-3">
+                        <label for="id_card_holder" class="form-label small" style="color: var(--text);">{{ form.card_holder.label }} *</label>
+                        {{ form.card_holder }}
+                        {% if form.card_holder.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.card_holder.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_card_number" class="form-label small" style="color: var(--text);">{{ form.card_number.label }} *</label>
+                        {{ form.card_number }}
+                        {% if form.card_number.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.card_number.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <label for="id_expiry_month" class="form-label small" style="color: var(--text);">{{ form.expiry_month.label }} *</label>
+                            {{ form.expiry_month }}
+                            {% if form.expiry_month.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.expiry_month.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-4">
+                            <label for="id_expiry_year" class="form-label small" style="color: var(--text);">{{ form.expiry_year.label }} *</label>
+                            {{ form.expiry_year }}
+                            {% if form.expiry_year.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.expiry_year.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-4">
+                            <label for="id_cvc" class="form-label small" style="color: var(--text);">{{ form.cvc.label }} *</label>
+                            {{ form.cvc }}
+                            {% if form.cvc.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.cvc.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-primary px-4 py-2">Оплатити {{ featured_price }} грн</button>
+                        <a href="{% url 'properties:payment' property.pk %}" class="btn btn-outline-secondary py-2">Назад</a>
+                    </div>
+                    <p class="small text-muted mt-3 mb-0">Для прийому реальних платежів можна підключити <strong>LiqPay</strong> або <strong>Stripe</strong> через API мерчанта.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+(function() {
+    var form = document.getElementById('paymentForm');
+    if (!form) return;
+    var cardNumber = form.querySelector('#id_card_number');
+    var expiryMonth = form.querySelector('#id_expiry_month');
+    var expiryYear = form.querySelector('#id_expiry_year');
+    var cvc = form.querySelector('#id_cvc');
+
+    if (cardNumber) {
+        cardNumber.addEventListener('input', function() {
+            var v = this.value.replace(/\D/g, '');
+            if (v.length > 16) v = v.slice(0, 16);
+            var parts = [];
+            for (var i = 0; i < v.length; i += 4) parts.push(v.slice(i, i + 4));
+            this.value = parts.join(' ');
+        });
+    }
+    if (expiryMonth) {
+        expiryMonth.addEventListener('input', function() {
+            var v = parseInt(this.value, 10);
+            if (v > 12) this.value = 12;
+            if (v < 1 && this.value !== '') this.value = 1;
+        });
+        expiryMonth.setAttribute('max', '12');
+        expiryMonth.setAttribute('min', '1');
+    }
+    if (expiryYear) {
+        expiryYear.addEventListener('input', function() {
+            var v = parseInt(this.value, 10);
+            var y = new Date().getFullYear();
+            if (this.value.length === 4 && v < y) this.value = y;
+            if (v > 2040) this.value = 2040;
+        });
+        if (!expiryYear.getAttribute('min')) expiryYear.setAttribute('min', new Date().getFullYear());
+    }
+    if (cvc) {
+        cvc.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 4);
+        });
+    }
+})();
+</script>
+{% endblock %}

@@ -2,6 +2,7 @@
 {% block title %}Форма аудитора — mobi home{% endblock %}
 
 {% block content %}
+<div class="wrap">
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
@@ -126,4 +127,5 @@
         <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary">Скасувати</a>
     {% endif %}
 </form>
+</div>
 {% endblock %}

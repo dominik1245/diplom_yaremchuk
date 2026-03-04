@@ -19,5 +19,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('add-listing/', views.add_listing, name='add_listing'),
     path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile, name='profile'),
     path('payment/<int:pk>/', views.payment, name='payment'),
+    path('payment/<int:pk>/paid/', views.payment_paid, name='payment_paid'),
 ]

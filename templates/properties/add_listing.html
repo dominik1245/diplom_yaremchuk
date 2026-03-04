@@ -10,29 +10,26 @@
         <li class="breadcrumb-item active" aria-current="page">Додати оголошення</li>
     </ol>
 </nav>
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h1 class="h4 mb-0" style="color: var(--text);">Додати нове оголошення</h1>
-    <form method="post" action="{% url 'properties:logout' %}" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-secondary btn-sm">Вийти з облікового запису</button>
-    </form>
-</div>
+<h1 class="h4 mb-3" style="color: var(--text);">Додати нове оголошення</h1>
 <div class="card card-premium mb-4 border overflow-hidden add-listing-block" style="border-color: var(--border) !important;">
-    <div class="add-listing-header d-flex align-items-center py-3 px-3" style="cursor: pointer; background: var(--bg-card); border-bottom: 1px solid var(--border);" data-bs-toggle="collapse" data-bs-target="#addListingCollapse" aria-expanded="false" aria-controls="addListingCollapse">
+    <div class="add-listing-header d-flex align-items-center py-3 px-3" style="cursor: pointer; background: var(--bg-card); border-bottom: 1px solid var(--border);" data-bs-toggle="collapse" data-bs-target="#addListingCollapse" aria-expanded="{% if form.errors %}true{% else %}false{% endif %}" aria-controls="addListingCollapse">
         <span class="add-listing-icon me-2 align-self-start flex-shrink-0" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
         </span>
         <div class="flex-grow-1 min-width-0">
             <h2 class="h5 mb-1" style="color: var(--text);">Додати оголошення</h2>
-            <p class="add-listing-header-desc mb-0 small text-muted">Заповніть усі поля. Після збереження потрібно буде оплатити публікацію банківською карткою.</p>
+            <p class="add-listing-header-desc mb-0 small text-muted">Заповніть усі поля та додайте фото. Після збереження ви зможете опублікувати оголошення безкоштовно або оплатити підвищену видимість.</p>
         </div>
         <span class="add-listing-chevron ms-2 flex-shrink-0" aria-hidden="true"></span>
     </div>
-    <div id="addListingCollapse" class="collapse">
+    <div id="addListingCollapse" class="collapse {% if form.errors %}show{% endif %}">
         <div class="card-body">
-            <p class="text-muted small mb-4">Заповніть усі поля. Після збереження потрібно буде оплатити публікацію банківською карткою.</p>
+            <p class="text-muted small mb-4">Фото обовʼязкове. Після збереження ви зможете опублікувати оголошення безкоштовно або обрати платну опцію.</p>
     <form method="post" action="" enctype="multipart/form-data" class="add-listing-form">
         {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-3 py-2 small">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
         <div class="row g-3">
             <div class="col-12">
                 <label for="id_name" class="form-label small" style="color: var(--text);">Назва *</label>
@@ -42,6 +39,7 @@
             <div class="col-12 col-md-6">
                 <label class="form-label small" style="color: var(--text);">Тип *</label>
                 {{ form.listing_type }}
+                {% if form.listing_type.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.listing_type.errors.0 }}</div>{% endif %}
             </div>
             <div class="col-12 col-md-6">
                 <label class="form-label small" style="color: var(--text);">Рівень доступності</label>
@@ -75,8 +73,12 @@
             </div>
             <div class="row g-3 mb-5 pb-2 row-photo-amenities">
                 <div class="col-12 col-md-4 col-lg-3 photo-col">
-                    <label class="form-label small d-block" style="color: var(--text);">Фото</label>
+                    <label class="form-label small d-block" style="color: var(--text);">Головне фото *</label>
                     {{ form.photo }}
+                    {% if form.photo.errors %}<div class="invalid-feedback d-block small mt-1" style="color: var(--accent);">{{ form.photo.errors.0 }}</div>{% endif %}
+                    <label class="form-label small d-block mt-3" style="color: var(--text);">Додаткові фото</label>
+                    <input type="file" name="extra_photos" multiple accept="image/*" class="form-control" id="id_extra_photos">
+                    <span class="form-text small d-block mt-1">Можна обрати кілька файлів</span>
                 </div>
                 <div class="col-12 col-md-8 col-lg-9 amenities-col">
                     <label class="form-label small d-block mb-2" style="color: var(--text); border: none; background: transparent;">Зручності</label>
@@ -87,7 +89,7 @@
             </div>
             <div class="col-12 pt-5 mt-5 pb-3 border-top" style="border-color: var(--border) !important;">
                 <div class="d-flex flex-column flex-sm-row gap-3 align-items-stretch">
-                    <button type="submit" class="btn btn-primary btn-lg flex-sm-fill px-4 py-2">Зберегти та перейти до оплати</button>
+                    <button type="submit" class="btn btn-primary btn-lg flex-sm-fill px-4 py-2">Зберегти та перейти до публікації</button>
                     <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary btn-lg flex-sm-fill px-4 py-2 text-center d-flex align-items-center justify-content-center">Скасувати</a>
                 </div>
             </div>
@@ -116,7 +118,10 @@
 .amenities-horizontal label,
 .amenities-horizontal .form-check,
 #id_features label { margin-bottom: 0 !important; cursor: pointer; color: var(--text); display: inline-flex !important; align-items: center; gap: 0.35rem; white-space: nowrap; border: none !important; overflow: visible; }
-.amenities-horizontal .form-check-input { flex-shrink: 0; }
+.amenities-horizontal .form-check-input { flex-shrink: 0; margin-top: 0; }
+.add-listing-form .amenities-horizontal .form-check { padding: 0.35rem 0; margin: 0; position: relative; isolation: isolate; }
+.add-listing-form .amenities-horizontal .form-check-input:focus { box-shadow: 0 0 0 0.2rem var(--accent-soft); outline: none; }
+.add-listing-form .amenities-horizontal .form-check label { cursor: pointer; }
 /* прибрати білу смугу, не обрізати контент зручностей */
 .add-listing-form .row-photo-amenities { border: none !important; overflow: visible; }
 .add-listing-form .row-photo-amenities .photo-col { overflow: hidden; min-width: 0; max-width: 100%; }

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Профіль — mobi home{% endblock %}
+
+{% block content %}
+<div class="wrap profile-page">
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Профіль</li>
+    </ol>
+</nav>
+
+<div class="profile-header card card-premium overflow-hidden mb-4">
+    <div class="profile-header-inner p-4 p-md-5">
+        <div class="row align-items-center g-4">
+            <div class="col-auto">
+                <div class="profile-avatar rounded-circle d-flex align-items-center justify-content-center" aria-hidden="true">
+                    <span class="profile-avatar-text">{{ user.username|slice:":1"|upper }}</span>
+                </div>
+            </div>
+            <div class="col">
+                <h1 class="profile-title mb-1">Профіль</h1>
+                <p class="profile-username mb-0">
+                    <span class="fw-600">{{ user.username }}</span>
+                    {% if user.email %}<span class="text-muted ms-2">·</span><span class="text-muted ms-2">{{ user.email }}</span>{% endif %}
+                </p>
+            </div>
+            <div class="col-12 col-md-auto profile-buttons-col">
+                <div class="d-flex flex-wrap gap-2 profile-action-buttons">
+                    <a href="{% url 'properties:add_listing' %}" class="btn btn-primary px-4 py-2">
+                        <span class="profile-btn-icon" aria-hidden="true">+</span>
+                        Додати оголошення
+                    </a>
+                    <a href="{% url 'properties:logout' %}" class="btn btn-outline-secondary px-4 py-2">Вийти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="profile-listings mb-4">
+    <h2 class="profile-section-title mb-3">Мої оголошення</h2>
+    {% if user_listings %}
+    <div class="listing-cards">
+        {% for prop in user_listings %}
+        <a href="{% url 'properties:property_detail' prop.pk %}" class="profile-listing-card card card-premium text-decoration-none d-block mb-3">
+            <div class="card-body py-3 px-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <span class="profile-listing-name">{{ prop.name }}</span>
+                <span class="profile-listing-meta">
+                    {% if prop.is_published %}<span class="badge profile-badge profile-badge--published">Опубліковано</span>{% else %}<span class="badge profile-badge profile-badge--draft">Чернетка</span>{% endif %}
+                    {% if prop.city %}<span class="text-muted small ms-2">{{ prop.city }}</span>{% endif %}
+                </span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card card-premium profile-empty">
+        <div class="card-body text-center py-5 px-4">
+            <div class="profile-empty-icon mb-3" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <p class="text-muted mb-3">У вас ще немає оголошень.</p>
+            <a href="{% url 'properties:add_listing' %}" class="btn btn-primary px-4 py-2">Додати оголошення</a>
+        </div>
+    </div>
+    {% endif %}
+</section>
+</div>
+
+<style>
+.profile-page { max-width: 720px; }
+.profile-header-inner { background: linear-gradient(135deg, var(--section-alt) 0%, var(--bg-card) 100%); border-radius: 0; }
+[data-theme="dark"] .profile-header-inner { background: linear-gradient(135deg, var(--section-alt) 0%, var(--bg-card) 100%); }
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.profile-avatar-text { line-height: 1; }
+.profile-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text) !important; }
+.profile-username { font-size: 1rem; color: var(--text); }
+.profile-btn-icon { opacity: 0.9; margin-right: 0.25rem; }
+.profile-section-title { font-size: 1.125rem; font-weight: 600; color: var(--text) !important; letter-spacing: -0.01em; }
+.profile-listing-card { transition: box-shadow 0.25s ease, border-color 0.25s ease; }
+.profile-listing-card:hover { box-shadow: var(--shadow-hover); border-color: var(--accent-soft) !important; }
+.profile-listing-name { font-weight: 500; color: var(--text) !important; }
+.profile-listing-meta { font-size: 0.875rem; }
+.profile-badge { font-size: 0.75rem; font-weight: 600; padding: 0.35rem 0.65rem; border-radius: var(--radius-sm); }
+.profile-badge--published { background: rgba(25, 135, 84, 0.15); color: #198754; }
+[data-theme="dark"] .profile-badge--published { background: rgba(25, 135, 84, 0.25); color: #75c997; }
+.profile-badge--draft { background: var(--accent-soft); color: var(--accent); }
+.profile-empty { border-style: dashed; }
+.profile-empty-icon { color: var(--text-muted); opacity: 0.7; }
+.profile-empty-icon svg { display: block; margin: 0 auto; }
+.profile-buttons-col { margin-top: 1rem; }
+@media (min-width: 768px) { .profile-buttons-col { margin-top: 1.25rem; margin-left: 0; } }
+.profile-action-buttons { margin-left: 0; }
+</style>
+{% endblock %}

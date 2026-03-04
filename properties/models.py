@@ -77,6 +77,11 @@ class Property(models.Model):
         help_text='1 = батьки з дитиною, 2 = без руки, 3 = крісло, 4 = без руки/ноги, 5 = універсальний',
     )
     is_published = models.BooleanField('Опубліковано', default=True)
+    is_featured = models.BooleanField(
+        'Підвищена видимість (платне)',
+        default=False,
+        help_text='Оголошення показується вище в каталозі.',
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -95,6 +100,26 @@ class Property(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PropertyPhoto(models.Model):
+    """Додаткове фото оголошення (галерея)."""
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='extra_photos',
+        verbose_name='Оголошення',
+    )
+    image = models.ImageField('Фото', upload_to='properties/gallery/%Y/%m/')
+    order = models.PositiveSmallIntegerField('Порядок', default=0)
+
+    class Meta:
+        verbose_name = 'Фото оголошення'
+        verbose_name_plural = 'Фото оголошень'
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f'Фото #{self.order} — {self.property.name}'
 
 
 class EntranceStatus(models.TextChoices):

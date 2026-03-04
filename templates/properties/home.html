@@ -64,7 +64,7 @@
             <select name="mobility" id="mobility" class="form-select form-select-sm">
                 <option value="">Усі</option>
                 {% for L in mobility_levels %}
-                    <option value="{{ L.id }}" {% if mobility == L.id|stringformat:"d" %}selected{% endif %}>{{ L.short }}</option>
+                    <option value="{{ L.id }}" {% if mobility == L.id|stringformat:"d" %}selected{% endif %}>Рівень {{ L.id }}</option>
                 {% endfor %}
             </select>
             <a href="{% url 'properties:accessibility_levels' %}" class="small" style="color: var(--accent);">Що це?</a>
@@ -73,15 +73,15 @@
             <label class="form-label small mb-1 d-block" style="color: var(--text);">Доступність</label>
             <div class="d-flex flex-wrap gap-3">
                 <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" name="lift_80" value="1" id="lift_80" {% if filter_lift %}checked{% endif %}>
+                <input class="form-check-input" type="checkbox" name="lift_80" value="1" id="lift_80" {% if filter_lift %}checked{% endif %}>
                     <label class="form-check-label" for="lift_80" style="color: var(--text);">Ліфт &gt; 80 см</label>
-                </div>
+            </div>
                 <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" name="shower_drain" value="1" id="shower_drain" {% if filter_shower %}checked{% endif %}>
+                <input class="form-check-input" type="checkbox" name="shower_drain" value="1" id="shower_drain" {% if filter_shower %}checked{% endif %}>
                     <label class="form-check-label" for="shower_drain" style="color: var(--text);">Душ-трап</label>
-                </div>
+            </div>
                 <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" name="no_thresholds" value="1" id="no_thresholds" {% if filter_no_thresholds %}checked{% endif %}>
+                <input class="form-check-input" type="checkbox" name="no_thresholds" value="1" id="no_thresholds" {% if filter_no_thresholds %}checked{% endif %}>
                     <label class="form-check-label" for="no_thresholds" style="color: var(--text);">Без порогів</label>
                 </div>
             </div>
@@ -108,13 +108,15 @@
                 <option value="score" {% if sort == 'score' %}selected{% endif %}>За балом</option>
             </select>
         </div>
-        <div class="col-12 col-md-6 d-flex align-items-end gap-2 filter-actions">
-            <button type="submit" class="btn btn-primary btn-sm filter-action-btn">Застосувати</button>
-            <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary btn-sm filter-action-btn">Скинути</a>
+        <div class="col-12 mt-2 pt-1 filter-actions-row">
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <button type="submit" id="filterApplyBtn" class="btn btn-primary btn-sm filter-action-btn" style="min-width: 7rem;">Застосувати</button>
+                <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary btn-sm filter-action-btn px-3 py-2" style="min-width: 7rem; text-align: center;">Скинути</a>
+            </div>
         </div>
     </div>
 </form>
-        </div>
+    </div>
     </div>
 </div>
 
@@ -130,6 +132,7 @@
                         <img src="{{ prop.listing_photo_url }}" class="card-img-top" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
                     {% endif %}
                         <div class="position-absolute top-0 start-0 p-2 d-flex gap-1 flex-wrap">
+                            {% if prop.is_featured %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
                             <span class="listing-badge {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ prop.get_listing_type_display }}</span>
                         </div>
                     </div>
@@ -197,7 +200,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 {% endif %}
 <style>
-.filter-actions .filter-action-btn { min-width: 8rem; text-align: center; }
+.filter-actions-row .filter-action-btn { font-weight: 600; border-radius: var(--radius-sm); }
+.filter-actions-row .btn-outline-secondary { border-width: 1px; }
 .filter-block .card-header { user-select: none; }
 .filter-block-icon { flex-shrink: 0; color: var(--accent); display: inline-flex; align-items: center; }
 .filter-block .accordion-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; }
@@ -212,14 +216,49 @@
 <script>
 (function() {
     var mapCities = {{ map_cities_json|safe }};
-    if (!mapCities || !document.getElementById('map')) return;
-    var map = L.map('map').setView([49.0, 32.0], 6);
+    var mapCenter = {{ map_center_json|safe }};
+    var mapZoom = {{ map_zoom|default:6 }};
+    var mapEl = document.getElementById('map');
+    if (!mapCities || !mapEl) return;
+    var latLng = Array.isArray(mapCenter) && mapCenter.length >= 2 ? [mapCenter[0], mapCenter[1]] : [49.0, 32.0];
+    var map = L.map('map').setView(latLng, mapZoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    var bounds = null;
     mapCities.forEach(function(item) {
+        var lat = item.lat, lng = item.lng;
         var msg = item.city + ': ' + item.count + ' оголошень';
-        L.marker([item.lat, item.lng]).addTo(map).bindPopup(msg);
+        L.marker([lat, lng]).addTo(map).bindPopup(msg);
+        if (bounds) { bounds.extend([lat, lng]); } else { bounds = L.latLngBounds([lat, lng], [lat, lng]); }
     });
+    if (bounds && bounds.isValid()) {
+        if (mapCities.length === 1) {
+            map.setView([mapCities[0].lat, mapCities[0].lng], 11);
+        } else {
+            map.fitBounds(bounds, { padding: [24, 24], maxZoom: 12 });
+        }
+    }
+    window.addEventListener('load', function() { map.invalidateSize(); });
 })();
 </script>
 {% endif %}
+<script>
+(function() {
+    var form = document.querySelector('.filter-block form[method="get"]');
+    var btn = document.getElementById('filterApplyBtn');
+    if (!form || !btn) return;
+    function formSnapshot() {
+        var fd = new FormData(form);
+        var p = [];
+        fd.forEach(function(v, k) { p.push(k + '=' + encodeURIComponent(v)); });
+        return p.sort().join('&');
+    }
+    var initial = formSnapshot();
+    function check() {
+        btn.disabled = (formSnapshot() === initial);
+    }
+    form.addEventListener('change', check);
+    form.addEventListener('input', check);
+    check();
+})();
+</script>
 {% endblock %}

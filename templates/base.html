@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}mobi home{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Платформа підбору та оголошень доступного житла. Знайдіть квартиру без бар'єрів — mobi home.{% endblock %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -149,6 +150,8 @@
             transition: color 0.2s ease;
         }
         .site-nav .brand:hover { color: var(--accent) !important; }
+        .site-nav .brand img.site-logo { opacity: 0.9; }
+        .site-nav .brand:hover img.site-logo { opacity: 1; }
         .site-nav .nav-link {
             color: var(--text-muted) !important;
             font-weight: 500;
@@ -159,6 +162,7 @@
             transition: color 0.2s, background 0.2s;
         }
         .site-nav .nav-link:hover { color: var(--text) !important; background: var(--accent-soft); }
+        .site-nav .nav-link.active { color: var(--accent) !important; background: var(--accent-soft); font-weight: 600; }
         .theme-btn {
             width: 36px;
             height: 36px;
@@ -293,6 +297,7 @@
         .listing-badge { font-size: 0.8125rem; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: var(--radius-sm); letter-spacing: 0.02em; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         .listing-badge--sale { background: #198754; color: #fff; }
         .listing-badge--rent { background: #0d6efd; color: #fff; }
+        .listing-badge--featured { background: var(--accent); color: #fff; }
         .listing-badge-audit { font-size: 0.75rem; font-weight: 600; padding: 0.35rem 0.6rem; border-radius: var(--radius-sm); background: rgba(0,0,0,0.65); color: #fff; }
         .listing-card-audit-line { font-size: 0.8125rem; color: var(--text-muted); }
 
@@ -318,30 +323,50 @@
 </head>
 <body>
     <header class="site-nav">
+        {% url 'properties:add_listing' as add_listing_url %}
         <div class="wrap d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <a class="brand" href="{% url 'properties:index' %}">mobi home</a>
+            <a class="brand d-flex align-items-center gap-2" href="{% url 'properties:index' %}">
+                <img src="{% static 'img/logo.png' %}" alt="mobi home" height="52" class="site-logo flex-shrink-0" style="width: auto;">
+                <span>mobi home</span>
+            </a>
             <nav class="d-none d-lg-flex align-items-center flex-wrap gap-1">
-                <a class="nav-link" href="{% url 'properties:index' %}">Головна</a>
-                <a class="nav-link" href="{% url 'properties:about' %}">Про нас</a>
-                <a class="nav-link" href="{% url 'properties:home' %}">Каталог</a>
-                <a class="nav-link" href="{% url 'properties:services' %}">Послуги</a>
-                <a class="nav-link" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
-                <a class="nav-link" href="{% url 'properties:contact' %}">Контакти</a>
-                <a class="nav-link" href="{% url 'properties:register' %}">Реєстрація</a>
-                </nav>
+                <a class="nav-link {% if current_url_name == 'index' %}active{% endif %}" href="{% url 'properties:index' %}">Головна</a>
+                <a class="nav-link {% if current_url_name == 'about' %}active{% endif %}" href="{% url 'properties:about' %}">Про нас</a>
+                <a class="nav-link {% if current_url_name == 'home' %}active{% endif %}" href="{% url 'properties:home' %}">Каталог</a>
+                <a class="nav-link {% if current_url_name == 'services' %}active{% endif %}" href="{% url 'properties:services' %}">Послуги</a>
+                <a class="nav-link {% if current_url_name == 'accessibility_levels' %}active{% endif %}" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
+                <a class="nav-link {% if current_url_name == 'contact' %}active{% endif %}" href="{% url 'properties:contact' %}">Контакти</a>
+                {% if user.is_authenticated %}
+                <a class="nav-link {% if current_url_name == 'profile' %}active{% endif %}" href="{% url 'properties:profile' %}">Профіль</a>
+                <a class="nav-link {% if current_url_name == 'add_listing' %}active{% endif %}" href="{% url 'properties:add_listing' %}">Додати оголошення</a>
+                <a class="nav-link" href="{% url 'properties:logout' %}">Вихід</a>
+                {% else %}
+                <a class="nav-link {% if current_url_name == 'login' %}active{% endif %}" href="{% url 'properties:login' %}">Увійти</a>
+                <a class="nav-link {% if current_url_name == 'register' %}active{% endif %}" href="{% url 'properties:register' %}">Реєстрація</a>
+                <a class="nav-link" href="{% url 'properties:login' %}?next={{ add_listing_url|urlencode }}">Додати оголошення</a>
+                {% endif %}
+            </nav>
             <button class="navbar-toggler d-lg-none border-0 p-2 ms-auto rounded-2" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse" aria-controls="navCollapse" aria-expanded="false" aria-label="Меню" style="background: var(--accent-soft);">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
         <div class="collapse d-lg-none" id="navCollapse">
             <div class="wrap py-3 border-top" style="border-color: var(--border) !important;">
-                <a class="d-block py-2 nav-link" href="{% url 'properties:index' %}">Головна</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:about' %}">Про нас</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:home' %}">Каталог</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:services' %}">Послуги</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:contact' %}">Контакти</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:register' %}">Реєстрація</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'index' %}active{% endif %}" href="{% url 'properties:index' %}">Головна</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'about' %}active{% endif %}" href="{% url 'properties:about' %}">Про нас</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'home' %}active{% endif %}" href="{% url 'properties:home' %}">Каталог</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'services' %}active{% endif %}" href="{% url 'properties:services' %}">Послуги</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'accessibility_levels' %}active{% endif %}" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'contact' %}active{% endif %}" href="{% url 'properties:contact' %}">Контакти</a>
+                {% if user.is_authenticated %}
+                <a class="d-block py-2 nav-link {% if current_url_name == 'profile' %}active{% endif %}" href="{% url 'properties:profile' %}">Профіль</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'add_listing' %}active{% endif %}" href="{% url 'properties:add_listing' %}">Додати оголошення</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:logout' %}">Вихід</a>
+                {% else %}
+                <a class="d-block py-2 nav-link {% if current_url_name == 'login' %}active{% endif %}" href="{% url 'properties:login' %}">Увійти</a>
+                <a class="d-block py-2 nav-link {% if current_url_name == 'register' %}active{% endif %}" href="{% url 'properties:register' %}">Реєстрація</a>
+                <a class="d-block py-2 nav-link" href="{% url 'properties:login' %}?next={{ add_listing_url|urlencode }}">Додати оголошення</a>
+                {% endif %}
             </div>
         </div>
     </header>

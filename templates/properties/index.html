@@ -87,6 +87,7 @@
                             <img src="{{ prop.listing_photo_url }}" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
                         {% endif %}
                         <div class="position-absolute top-0 start-0 p-2 d-flex gap-1 flex-wrap">
+                            {% if prop.is_featured %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
                             <span class="listing-badge {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ prop.get_listing_type_display }}</span>
                         </div>
                     </div>

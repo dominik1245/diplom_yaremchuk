@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q, Count
 
-from .models import Property, AccessibilityAudit, BathroomType, EntranceStatus, ListingType, Feature, score_to_status
+from .models import Property, PropertyPhoto, AccessibilityAudit, BathroomType, EntranceStatus, ListingType, Feature, score_to_status
 from .forms import AccessibilityAuditForm, RegisterForm, AddListingForm, PaymentForm
 from .mobility import MOBILITY_LEVELS
 
@@ -32,7 +32,7 @@ PROPERTIES_PER_PAGE = 9
 
 def index(request):
     """Головна лендінг-сторінка: герой, статистика, обрані оголошення, CTA."""
-    featured = Property.objects.filter(is_published=True).select_related('audit').order_by('-created_at')[:6]
+    featured = Property.objects.filter(is_published=True).select_related('audit').prefetch_related('extra_photos').order_by('-is_featured', '-created_at')[:6]
     _assign_listing_photo_urls(featured)
     total_count = Property.objects.filter(is_published=True).count()
     cities_count = Property.objects.filter(is_published=True, city__isnull=False).exclude(city='').values('city').distinct().count()
@@ -71,7 +71,7 @@ def home(request):
     """
     Головна: каталог квартир з фільтрами (тип, місто, ціна, кімнати, доступність), сортування, пагінація.
     """
-    qs = Property.objects.filter(is_published=True).select_related('audit').prefetch_related('features')
+    qs = Property.objects.filter(is_published=True).select_related('audit').prefetch_related('features', 'extra_photos')
 
     # Фільтр: тип оголошення (продаж / оренда)
     listing_type = request.GET.get('type', '').strip()
@@ -161,7 +161,7 @@ def home(request):
     elif sort == 'score':
         qs = qs.order_by('-audit__total_score')
     else:
-        qs = qs.order_by('-created_at')
+        qs = qs.order_by('-is_featured', '-created_at')
 
     total_count = qs.count()
     paginator = Paginator(qs, PROPERTIES_PER_PAGE)
@@ -172,19 +172,21 @@ def home(request):
         page_obj = paginator.page(1)
     _assign_listing_photo_urls(page_obj.object_list)
 
-    # Список міст для фільтра (унікальні, відсортовані, без порожніх)
+    # Список міст для фільтра (унікальні, відсортовані, нормалізовані)
     cities = sorted(
         set(
-            Property.objects.filter(is_published=True, city__isnull=False)
+            (c or '').strip()
+            for c in Property.objects.filter(is_published=True, city__isnull=False)
             .exclude(city='')
             .values_list('city', flat=True)
+            if (c or '').strip()
         )
     )
 
     # Усі зручності для фільтра
     all_features = Feature.objects.all().order_by('name')
 
-    # Дані для карти: міста з кількістю оголошень та координатами
+    # Дані для карти: при виборі міста показуємо лише його, інакше — усі міста з оголошеннями
     city_counts = (
         Property.objects.filter(is_published=True, city__isnull=False)
         .exclude(city='')
@@ -192,11 +194,33 @@ def home(request):
         .annotate(count=Count('id'))
         .order_by('-count')
     )
-    map_cities = [
-        {'city': c['city'], 'count': c['count'], 'lat': CITY_COORDINATES.get(c['city'], (50.45, 30.52))[0], 'lng': CITY_COORDINATES.get(c['city'], (50.45, 30.52))[1]}
-        for c in city_counts
-    ]
+    all_map_cities = []
+    for c in city_counts:
+        city_name = (c['city'] or '').strip()
+        if not city_name:
+            continue
+        coords = CITY_COORDINATES.get(city_name, (50.45, 30.52))
+        all_map_cities.append({
+            'city': city_name,
+            'count': c['count'],
+            'lat': coords[0],
+            'lng': coords[1],
+        })
+    if city:
+        map_cities = [m for m in all_map_cities if m['city'] == city]
+        if map_cities:
+            map_center = (map_cities[0]['lat'], map_cities[0]['lng'])
+            map_zoom = 11
+        else:
+            map_cities = all_map_cities
+            map_center = (49.0, 32.0)
+            map_zoom = 6
+    else:
+        map_cities = all_map_cities
+        map_center = (49.0, 32.0)
+        map_zoom = 6
     map_cities_json = json.dumps(map_cities, ensure_ascii=False)
+    map_center_json = json.dumps(map_center)
 
     context = {
         'properties': page_obj,
@@ -219,6 +243,9 @@ def home(request):
         'cities': cities,
         'map_cities': map_cities,
         'map_cities_json': map_cities_json,
+        'map_center': map_center,
+        'map_center_json': map_center_json,
+        'map_zoom': map_zoom,
     }
     return render(request, 'properties/home.html', context)
 
@@ -260,18 +287,27 @@ def _property_photos_for_pk(pk):
 
 
 def _assign_listing_photo_urls(properties):
-    """Додає кожному оголошенню атрибут listing_photo_url (з інтернету за pk)."""
+    """Додає кожному оголошенню атрибут listing_photo_url: своє фото, додаткове фото або placeholder."""
     n = len(PROPERTY_PHOTO_URLS)
     for p in properties:
-        p.listing_photo_url = PROPERTY_PHOTO_URLS[p.pk % n]
+        if p.photo:
+            p.listing_photo_url = p.photo.url
+        else:
+            first_extra = p.extra_photos.first() if hasattr(p, 'extra_photos') else None
+            p.listing_photo_url = first_extra.image.url if first_extra else PROPERTY_PHOTO_URLS[p.pk % n]
 
 
 def property_detail(request, pk):
-    """Сторінка об'єкта: повна інформація та результати аудиту."""
-    prop = get_object_or_404(Property.objects.prefetch_related('features'), pk=pk)
+    """Сторінка об'єкта: повна інформація та результати аудиту. Фото: головне + додаткові; якщо немає — placeholder."""
+    prop = get_object_or_404(Property.objects.prefetch_related('features', 'extra_photos'), pk=pk)
     audit = getattr(prop, 'audit', None)
     can_edit_audit = _can_manage_property(request.user, prop) if request.user.is_authenticated else False
-    property_photos = _property_photos_for_pk(prop.pk)
+    property_photos = []
+    if prop.photo:
+        property_photos.append(prop.photo.url)
+    property_photos.extend(p.image.url for p in prop.extra_photos.all())
+    if not property_photos:
+        property_photos = _property_photos_for_pk(prop.pk)
 
     rows = []
     if audit:
@@ -415,7 +451,10 @@ def add_listing(request):
             prop.owner = request.user
             prop.save()
             form.save_m2m()
-            messages.success(request, 'Оголошення збережено. Перейдіть до оплати для публікації.')
+            for i, f in enumerate(request.FILES.getlist('extra_photos')):
+                if f:
+                    PropertyPhoto.objects.create(property=prop, image=f, order=i)
+            messages.success(request, 'Оголошення збережено. Оберіть спосіб публікації.')
             return redirect('properties:payment', pk=prop.pk)
         else:
             messages.error(request, 'Виправте помилки у формі.')
@@ -425,33 +464,65 @@ def add_listing(request):
 
 
 def logout_view(request):
-    """Вихід з облікового запису. Редірект на головну."""
+    """Вихід з облікового запису. Приймає GET і POST, редірект на головну."""
     logout(request)
     messages.info(request, 'Ви вийшли з облікового запису.')
     return redirect('properties:index')
 
 
+@login_required(login_url='/login/')
+def profile(request):
+    """Сторінка профілю: дані користувача та список його оголошень."""
+    user_listings = Property.objects.filter(owner=request.user).order_by('-created_at')
+    context = {'user_listings': user_listings}
+    return render(request, 'properties/profile.html', context)
+
+
 def payment(request, pk):
-    """Оплата банківською карткою (мок). Після успіху — публікація оголошення та редірект. Доступно лише власнику або адміну."""
+    """Публікація оголошення: безкоштовно або оплата (LiqPay/Stripe). Доступно лише власнику або адміну."""
     prop = get_object_or_404(Property, pk=pk)
     if not request.user.is_authenticated:
-        messages.error(request, 'Увійдіть, щоб оплатити оголошення.')
+        messages.error(request, 'Увійдіть, щоб опублікувати оголошення.')
         return redirect('properties:property_detail', pk=pk)
     if not (request.user.is_staff or (getattr(prop, 'owner_id', None) and prop.owner_id == request.user.id)):
-        messages.error(request, 'Редагувати та оплачувати можна лише своє оголошення.')
+        messages.error(request, 'Публікувати можна лише своє оголошення.')
         return redirect('properties:property_detail', pk=pk)
     if prop.is_published:
         messages.info(request, 'Оголошення вже опубліковане.')
         return redirect('properties:property_detail', pk=pk)
     if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'free':
+            prop.is_published = True
+            prop.is_featured = False
+            prop.save()
+            messages.success(request, 'Оголошення опубліковано безкоштовно.')
+            return redirect('properties:property_detail', pk=pk)
+    return render(request, 'properties/payment.html', {'property': prop})
+
+
+def payment_paid(request, pk):
+    """Оплата підвищеної видимості. Форма картки, після валідації — публікація з is_featured=True."""
+    prop = get_object_or_404(Property, pk=pk)
+    if not request.user.is_authenticated:
+        messages.error(request, 'Увійдіть, щоб оплатити.')
+        return redirect('properties:property_detail', pk=pk)
+    if not (request.user.is_staff or (getattr(prop, 'owner_id', None) and prop.owner_id == request.user.id)):
+        messages.error(request, 'Оплатити можна лише своє оголошення.')
+        return redirect('properties:property_detail', pk=pk)
+    if prop.is_published:
+        messages.info(request, 'Оголошення вже опубліковане.')
+        return redirect('properties:property_detail', pk=pk)
+    FEATURED_PRICE = 99
+    if request.method == 'POST':
         form = PaymentForm(request.POST)
         if form.is_valid():
             prop.is_published = True
+            prop.is_featured = True
             prop.save()
-            messages.success(request, 'Оплата пройшла успішно. Ваше оголошення опубліковано.')
+            messages.success(request, f'Оплата {FEATURED_PRICE} грн прийнята. Оголошення опубліковано з підвищеною видимістю.')
             return redirect('properties:property_detail', pk=pk)
-        else:
-            messages.error(request, 'Перевірте дані картки.')
+        messages.error(request, 'Перевірте дані картки.')
     else:
         form = PaymentForm()
-    return render(request, 'properties/payment.html', {'form': form, 'property': prop})
+    return render(request, 'properties/payment_paid.html', {'property': prop, 'featured_price': FEATURED_PRICE, 'form': form})
