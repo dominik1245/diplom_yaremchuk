@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<section class="py-5" style="background: linear-gradient(180deg, #ffffff 0%, var(--color-pale) 100%);">
+<section class="py-5 about-values-section" style="background: var(--section-alt);">
     <div class="wrap">
         <div class="row g-3 text-center mb-5 animate-on-scroll justify-content-center">
             <div class="col-4 col-md-2 animate-on-scroll"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">5+</span><span class="small text-muted">років на ринку</span></div>
@@ -33,9 +33,9 @@
             <div class="col-4 col-md-2"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">24/7</span><span class="small text-muted">каталог онлайн</span></div>
         </div>
         <h2 class="text-center mb-5 animate-on-scroll">Наші цінності</h2>
-        <div class="row g-4">
+        <div class="row g-4 about-values-cards">
             <div class="col-md-6 col-lg-3">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll about-values-card">
                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(90, 124, 89, 0.2);">
                         <span style="font-size: 1.75rem;">♿</span>
                     </div>
@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-1">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-1 about-values-card">
                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(90, 124, 89, 0.2);">
                         <span style="font-size: 1.75rem;">✓</span>
                     </div>
@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-2">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-2 about-values-card">
                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(201, 162, 39, 0.2);">
                         <span style="font-size: 1.75rem;">🤝</span>
                     </div>
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-3">
+                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-3 about-values-card">
                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; background: rgba(90, 124, 89, 0.15);">
                         <span style="font-size: 1.75rem;">🏠</span>
                     </div>
@@ -136,5 +136,16 @@
     object-position: top center;
 }
 .about-team .team-card-img--woman { object-position: 50% 20%; }
+/* Секція «Наші цінності»: без градієнта та без тіні на картках */
+.about-values-section { background: var(--section-alt) !important; }
+.about-values-card {
+    box-shadow: none !important;
+    border: 1px solid var(--border);
+}
+.about-values-card:hover {
+    box-shadow: none !important;
+    border-color: var(--border);
+}
+.about-values-card .rounded-circle { box-shadow: none !important; }
 </style>
 {% endblock %}

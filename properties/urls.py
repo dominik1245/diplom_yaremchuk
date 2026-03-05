@@ -15,6 +15,7 @@ urlpatterns = [
     path('property/<int:pk>/delete/', views.delete_property, name='delete_property'),
     path('audit/new/', views.auditor_form, name='auditor_form_new'),
     path('audit/<int:pk>/', views.auditor_form, name='auditor_form'),
+    path('auth/', views.auth_page, name='auth'),
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
     path('add-listing/', views.add_listing, name='add_listing'),
@@ -22,4 +23,5 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('payment/<int:pk>/', views.payment, name='payment'),
     path('payment/<int:pk>/paid/', views.payment_paid, name='payment_paid'),
+    path('property/<int:pk>/promote/', views.promote_listing, name='promote_listing'),
 ]

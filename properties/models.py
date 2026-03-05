@@ -82,6 +82,19 @@ class Property(models.Model):
         default=False,
         help_text='Оголошення показується вище в каталозі.',
     )
+    featured_until = models.DateTimeField(
+        'Реклама до',
+        null=True,
+        blank=True,
+        help_text='До якої дати діє підвищена видимість.',
+    )
+    view_count = models.PositiveIntegerField('Перегляди', default=0)
+    contact_phone = models.CharField('Контактний телефон', max_length=30, blank=True)
+    is_verified = models.BooleanField(
+        'Перевірене оголошення',
+        default=False,
+        help_text='Позначка, що нерухомість реальна (перевірено адміністрацією).',
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

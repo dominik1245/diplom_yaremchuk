@@ -10,10 +10,10 @@ class FeatureAdmin(admin.ModelAdmin):
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'listing_type', 'city', 'price', 'rooms', 'area_sqm', 'mobility_level', 'is_published', 'created_at')
-    list_filter = ('listing_type', 'is_published', 'city', 'mobility_level')
-    search_fields = ('name', 'address', 'city', 'description')
-    list_editable = ('is_published',)
+    list_display = ('name', 'listing_type', 'city', 'price', 'rooms', 'area_sqm', 'mobility_level', 'is_published', 'is_verified', 'view_count', 'featured_until', 'created_at')
+    list_filter = ('listing_type', 'is_published', 'is_verified', 'city', 'mobility_level')
+    search_fields = ('name', 'address', 'city', 'description', 'contact_phone')
+    list_editable = ('is_published', 'is_verified',)
     filter_horizontal = ('features',)
 
 

@@ -59,6 +59,11 @@
                 <label class="form-label small" style="color: var(--text);">Ціна (грн)</label>
                 {{ form.price }}
             </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small" style="color: var(--text);">Контактний телефон</label>
+                {{ form.contact_phone }}
+                <span class="form-text small">Для зв’язку з вами по оголошенню</span>
+            </div>
             <div class="col-6 col-md-3">
                 <label class="form-label small" style="color: var(--text);">Кімнат</label>
                 {{ form.rooms }}
@@ -77,8 +82,12 @@
                     {{ form.photo }}
                     {% if form.photo.errors %}<div class="invalid-feedback d-block small mt-1" style="color: var(--accent);">{{ form.photo.errors.0 }}</div>{% endif %}
                     <label class="form-label small d-block mt-3" style="color: var(--text);">Додаткові фото</label>
-                    <input type="file" name="extra_photos" multiple accept="image/*" class="form-control" id="id_extra_photos">
-                    <span class="form-text small d-block mt-1">Можна обрати кілька файлів</span>
+                    <div class="photo-drop-zone border rounded-3 p-3 text-center" id="photoDropZone" style="border-style: dashed !important; border-color: var(--border); background: var(--bg-card); min-height: 120px;">
+                        <input type="file" name="extra_photos" multiple accept="image/*" class="d-none" id="id_extra_photos">
+                        <p class="small text-muted mb-2" id="photoDropZoneText">Перетягніть сюди фото або</p>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="photoAddBtn">Додати фото</button>
+                        <div class="mt-2 d-flex flex-wrap gap-1 justify-content-center" id="extraPhotosPreviews"></div>
+                    </div>
                 </div>
                 <div class="col-12 col-md-8 col-lg-9 amenities-col">
                     <label class="form-label small d-block mb-2" style="color: var(--text); border: none; background: transparent;">Зручності</label>
@@ -121,6 +130,7 @@
 .amenities-horizontal .form-check-input { flex-shrink: 0; margin-top: 0; }
 .add-listing-form .amenities-horizontal .form-check { padding: 0.35rem 0; margin: 0; position: relative; isolation: isolate; }
 .add-listing-form .amenities-horizontal .form-check-input:focus { box-shadow: 0 0 0 0.2rem var(--accent-soft); outline: none; }
+.add-listing-form .amenities-horizontal .form-check-input { transition: none; }
 .add-listing-form .amenities-horizontal .form-check label { cursor: pointer; }
 /* прибрати білу смугу, не обрізати контент зручностей */
 .add-listing-form .row-photo-amenities { border: none !important; overflow: visible; }
@@ -135,5 +145,53 @@
 .add-listing-form .amenities-col .amenities-horizontal::after { display: none !important; content: none !important; }
 #id_features::before, #id_features::after { display: none !important; content: none !important; }
 #id_features { background: transparent !important; }
+.photo-drop-zone.dragover { border-color: var(--accent) !important; background: var(--accent-soft) !important; }
 </style>
+<script>
+(function() {
+    var zone = document.getElementById('photoDropZone');
+    var input = document.getElementById('id_extra_photos');
+    var btn = document.getElementById('photoAddBtn');
+    var text = document.getElementById('photoDropZoneText');
+    var previews = document.getElementById('extraPhotosPreviews');
+    if (!zone || !input) return;
+    var extraFilesList = [];
+    function syncInputFromList() {
+        var dt = new DataTransfer();
+        for (var i = 0; i < extraFilesList.length; i++) dt.items.add(extraFilesList[i]);
+        input.files = dt.files;
+        updatePreviews();
+    }
+    function addFiles(fileList) {
+        if (!fileList || !fileList.length) return;
+        for (var j = 0; j < fileList.length; j++) {
+            if (fileList[j].type && fileList[j].type.indexOf('image/') === 0) extraFilesList.push(fileList[j]);
+        }
+        syncInputFromList();
+    }
+    function updatePreviews() {
+        previews.innerHTML = '';
+        for (var i = 0; i < extraFilesList.length; i++) {
+            var f = extraFilesList[i];
+            var span = document.createElement('span');
+            span.className = 'badge bg-secondary';
+            span.textContent = f.name;
+            previews.appendChild(span);
+        }
+        text.textContent = extraFilesList.length ? 'Додано фото: ' + extraFilesList.length + '. Перетягніть ще або ' : 'Перетягніть сюди фото або ';
+    }
+    btn.addEventListener('click', function() { input.click(); });
+    input.addEventListener('change', function() {
+        if (input.files.length) addFiles(Array.from(input.files));
+    });
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function(e) { e.preventDefault(); zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        zone.classList.remove('dragover');
+        addFiles(e.dataTransfer.files);
+    });
+})();
+</script>
 {% endblock %}

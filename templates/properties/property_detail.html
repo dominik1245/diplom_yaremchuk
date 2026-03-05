@@ -13,7 +13,9 @@
 
 <div class="property-detail-header mb-4">
     <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-        {% if property.is_featured %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
+        {% if property.is_featured and featured_until_display %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
+        {% if property.is_verified %}<span class="badge bg-success">Перевірене оголошення</span>{% endif %}
+        {% if audit %}<span class="badge bg-info text-dark">Аудит проведено</span>{% endif %}
         <span class="listing-badge {% if property.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ property.get_listing_type_display }}</span>
         {% if property.city %}<span class="badge bg-secondary">{{ property.city }}</span>{% endif %}
         {% if property.mobility_level %}<span class="badge bg-secondary">Рівень {{ property.mobility_level }}</span>{% endif %}
@@ -78,12 +80,26 @@
                     <p class="mb-3" style="color: var(--text);"><strong>Зручності:</strong> {% for f in property.features.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
                 {% endif %}
                 <div class="border-top pt-3 mt-3" style="border-color: var(--border) !important;">
-                    <p class="text-muted small mb-0" style="color: var(--text-muted);">Зацікавило оголошення? Зв’яжіться з агентом через адмін-панель або додайте контакт у описі.</p>
+                    {% if property.contact_phone %}
+                    <p class="mb-2" style="color: var(--text);"><strong>Контакт продавця:</strong></p>
+                    <p class="mb-2">
+                        <a href="tel:{{ property.contact_phone|cut:' ' }}" class="btn btn-primary btn-sm me-2">Подзвонити</a>
+                        <span style="color: var(--text);">{{ property.contact_phone }}</span>
+                    </p>
+                    {% elif property.owner and property.owner.email %}
+                    <p class="mb-2" style="color: var(--text);"><strong>Написати продавцю:</strong></p>
+                    <a href="mailto:{{ property.owner.email }}" class="btn btn-outline-primary btn-sm">Написати на email</a>
+                    {% else %}
+                    <p class="text-muted small mb-0" style="color: var(--text-muted);">Зацікавило оголошення? Додайте контакт у описі або зв'яжіться з продавцем.</p>
+                    {% endif %}
                     {% if can_edit_audit %}
-                    <div class="mt-3 pt-3 border-top d-flex flex-wrap gap-2" style="border-color: var(--border) !important;">
+                    <div class="mt-3 pt-3 border-top d-flex flex-wrap gap-2 align-items-center" style="border-color: var(--border) !important;">
+                        {% if featured_until_display %}<span class="small text-muted">Реклама до: {{ featured_until_display|date:"d.m.Y" }}</span>{% endif %}
+                        {% if can_promote %}<a href="{% url 'properties:promote_listing' property.pk %}" class="btn btn-outline-primary btn-sm">Рекламувати оголошення</a>{% endif %}
                         <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-outline-primary btn-sm">Редагувати аудит</a>
                         <a href="{% url 'properties:delete_property' property.pk %}" class="btn btn-outline-danger btn-sm">Видалити оголошення</a>
                     </div>
+                    <p class="small text-muted mt-2 mb-0">Перегляди: <strong>{{ property.view_count }}</strong></p>
                     {% endif %}
                 </div>
             </div>
@@ -318,7 +334,7 @@
     margin-bottom: 1rem;
 }
 .audit-card-empty .audit-label { color: var(--footer-text) !important; }
-[data-theme="light"] .audit-card { background: #2c2824; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+[data-theme="light"] .audit-card { background: var(--footer-bg); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 [data-theme="light"] .audit-card-header,
 [data-theme="light"] .audit-card-body,
 [data-theme="light"] .audit-card-title,
@@ -326,9 +342,9 @@
 [data-theme="light"] .audit-score-max,
 [data-theme="light"] .audit-collapse-header .audit-card-title,
 [data-theme="light"] .audit-disclaimer,
-[data-theme="light"] .audit-card-empty .audit-label { color: #e8e4e0 !important; }
+[data-theme="light"] .audit-card-empty .audit-label { color: var(--footer-text) !important; }
 [data-theme="light"] .audit-table thead th,
-[data-theme="light"] .audit-table tbody td { color: #e8e4e0 !important; }
+[data-theme="light"] .audit-table tbody td { color: var(--footer-text) !important; }
 [data-theme="light"] .audit-table tbody tr:hover { background: rgba(255,255,255,0.06); }
 </style>
 {% endblock %}

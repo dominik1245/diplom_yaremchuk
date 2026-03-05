@@ -87,7 +87,7 @@
                             <img src="{{ prop.listing_photo_url }}" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
                         {% endif %}
                         <div class="position-absolute top-0 start-0 p-2 d-flex gap-1 flex-wrap">
-                            {% if prop.is_featured %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
+                            {% if prop.featured_active %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
                             <span class="listing-badge {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ prop.get_listing_type_display }}</span>
                         </div>
                     </div>
@@ -280,7 +280,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(160deg, #388e8f 0%, #2d6b6c 50%, #1e4d4e 100%);
+    background: linear-gradient(160deg, #334655 0%, #253340 50%, #051711 100%);
     color: #fff;
     font-size: 1.35rem;
     font-weight: 700;
@@ -292,18 +292,19 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 .advantages-icon--warm {
-    background: linear-gradient(160deg, #a38d3c 0%, #8b7519 50%, #6b5a14 100%);
+    background: linear-gradient(160deg, #B7A798 0%, #9a8a7a 50%, #7d6e60 100%);
+    color: #051711;
     box-shadow: 0 4px 14px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 .card-premium:hover .advantages-icon--warm {
     box-shadow: 0 6px 18px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 [data-theme="dark"] .advantages-icon {
-    background: linear-gradient(160deg, #3d9a9b 0%, #2d7a7b 50%, #1e5a5b 100%);
+    background: linear-gradient(160deg, #334655 0%, #4a6174 50%, #253340 100%);
     box-shadow: 0 4px 18px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 [data-theme="dark"] .advantages-icon--warm {
-    background: linear-gradient(160deg, #b39d4d 0%, #8b7519 50%, #6b5a14 100%);
+    background: linear-gradient(160deg, #B7A798 0%, #9a8a7a 50%, #7d6e60 100%);
     box-shadow: 0 4px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 [data-theme="dark"] .card-premium:hover .advantages-icon,
@@ -319,7 +320,7 @@
 
 /* Фон головної: фото не обрізає головний об'єкт (будинок/людину) — центр по вертикалі зміщений */
 .hero-bg {
-    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.25)), url('{% static "img/hero.png" %}') no-repeat;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0.4) 100%), url('{% static "img/hero.png" %}') no-repeat;
     background-size: cover;
     background-position: 50% 45%;
 }

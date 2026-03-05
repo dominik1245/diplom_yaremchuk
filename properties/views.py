@@ -8,7 +8,9 @@ from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Case, When, Value, IntegerField
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import Property, PropertyPhoto, AccessibilityAudit, BathroomType, EntranceStatus, ListingType, Feature, score_to_status
 from .forms import AccessibilityAuditForm, RegisterForm, AddListingForm, PaymentForm
@@ -32,7 +34,20 @@ PROPERTIES_PER_PAGE = 9
 
 def index(request):
     """Головна лендінг-сторінка: герой, статистика, обрані оголошення, CTA."""
-    featured = Property.objects.filter(is_published=True).select_related('audit').prefetch_related('extra_photos').order_by('-is_featured', '-created_at')[:6]
+    now_index = timezone.now()
+    featured = (
+        Property.objects.filter(is_published=True)
+        .select_related('audit')
+        .prefetch_related('extra_photos')
+        .annotate(
+            featured_active=Case(
+                When(Q(is_featured=True) & (Q(featured_until__isnull=True) | Q(featured_until__gt=now_index)), then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        )
+        .order_by('-featured_active', '-created_at')[:6]
+    )
     _assign_listing_photo_urls(featured)
     total_count = Property.objects.filter(is_published=True).count()
     cities_count = Property.objects.filter(is_published=True, city__isnull=False).exclude(city='').values('city').distinct().count()
@@ -152,7 +167,15 @@ def home(request):
             | Q(description__icontains=query)
         )
 
-    # Сортування
+    # Сортування (реклама: лише з активною featured_until)
+    now = timezone.now()
+    qs = qs.annotate(
+        featured_active=Case(
+            When(Q(is_featured=True) & (Q(featured_until__isnull=True) | Q(featured_until__gt=now)), then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField(),
+        )
+    )
     sort = request.GET.get('sort', 'newest')
     if sort == 'price_asc':
         qs = qs.order_by('price')
@@ -161,7 +184,7 @@ def home(request):
     elif sort == 'score':
         qs = qs.order_by('-audit__total_score')
     else:
-        qs = qs.order_by('-is_featured', '-created_at')
+        qs = qs.order_by('-featured_active', '-created_at')
 
     total_count = qs.count()
     paginator = Paginator(qs, PROPERTIES_PER_PAGE)
@@ -293,7 +316,9 @@ def _assign_listing_photo_urls(properties):
         if p.photo:
             p.listing_photo_url = p.photo.url
         else:
-            first_extra = p.extra_photos.first() if hasattr(p, 'extra_photos') else None
+            extras = getattr(p, 'extra_photos', None)
+            extras_list = list(extras.all()) if extras else []
+            first_extra = extras_list[0] if extras_list else None
             p.listing_photo_url = first_extra.image.url if first_extra else PROPERTY_PHOTO_URLS[p.pk % n]
 
 
@@ -302,12 +327,25 @@ def property_detail(request, pk):
     prop = get_object_or_404(Property.objects.prefetch_related('features', 'extra_photos'), pk=pk)
     audit = getattr(prop, 'audit', None)
     can_edit_audit = _can_manage_property(request.user, prop) if request.user.is_authenticated else False
+    # Лічильник переглядів: один раз за сесію на оголошення
+    session_key = 'viewed_property_%s' % pk
+    if not request.session.get(session_key):
+        prop.view_count = (prop.view_count or 0) + 1
+        prop.save(update_fields=['view_count'])
+        request.session[session_key] = True
     property_photos = []
     if prop.photo:
         property_photos.append(prop.photo.url)
     property_photos.extend(p.image.url for p in prop.extra_photos.all())
     if not property_photos:
         property_photos = _property_photos_for_pk(prop.pk)
+
+    now = timezone.now()
+    can_promote = (
+        can_edit_audit and prop.is_published and
+        (not prop.is_featured or (prop.featured_until and prop.featured_until < now))
+    )
+    featured_until_display = prop.featured_until if prop.featured_until and prop.featured_until > now else None
 
     rows = []
     if audit:
@@ -335,6 +373,8 @@ def property_detail(request, pk):
         'audit_rows': rows,
         'can_edit_audit': can_edit_audit,
         'property_photos': property_photos,
+        'can_promote': can_promote,
+        'featured_until_display': featured_until_display,
     }
     return render(request, 'properties/property_detail.html', context)
 
@@ -346,7 +386,7 @@ def _can_manage_property(user, prop):
     return user.is_staff or (getattr(prop, 'owner_id', None) and prop.owner_id == user.id)
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='/auth/')
 def delete_property(request, pk):
     """Видалення оголошення. Доступно лише власнику або адміну."""
     prop = get_object_or_404(Property, pk=pk)
@@ -398,50 +438,72 @@ def auditor_form(request, pk=None):
     return render(request, 'properties/auditor_form.html', context)
 
 
-def register(request):
-    """Реєстрація. Після успіху — редірект на додати оголошення."""
+def _prepare_login_form(form):
+    form.fields['username'].label = "Ім'я користувача"
+    form.fields['password'].label = 'Пароль'
+    form.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': "Телефон або e-mail / логін", 'autocomplete': 'username'})
+    form.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Пароль', 'autocomplete': 'current-password'})
+
+
+def auth_page(request):
+    """Об'єднана сторінка: Вхід та Реєстрація на одній сторінці (таби)."""
     if request.user.is_authenticated:
         return redirect('properties:add_listing')
+    next_url = (request.GET.get('next') or request.POST.get('next') or '')[:500]
+    active_tab = request.GET.get('tab', 'login')
+    login_form = AuthenticationForm(request)
+    register_form = RegisterForm()
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Реєстрація успішна. Додайте ваше оголошення.')
-            return redirect('properties:add_listing')
+        form_type = request.POST.get('form_type', 'login')
+        next_url = request.POST.get('next', next_url)
+        if form_type == 'register':
+            register_form = RegisterForm(request.POST)
+            if register_form.is_valid():
+                user = register_form.save()
+                login(request, user)
+                messages.success(request, 'Реєстрація успішна. Додайте ваше оголошення.')
+                return redirect(next_url if next_url.startswith('/') else 'properties:add_listing')
+            messages.error(request, 'Виправте помилки у формі реєстрації.')
+            active_tab = 'register'
         else:
-            messages.error(request, 'Виправте помилки у формі.')
-    else:
-        form = RegisterForm()
-    return render(request, 'properties/register.html', {'form': form})
+            login_form = AuthenticationForm(request, data=request.POST)
+            if login_form.is_valid():
+                user = login_form.get_user()
+                login(request, user)
+                if request.POST.get('remember_me'):
+                    request.session.set_expiry(60 * 60 * 24 * 14)
+                else:
+                    request.session.set_expiry(0)
+                messages.success(request, 'Ви успішно увійшли.')
+                return redirect(next_url if next_url.startswith('/') else 'properties:add_listing')
+            messages.error(request, 'Невірний логін або пароль.')
+            active_tab = 'login'
+    _prepare_login_form(login_form)
+    return render(request, 'properties/auth.html', {
+        'login_form': login_form,
+        'register_form': register_form,
+        'active_tab': active_tab,
+        'next_url': next_url,
+    })
+
+
+def register(request):
+    """Редірект на об'єднану сторінку входу/реєстрації."""
+    if request.user.is_authenticated:
+        return redirect('properties:add_listing')
+    next_url = request.GET.get('next', '')
+    return redirect('properties:auth' + ('?tab=register&next=' + next_url if next_url else '?tab=register'))
 
 
 def login_view(request):
-    """Вхід за логіном (ім'я користувача) та паролем. Після успіху — редірект на add_listing або next."""
+    """Редірект на об'єднану сторінку входу/реєстрації."""
     if request.user.is_authenticated:
         return redirect('properties:add_listing')
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, 'Ви успішно увійшли.')
-            next_url = request.GET.get('next') or request.POST.get('next')
-            if next_url and next_url.startswith('/'):
-                return redirect(next_url)
-            return redirect('properties:add_listing')
-        else:
-            messages.error(request, 'Невірний логін або пароль. Спробуйте ще раз.')
-    else:
-        form = AuthenticationForm(request)
-    form.fields['username'].label = "Ім'я користувача"
-    form.fields['password'].label = 'Пароль'
-    form.fields['username'].widget.attrs.update({'class': 'form-control form-control-sm', 'placeholder': "Ім'я користувача (логін)", 'autocomplete': 'username'})
-    form.fields['password'].widget.attrs.update({'class': 'form-control form-control-sm', 'placeholder': 'Пароль', 'autocomplete': 'current-password'})
-    return render(request, 'properties/login.html', {'form': form})
+    qs = request.GET.urlencode()
+    return redirect('properties:auth' + ('?' + qs) if qs else 'properties:auth')
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='/auth/')
 def add_listing(request):
     """Форма додавання оголошення (всі поля + рівні доступності). Після збереження — редірект на оплату."""
     if request.method == 'POST':
@@ -470,7 +532,7 @@ def logout_view(request):
     return redirect('properties:index')
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='/auth/')
 def profile(request):
     """Сторінка профілю: дані користувача та список його оголошень."""
     user_listings = Property.objects.filter(owner=request.user).order_by('-created_at')
@@ -495,10 +557,43 @@ def payment(request, pk):
         if action == 'free':
             prop.is_published = True
             prop.is_featured = False
-            prop.save()
-            messages.success(request, 'Оголошення опубліковано безкоштовно.')
+            prop.featured_until = None
+            prop.save(update_fields=['is_published', 'is_featured', 'featured_until'])
+            messages.success(request, 'Оголошення опубліковано безкоштовно. Пізніше можна замовити рекламу.')
             return redirect('properties:property_detail', pk=pk)
     return render(request, 'properties/payment.html', {'property': prop})
+
+
+def promote_listing(request, pk):
+    """Рекламувати вже опубліковане оголошення (підвищена видимість 30 днів)."""
+    prop = get_object_or_404(Property, pk=pk)
+    if not request.user.is_authenticated:
+        messages.error(request, 'Увійдіть, щоб замовити рекламу.')
+        return redirect('properties:property_detail', pk=pk)
+    if not (request.user.is_staff or (getattr(prop, 'owner_id', None) and prop.owner_id == request.user.id)):
+        messages.error(request, 'Рекламувати можна лише своє оголошення.')
+        return redirect('properties:property_detail', pk=pk)
+    if not prop.is_published:
+        messages.error(request, 'Спочатку опублікуйте оголошення.')
+        return redirect('properties:property_detail', pk=pk)
+    FEATURED_PRICE = 99
+    PROMOTE_DAYS = 30
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            now = timezone.now()
+            if prop.featured_until and prop.featured_until > now:
+                prop.featured_until = prop.featured_until + timedelta(days=PROMOTE_DAYS)
+            else:
+                prop.featured_until = now + timedelta(days=PROMOTE_DAYS)
+            prop.is_featured = True
+            prop.save(update_fields=['is_featured', 'featured_until'])
+            messages.success(request, f'Реклама активована на {PROMOTE_DAYS} днів. Діє до {prop.featured_until.strftime("%d.%m.%Y")}.')
+            return redirect('properties:property_detail', pk=pk)
+        messages.error(request, 'Перевірте дані картки.')
+    else:
+        form = PaymentForm()
+    return render(request, 'properties/promote_listing.html', {'property': prop, 'featured_price': FEATURED_PRICE, 'form': form})
 
 
 def payment_paid(request, pk):
@@ -511,7 +606,7 @@ def payment_paid(request, pk):
         messages.error(request, 'Оплатити можна лише своє оголошення.')
         return redirect('properties:property_detail', pk=pk)
     if prop.is_published:
-        messages.info(request, 'Оголошення вже опубліковане.')
+        messages.info(request, 'Оголошення вже опубліковане. Скористайтесь «Рекламувати оголошення».')
         return redirect('properties:property_detail', pk=pk)
     FEATURED_PRICE = 99
     if request.method == 'POST':
@@ -519,8 +614,9 @@ def payment_paid(request, pk):
         if form.is_valid():
             prop.is_published = True
             prop.is_featured = True
-            prop.save()
-            messages.success(request, f'Оплата {FEATURED_PRICE} грн прийнята. Оголошення опубліковано з підвищеною видимістю.')
+            prop.featured_until = timezone.now() + timedelta(days=30)
+            prop.save(update_fields=['is_published', 'is_featured', 'featured_until'])
+            messages.success(request, f'Оплата {FEATURED_PRICE} грн прийнята. Реклама діє 30 днів.')
             return redirect('properties:property_detail', pk=pk)
         messages.error(request, 'Перевірте дані картки.')
     else:

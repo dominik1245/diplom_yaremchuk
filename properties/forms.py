@@ -40,7 +40,7 @@ class AddListingForm(forms.ModelForm):
         model = Property
         fields = (
             'name', 'listing_type', 'address', 'city', 'price', 'rooms', 'area_sqm',
-            'description', 'photo', 'mobility_level', 'features',
+            'description', 'photo', 'mobility_level', 'contact_phone', 'features',
         )
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Назва оголошення'}),
@@ -52,6 +52,7 @@ class AddListingForm(forms.ModelForm):
             'area_sqm': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'м²', 'min': 1, 'step': 0.1}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Опис'}),
             'photo': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'contact_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+380 XX XXX XX XX'}),
             'features': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         }
 
