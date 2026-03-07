@@ -3,16 +3,6 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:add_listing' %}">Додати оголошення</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:payment' property.pk %}">Публікація</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Оплата</li>
-    </ol>
-</nav>
-
 <div class="row g-4">
     <div class="col-lg-5">
         <div class="card card-premium mb-4">

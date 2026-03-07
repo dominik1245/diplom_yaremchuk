@@ -3,15 +3,6 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:property_detail' property.pk %}">{{ property.name }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Видалити</li>
-    </ol>
-</nav>
-
 <div class="card card-premium card-body mb-4">
     <h1 class="h4 mb-3" style="color: var(--text);">Видалити оголошення?</h1>
     <p class="mb-3" style="color: var(--text);">Ви впевнені, що хочете видалити оголошення <strong>«{{ property.name }}»</strong>? Цю дію не можна скасувати.</p>

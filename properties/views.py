@@ -3,7 +3,9 @@
 """
 import json
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -12,7 +14,7 @@ from django.db.models import Q, Count, Case, When, Value, IntegerField
 from django.utils import timezone
 from datetime import timedelta
 
-from .models import Property, PropertyPhoto, AccessibilityAudit, BathroomType, EntranceStatus, ListingType, Feature, score_to_status
+from .models import Property, PropertyPhoto, PropertyFavorite, AccessibilityAudit, BathroomType, EntranceStatus, ListingType, Feature, score_to_status
 from .forms import AccessibilityAuditForm, RegisterForm, AddListingForm, PaymentForm
 from .mobility import MOBILITY_LEVELS
 
@@ -120,6 +122,28 @@ def home(request):
     except (TypeError, ValueError):
         pass
 
+    # Фільтр: максимум кімнат
+    try:
+        rooms_max = request.GET.get('rooms_max')
+        if rooms_max:
+            qs = qs.filter(rooms__lte=int(rooms_max))
+    except (TypeError, ValueError):
+        pass
+
+    # Фільтр: площа від / до (м²)
+    try:
+        area_min = request.GET.get('area_min')
+        if area_min:
+            qs = qs.filter(area_sqm__gte=float(area_min))
+    except (TypeError, ValueError):
+        pass
+    try:
+        area_max = request.GET.get('area_max')
+        if area_max:
+            qs = qs.filter(area_sqm__lte=float(area_max))
+    except (TypeError, ValueError):
+        pass
+
     # Критичні точки доступності
     has_audit = Q(audit__isnull=False)
     lift_ok = Q(audit__lift_width_cm__gt=80)
@@ -140,6 +164,36 @@ def home(request):
             qs = qs.filter(shower_drain)
         if filter_no_thresholds:
             qs = qs.filter(no_thresholds)
+
+    # Фільтр: радіус для розвороту (мобільність)
+    filter_turning = request.GET.get('turning_radius') == '1'
+    if filter_turning:
+        qs = qs.filter(has_audit, audit__turning_radius_exists=True)
+
+    # Фільтр: тип санвузлу (мобільність)
+    bathroom_type = request.GET.get('bathroom_type', '').strip()
+    if bathroom_type in ('bath', 'shower_tray', 'shower_drain'):
+        qs = qs.filter(has_audit, audit__bathroom_type=bathroom_type)
+
+    # Фільтр: лише з проведеним аудитом
+    filter_has_audit = request.GET.get('has_audit') == '1'
+    if filter_has_audit:
+        qs = qs.filter(has_audit)
+
+    # Фільтр: мінімальний бал аудиту (1–10)
+    audit_score_min_val = request.GET.get('audit_score_min', '').strip()
+    try:
+        if audit_score_min_val:
+            score = float(audit_score_min_val)
+            if 1 <= score <= 10:
+                qs = qs.filter(has_audit, audit__total_score__gte=score)
+    except (TypeError, ValueError):
+        audit_score_min_val = ''
+
+    # Фільтр: лише перевірені оголошення
+    filter_verified = request.GET.get('verified') == '1'
+    if filter_verified:
+        qs = qs.filter(is_verified=True)
 
     # Фільтр: рівень мобільності (1–5) — житло, що задовольняє обраний рівень або вищий
     mobility = request.GET.get('mobility', '').strip()
@@ -254,9 +308,18 @@ def home(request):
         'price_min': request.GET.get('price_min', ''),
         'price_max': request.GET.get('price_max', ''),
         'rooms': request.GET.get('rooms', ''),
+        'rooms_max': request.GET.get('rooms_max', ''),
+        'area_min': request.GET.get('area_min', ''),
+        'area_max': request.GET.get('area_max', ''),
         'filter_lift': filter_lift,
         'filter_shower': filter_shower,
         'filter_no_thresholds': filter_no_thresholds,
+        'filter_turning': filter_turning,
+        'bathroom_type': bathroom_type,
+        'filter_has_audit': filter_has_audit,
+        'audit_score_min': audit_score_min_val,
+        'filter_verified': filter_verified,
+        'bathroom_type_choices': BathroomType.choices,
         'mobility': mobility,
         'mobility_levels': MOBILITY_LEVELS,
         'selected_features': [int(x) for x in feature_ids if x.isdigit()],
@@ -367,6 +430,10 @@ def property_detail(request, pk):
             ('Радіус для розвороту', 'Так' if audit.turning_radius_exists else 'Ні', '—', audit.turning_comment),
         ]
 
+    is_favorite = False
+    if request.user.is_authenticated:
+        is_favorite = PropertyFavorite.objects.filter(user=request.user, property=prop).exists()
+
     context = {
         'property': prop,
         'audit': audit,
@@ -375,6 +442,7 @@ def property_detail(request, pk):
         'property_photos': property_photos,
         'can_promote': can_promote,
         'featured_until_display': featured_until_display,
+        'is_favorite': is_favorite,
     }
     return render(request, 'properties/property_detail.html', context)
 
@@ -487,6 +555,11 @@ def auth_page(request):
     })
 
 
+def coming_soon(request):
+    """Сторінка «Скоро» для соціального входу (Google, Telegram, Дія)."""
+    return render(request, 'properties/coming_soon.html')
+
+
 def register(request):
     """Редірект на об'єднану сторінку входу/реєстрації."""
     if request.user.is_authenticated:
@@ -532,11 +605,32 @@ def logout_view(request):
     return redirect('properties:index')
 
 
+def toggle_favorite(request, pk):
+    """Додати або прибрати оголошення з обраного. POST; повертає JSON { is_favorite: bool }."""
+    if not request.user.is_authenticated:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.accepts('application/json'):
+            return JsonResponse({'error': 'login_required'}, status=401)
+        from urllib.parse import urlencode
+        return redirect(reverse('properties:auth') + '?' + urlencode({'next': request.build_absolute_uri()}))
+
+    prop = get_object_or_404(Property, pk=pk)
+    fav, created = PropertyFavorite.objects.get_or_create(user=request.user, property=prop)
+    if not created:
+        fav.delete()
+        is_favorite = False
+    else:
+        is_favorite = True
+    return JsonResponse({'is_favorite': is_favorite})
+
+
 @login_required(login_url='/auth/')
 def profile(request):
-    """Сторінка профілю: дані користувача та список його оголошень."""
+    """Сторінка профілю: дані користувача, його оголошення та обрані."""
     user_listings = Property.objects.filter(owner=request.user).order_by('-created_at')
-    context = {'user_listings': user_listings}
+    favorite_listings = Property.objects.filter(
+        favorited_by__user=request.user
+    ).order_by('-favorited_by__created_at').distinct()
+    context = {'user_listings': user_listings, 'favorite_listings': favorite_listings}
     return render(request, 'properties/profile.html', context)
 
 

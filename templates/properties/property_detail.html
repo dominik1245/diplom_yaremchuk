@@ -3,14 +3,6 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ property.name }}</li>
-    </ol>
-</nav>
-
 <div class="property-detail-header mb-4">
     <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
         {% if property.is_featured and featured_until_display %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
@@ -23,10 +15,37 @@
     </div>
     <h1 class="property-detail-title mb-2" style="color: var(--text);">{{ property.name }}</h1>
     <p class="text-muted mb-3" style="color: var(--text-muted);">{{ property.address }}</p>
+    <div class="property-detail-price-row d-flex flex-wrap align-items-center justify-content-between gap-3 mb-2" style="color: var(--text);">
+        <div class="property-detail-price-block">
+            {% if property.price %}
+                <span class="property-detail-price fw-bold">{{ property.price|floatformat:0 }} грн{% if property.listing_type == 'rent' %}/міс{% endif %}</span>
+            {% endif %}
+        </div>
+        <div class="property-detail-actions d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-share rounded-pill px-3 py-2" title="Поділитися" aria-label="Поділитися оголошенням">
+                <svg class="me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Поділитися
+            </button>
+            {% if user.is_authenticated %}
+            <button type="button" class="btn btn-outline-secondary btn-favorite rounded-pill px-3 py-2 {% if is_favorite %}btn-favorite--active{% endif %}" data-property-pk="{{ property.pk }}" data-in-favorites="{{ is_favorite|yesno:'true,false' }}" title="В обране" aria-label="Додати в обране">
+                {% if is_favorite %}
+                <svg class="btn-favorite-icon btn-favorite-icon--outline me-1 d-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg class="btn-favorite-icon btn-favorite-icon--fill me-1" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {% else %}
+                <svg class="btn-favorite-icon btn-favorite-icon--outline me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg class="btn-favorite-icon btn-favorite-icon--fill me-1 d-none" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {% endif %}
+                <span class="btn-favorite-text">В обране</span>
+            </button>
+            {% else %}
+            <a href="{% url 'properties:auth' %}?next={{ request.build_absolute_uri|urlencode }}" class="btn btn-outline-secondary rounded-pill px-3 py-2" title="В обране">
+                <svg class="me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                В обране
+            </a>
+            {% endif %}
+        </div>
+    </div>
     <div class="property-detail-meta d-flex flex-wrap gap-3 mb-0" style="color: var(--text);">
-        {% if property.price %}
-            <span class="property-detail-price"><strong>Ціна:</strong> {{ property.price|floatformat:0 }} грн{% if property.listing_type == 'rent' %}/міс{% endif %}</span>
-        {% endif %}
         {% if property.rooms %}<span><strong>Кімнат:</strong> {{ property.rooms }}</span>{% endif %}
         {% if property.area_sqm %}<span><strong>Площа:</strong> {{ property.area_sqm }} м²</span>{% endif %}
     </div>
@@ -110,7 +129,7 @@
 {% if audit %}
     <div class="audit-card mb-4">
         <div class="audit-card-body p-0">
-            <div class="audit-collapse-header d-flex align-items-center py-3 px-3" style="cursor: pointer; background: rgba(0,0,0,0.2);" data-bs-toggle="collapse" data-bs-target="#auditCollapse" aria-expanded="false" aria-controls="auditCollapse">
+            <div class="audit-collapse-header d-flex align-items-center py-3 px-3" data-bs-toggle="collapse" data-bs-target="#auditCollapse" aria-expanded="false" aria-controls="auditCollapse">
                 <h2 class="audit-card-title mb-0 flex-grow-1">Результати аудиту доступності</h2>
                 <span class="audit-score-block me-3">
                     <span class="audit-score-label">Загальний бал</span>
@@ -121,6 +140,16 @@
             </div>
             <div id="auditCollapse" class="collapse">
                 <div class="px-3 pb-3 pt-1">
+            <div class="audit-filter-row mb-2">
+                <span class="audit-filter-label">Фільтр за статусом:</span>
+                <div class="audit-filter-btns d-flex flex-wrap gap-1">
+                    <button type="button" class="audit-filter-btn active" data-status="">Усі</button>
+                    <button type="button" class="audit-filter-btn" data-status="Ідеально">Ідеально</button>
+                    <button type="button" class="audit-filter-btn" data-status="Потребує покращення">Потребує покращення</button>
+                    <button type="button" class="audit-filter-btn" data-status="Важкодоступно">Важкодоступно</button>
+                    <button type="button" class="audit-filter-btn" data-status="Недоступно">Недоступно</button>
+                </div>
+            </div>
             <div class="audit-table-wrap">
                 <table class="audit-table">
                     <thead>
@@ -133,7 +162,7 @@
                     </thead>
                     <tbody>
                         {% for row in audit_rows %}
-                            <tr>
+                            <tr data-audit-status="{{ row.2|default:'' }}">
                                 <td class="audit-cell audit-cell-criterion">{{ row.0 }}</td>
                                 <td class="audit-cell">{{ row.1|default:"—" }}</td>
                                 <td class="audit-cell">
@@ -233,41 +262,29 @@
 }
 .property-gallery .carousel-indicators button.active { background-color: #fff; }
 
-/* Блок результатів аудиту — комфортний і зрозумілий вигляд */
+/* Блок результатів аудиту — світліший вигляд у стилі сайту, фільтр за статусом */
 .audit-card {
-    background: var(--footer-bg);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    box-shadow: var(--shadow);
 }
-.audit-card-header {
-    background: rgba(0,0,0,0.2);
-    color: var(--footer-text);
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+.audit-collapse-header {
+    background: var(--bg-card);
+    color: var(--text);
+    padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border);
+    user-select: none;
 }
 .audit-card-title {
     font-size: 1.125rem;
     font-weight: 600;
     margin: 0;
-    color: var(--footer-text) !important;
+    color: var(--text) !important;
 }
-.audit-score-block {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.35rem;
-}
-.audit-score-label {
-    font-size: 0.875rem;
-    color: var(--footer-text);
-    opacity: 0.9;
-}
+.audit-score-block { display: inline-flex; align-items: baseline; gap: 0.35rem; }
+.audit-score-label { font-size: 0.875rem; color: var(--text-muted); }
 .audit-score-value {
     font-size: 1.5rem;
     font-weight: 700;
@@ -279,35 +296,43 @@
 .audit-score-value.badge-score-mid { background: var(--accent-soft); color: var(--accent); }
 .audit-score-value.badge-score-low { background: var(--text-muted); color: #fff; }
 .audit-score-value.badge-score-none { background: var(--border); color: var(--text-muted); }
-.audit-score-max {
-    font-size: 0.95rem;
-    opacity: 0.75;
-    color: var(--footer-text);
-}
-.audit-card-body {
-    background: var(--footer-bg);
-    color: var(--footer-text);
-    padding: 1.5rem;
-}
-.audit-collapse-header { user-select: none; }
+.audit-score-max { font-size: 0.95rem; color: var(--text-muted); }
+.audit-card-body { background: var(--bg-card); color: var(--text); padding: 1.25rem 1.5rem; }
 .audit-collapse-header .audit-score-block { display: flex; align-items: baseline; gap: 0.25rem; }
-.audit-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.9; }
+.audit-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; color: var(--text-muted); }
 .audit-collapse-header[aria-expanded="true"] .audit-collapse-icon { transform: rotate(180deg); }
+/* Фільтр за статусом (як на фото) */
+.audit-filter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 0.75rem; }
+.audit-filter-label { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+.audit-filter-btns { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.audit-filter-btn {
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.audit-filter-btn:hover { background: var(--border); color: var(--text); }
+.audit-filter-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 500; }
 .audit-table-wrap {
     border-radius: var(--radius-sm);
     overflow: hidden;
     border: 1px solid var(--border);
     margin-bottom: 1.25rem;
+    background: var(--bg-card);
 }
 .audit-table {
     width: 100%;
     border-collapse: collapse;
-    color: var(--footer-text);
+    color: var(--text);
     font-size: 0.9375rem;
 }
 .audit-table thead th {
-    background: rgba(0,0,0,0.25);
-    color: var(--footer-text);
+    background: var(--section-alt);
+    color: var(--text);
     font-weight: 600;
     text-align: left;
     padding: 0.75rem 1rem;
@@ -318,33 +343,101 @@
     transition: background 0.15s ease;
 }
 .audit-table tbody tr:last-child { border-bottom: none; }
-.audit-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+.audit-table tbody tr:hover { background: var(--section-light); }
+.audit-table tbody tr.audit-row-hidden { display: none; }
 .audit-table tbody td {
     padding: 0.875rem 1rem;
-    color: var(--footer-text);
+    color: var(--text);
     vertical-align: top;
 }
 .audit-cell-criterion { font-weight: 500; }
-.audit-cell-comment { color: var(--footer-text); opacity: 0.9; }
-.audit-status-text { color: var(--footer-text); }
+.audit-cell-comment { color: var(--text-muted); }
+.audit-status-text { color: var(--text); }
 .audit-disclaimer {
     font-size: 0.8125rem;
-    color: var(--footer-text);
-    opacity: 0.8;
+    color: var(--text-muted);
     margin-bottom: 1rem;
 }
-.audit-card-empty .audit-label { color: var(--footer-text) !important; }
-[data-theme="light"] .audit-card { background: var(--footer-bg); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-[data-theme="light"] .audit-card-header,
-[data-theme="light"] .audit-card-body,
-[data-theme="light"] .audit-card-title,
-[data-theme="light"] .audit-score-label,
-[data-theme="light"] .audit-score-max,
-[data-theme="light"] .audit-collapse-header .audit-card-title,
-[data-theme="light"] .audit-disclaimer,
-[data-theme="light"] .audit-card-empty .audit-label { color: var(--footer-text) !important; }
-[data-theme="light"] .audit-table thead th,
-[data-theme="light"] .audit-table tbody td { color: var(--footer-text) !important; }
-[data-theme="light"] .audit-table tbody tr:hover { background: rgba(255,255,255,0.06); }
+.audit-card-empty .audit-label { color: var(--text) !important; }
+.property-detail-actions .btn { background: var(--bg-card); border-color: var(--border); color: var(--text); }
+.property-detail-actions .btn:hover { background: var(--bg-card-hover); border-color: var(--accent); color: var(--accent); }
+.btn-favorite.btn-favorite--active { border-color: #dc3545; color: #dc3545; background: rgba(220, 53, 69, 0.08) !important; }
+.btn-favorite.btn-favorite--active .btn-favorite-icon--fill { color: #dc3545; }
+[data-theme="dark"] .btn-favorite.btn-favorite--active { border-color: #f87171; color: #f87171; background: rgba(248, 113, 113, 0.12) !important; }
+[data-theme="dark"] .btn-favorite.btn-favorite--active .btn-favorite-icon--fill { color: #f87171; }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  // Поділитися: Web Share API або копіювання посилання
+  var shareBtn = document.querySelector('.btn-share');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', function() {
+      var url = window.location.href;
+      var title = document.querySelector('.property-detail-title');
+      var text = title ? title.textContent.trim() : '';
+      if (navigator.share) {
+        navigator.share({ url: url, title: text, text: text }).catch(function() {});
+      } else {
+        navigator.clipboard.writeText(url).then(function() {
+          var label = shareBtn.querySelector('.btn-favorite-text') || shareBtn;
+          var orig = shareBtn.innerHTML;
+          shareBtn.innerHTML = '<span class="text-success small">Скопійовано</span>';
+          setTimeout(function() { shareBtn.innerHTML = orig; }, 1500);
+        });
+      }
+    });
+  }
+  // В обране: POST на toggle_favorite, оновлення кнопки
+  var favBtn = document.querySelector('.btn-favorite');
+  if (favBtn) {
+    favBtn.addEventListener('click', function() {
+      var pk = this.getAttribute('data-property-pk');
+      var csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+      var token = csrf ? csrf.value : (document.cookie.match(/csrftoken=([^;]+)/) || [])[1];
+      var url = '/property/' + pk + '/favorite/';
+      var opts = { method: 'POST', headers: { 'X-CSRFToken': token || '', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }, credentials: 'same-origin' };
+      fetch(url, opts).then(function(r) {
+        if (r.status === 401) { window.location.href = '/auth/?next=' + encodeURIComponent(window.location.href); return; }
+        return r.json();
+      }).then(function(data) {
+        if (!data) return;
+        var inFav = data.is_favorite;
+        favBtn.setAttribute('data-in-favorites', inFav ? 'true' : 'false');
+        favBtn.classList.toggle('btn-favorite--active', inFav);
+        var outline = favBtn.querySelector('.btn-favorite-icon--outline');
+        var fill = favBtn.querySelector('.btn-favorite-icon--fill');
+        if (outline && fill) { outline.classList.toggle('d-none', inFav); fill.classList.toggle('d-none', !inFav); }
+      });
+    });
+  }
+})();
+(function() {
+  var wrap = document.querySelector('.audit-filter-row');
+  if (!wrap) return;
+  var btns = wrap.querySelectorAll('.audit-filter-btn');
+  var rows = document.querySelectorAll('.audit-table tbody tr[data-audit-status]');
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var status = this.getAttribute('data-status');
+      btns.forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      rows.forEach(function(row) {
+        var rowStatus = (row.getAttribute('data-audit-status') || '').trim();
+        if (status === '') {
+          row.classList.remove('audit-row-hidden');
+        } else {
+          if (rowStatus === status) {
+            row.classList.remove('audit-row-hidden');
+          } else {
+            row.classList.add('audit-row-hidden');
+          }
+        }
+      });
+    });
+  });
+})();
+</script>
 {% endblock %}

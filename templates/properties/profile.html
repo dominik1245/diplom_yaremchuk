@@ -4,13 +4,6 @@
 
 {% block content %}
 <div class="wrap profile-page">
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Профіль</li>
-    </ol>
-</nav>
-
 <div class="profile-header card card-premium overflow-hidden mb-4">
     <div class="profile-header-inner p-4 p-md-5">
         <div class="row align-items-center g-4">
@@ -38,6 +31,28 @@
         </div>
     </div>
 </div>
+
+<section class="profile-favorites mb-4">
+    <h2 class="profile-section-title mb-3">Обрані</h2>
+    {% if favorite_listings %}
+    <div class="listing-cards">
+        {% for prop in favorite_listings %}
+        <a href="{% url 'properties:property_detail' prop.pk %}" class="profile-listing-card card card-premium text-decoration-none d-block mb-3">
+            <div class="card-body py-3 px-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <span class="profile-listing-name">{{ prop.name }}</span>
+                <span class="profile-listing-meta text-muted small">{% if prop.city %}{{ prop.city }}{% endif %}{% if prop.price %} · {{ prop.price|floatformat:0 }} грн{% endif %}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card card-premium profile-empty">
+        <div class="card-body text-center py-4 px-4">
+            <p class="text-muted mb-0 small">Обрані оголошення з’являться тут. Натисніть «В обране» на сторінці оголошення.</p>
+        </div>
+    </div>
+    {% endif %}
+</section>
 
 <section class="profile-listings mb-4">
     <h2 class="profile-section-title mb-3">Мої оголошення</h2>

@@ -3,14 +3,6 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:add_listing' %}">Додати оголошення</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Публікація</li>
-    </ol>
-</nav>
 <h1 class="h4 mb-2" style="color: var(--text);">Публікація оголошення</h1>
 <p class="text-muted small mb-4">Оголошення: <strong style="color: var(--text);">{{ property.name }}</strong>. Оберіть спосіб публікації.</p>
 

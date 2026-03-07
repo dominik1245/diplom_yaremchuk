@@ -3,13 +3,6 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Додати оголошення</li>
-    </ol>
-</nav>
 <h1 class="h4 mb-3" style="color: var(--text);">Додати нове оголошення</h1>
 <div class="card card-premium mb-4 border overflow-hidden add-listing-block" style="border-color: var(--border) !important;">
     <div class="add-listing-header d-flex align-items-center py-3 px-3" style="cursor: pointer; background: var(--bg-card); border-bottom: 1px solid var(--border);" data-bs-toggle="collapse" data-bs-target="#addListingCollapse" aria-expanded="{% if form.errors %}true{% else %}false{% endif %}" aria-controls="addListingCollapse">

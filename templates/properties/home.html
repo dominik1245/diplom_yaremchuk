@@ -3,34 +3,28 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Каталог</li>
-    </ol>
-</nav>
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
     <h1 class="mb-0" style="color: var(--text);">Каталог житла</h1>
     <p class="text-muted mb-0" style="color: var(--text-muted);">Знайдено: <strong style="color: var(--text);">{{ total_count }}</strong> оголошень</p>
 </div>
 
-<div class="card card-premium mb-4 animate-on-scroll filter-block border overflow-hidden" style="border-color: var(--border) !important;">
-    <div class="card-header py-3 d-flex align-items-center {% if query or listing_type or city or rooms or price_min or price_max or mobility or filter_lift or filter_shower or filter_no_thresholds or selected_features %}filter-expanded{% endif %}" style="background: var(--bg-card); border-color: var(--border); cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="{% if query or listing_type or city or rooms or price_min or price_max or mobility or filter_lift or filter_shower or filter_no_thresholds or selected_features %}true{% else %}false{% endif %}" aria-controls="filterCollapse" id="filterToggle">
+<div class="card card-premium mb-4 animate-on-scroll filter-block filter-block--airy border overflow-hidden" style="border-color: var(--border) !important;">
+    <div class="card-header py-3 d-flex align-items-center {% if query or listing_type or city or rooms or rooms_max or price_min or price_max or area_min or area_max or mobility or filter_lift or filter_shower or filter_no_thresholds or filter_turning or bathroom_type or filter_has_audit or audit_score_min or filter_verified or selected_features %}filter-expanded{% endif %}" style="background: var(--bg-card); border-color: var(--border); cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="{% if query or listing_type or city or rooms or rooms_max or price_min or price_max or area_min or area_max or mobility or filter_lift or filter_shower or filter_no_thresholds or filter_turning or bathroom_type or filter_has_audit or audit_score_min or filter_verified or selected_features %}true{% else %}false{% endif %}" aria-controls="filterCollapse" id="filterToggle">
         <span class="filter-block-icon me-2" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
         </span>
         <h2 class="h6 mb-0 text-truncate flex-grow-1" style="color: var(--text);">Пошук і фільтри</h2>
         <span class="accordion-collapse-icon ms-2" aria-hidden="true"></span>
     </div>
-    <div id="filterCollapse" class="collapse {% if query or listing_type or city or rooms or price_min or price_max or mobility or filter_lift or filter_shower or filter_no_thresholds or selected_features %}show{% endif %}" data-bs-parent="">
+    <div id="filterCollapse" class="collapse {% if query or listing_type or city or rooms or rooms_max or price_min or price_max or area_min or area_max or mobility or filter_lift or filter_shower or filter_no_thresholds or filter_turning or bathroom_type or filter_has_audit or audit_score_min or filter_verified or selected_features %}show{% endif %}" data-bs-parent="">
         <div class="card-body">
-<form method="get" class="mb-0">
-    <div class="row g-3 align-items-end">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+<form method="get" class="mb-0 filter-form">
+    <div class="row g-3 align-items-end filter-form-row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 filter-field">
             <label for="q" class="form-label small mb-1">Пошук</label>
             <input type="search" name="q" id="q" class="form-control form-control-sm" value="{{ query }}" placeholder="Назва, адреса, місто...">
         </div>
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 filter-field">
             <label for="type" class="form-label small mb-1">Тип</label>
             <select name="type" id="type" class="form-select form-select-sm">
                 <option value="">Усі</option>
@@ -38,7 +32,7 @@
                 <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Оренда</option>
             </select>
         </div>
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 filter-field">
             <label for="city" class="form-label small mb-1">Місто</label>
             <select name="city" id="city" class="form-select form-select-sm">
                 <option value="">Усі міста</option>
@@ -47,19 +41,31 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col-4 col-sm-3 col-md-2">
+        <div class="col-4 col-sm-3 col-md-2 filter-field">
             <label for="rooms" class="form-label small mb-1">Кімнат від</label>
             <input type="number" name="rooms" id="rooms" class="form-control form-control-sm" value="{{ rooms }}" min="1" max="10" placeholder="—">
         </div>
-        <div class="col-4 col-sm-3 col-md-2">
+        <div class="col-4 col-sm-3 col-md-2 filter-field">
+            <label for="rooms_max" class="form-label small mb-1">Кімнат до</label>
+            <input type="number" name="rooms_max" id="rooms_max" class="form-control form-control-sm" value="{{ rooms_max }}" min="1" max="10" placeholder="—">
+        </div>
+        <div class="col-4 col-sm-3 col-md-2 filter-field">
             <label for="price_min" class="form-label small mb-1">Ціна від</label>
             <input type="number" name="price_min" id="price_min" class="form-control form-control-sm" value="{{ price_min }}" min="0" placeholder="грн">
         </div>
-        <div class="col-4 col-sm-3 col-md-2">
+        <div class="col-4 col-sm-3 col-md-2 filter-field">
             <label for="price_max" class="form-label small mb-1">Ціна до</label>
             <input type="number" name="price_max" id="price_max" class="form-control form-control-sm" value="{{ price_max }}" min="0" placeholder="грн">
         </div>
-        <div class="col-12 col-md-6 col-lg-2">
+        <div class="col-4 col-sm-3 col-md-2 filter-field">
+            <label for="area_min" class="form-label small mb-1">Площа від (м²)</label>
+            <input type="number" name="area_min" id="area_min" class="form-control form-control-sm" value="{{ area_min }}" min="0" step="0.1" placeholder="—">
+        </div>
+        <div class="col-4 col-sm-3 col-md-2 filter-field">
+            <label for="area_max" class="form-label small mb-1">Площа до (м²)</label>
+            <input type="number" name="area_max" id="area_max" class="form-control form-control-sm" value="{{ area_max }}" min="0" step="0.1" placeholder="—">
+        </div>
+        <div class="col-12 col-md-6 col-lg-2 filter-field">
             <label for="mobility" class="form-label small mb-1">Рівень доступності</label>
             <select name="mobility" id="mobility" class="form-select form-select-sm filter-mobility-select">
                 <option value="">— Не вказано</option>
@@ -67,7 +73,6 @@
                     <option value="{{ L.id }}" {% if mobility == L.id|stringformat:"d" %}selected{% endif %}>Рівень {{ L.id }}: {{ L.short }}</option>
                 {% endfor %}
             </select>
-            <a href="{% url 'properties:accessibility_levels' %}" class="small" style="color: var(--accent);">Що це?</a>
         </div>
         <div class="col-12">
             <label class="form-label small mb-1 d-block" style="color: var(--text);">Доступність</label>
@@ -83,6 +88,41 @@
                 <div class="form-check mb-0">
                 <input class="form-check-input" type="checkbox" name="no_thresholds" value="1" id="no_thresholds" {% if filter_no_thresholds %}checked{% endif %}>
                     <label class="form-check-label" for="no_thresholds" style="color: var(--text);">Без порогів</label>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" name="turning_radius" value="1" id="turning_radius" {% if filter_turning %}checked{% endif %}>
+                    <label class="form-check-label" for="turning_radius" style="color: var(--text);">Радіус для розвороту</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 filter-field">
+            <label for="bathroom_type" class="form-label small mb-1">Тип санвузлу</label>
+            <select name="bathroom_type" id="bathroom_type" class="form-select form-select-sm">
+                <option value="">Усі</option>
+                {% for val, label in bathroom_type_choices %}
+                    <option value="{{ val }}" {% if bathroom_type == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-2 filter-field">
+            <label for="audit_score_min" class="form-label small mb-1">Мін. бал аудиту</label>
+            <select name="audit_score_min" id="audit_score_min" class="form-select form-select-sm">
+                <option value="">—</option>
+                {% for i in "123456789" %}
+                    <option value="{{ forloop.counter }}" {% if audit_score_min == forloop.counter|stringformat:"d" %}selected{% endif %}>{{ forloop.counter }}+</option>
+                {% endfor %}
+                <option value="10" {% if audit_score_min == "10" %}selected{% endif %}>10</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" name="has_audit" value="1" id="has_audit" {% if filter_has_audit %}checked{% endif %}>
+                    <label class="form-check-label" for="has_audit" style="color: var(--text);">Лише з проведеним аудитом</label>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" name="verified" value="1" id="verified" {% if filter_verified %}checked{% endif %}>
+                    <label class="form-check-label" for="verified" style="color: var(--text);">Перевірені оголошення</label>
                 </div>
             </div>
         </div>
@@ -148,18 +188,18 @@
                             {% endif %}
                         </div>
                         <div class="listing-card-features small text-muted mb-2">
-                            {% if prop.features.exists %}
+                        {% if prop.features.exists %}
                                 {% for f in prop.features.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
                             {% else %}
                                 <span class="text-muted">—</span>
                             {% endif %}
-                        </div>
+                            </div>
                         <div class="listing-card-audit mt-auto pt-2">
                             {% if prop.audit or prop.mobility_level %}
                                 <p class="listing-card-audit-line mb-0 small">{% if prop.audit and prop.audit.total_score is not None %}Аудит: {{ prop.audit.total_score|floatformat:0 }} балів{% if prop.mobility_level %} · Рівень {{ prop.mobility_level }}{% endif %}{% elif prop.mobility_level %}Рівень доступності {{ prop.mobility_level }}{% endif %}</p>
                             {% else %}
                                 <p class="listing-card-audit-line mb-0 small text-muted">—</p>
-                            {% endif %}
+                        {% endif %}
                         </div>
                     </div>
                 </div>
@@ -182,7 +222,7 @@
                     <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if listing_type %}&type={{ listing_type }}{% endif %}{% if city %}&city={{ city }}{% endif %}{% if rooms %}&rooms={{ rooms }}{% endif %}{% if price_min %}&price_min={{ price_min }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if mobility %}&mobility={{ mobility }}{% endif %}{% if filter_lift %}&lift_80=1{% endif %}{% if filter_shower %}&shower_drain=1{% endif %}{% if filter_no_thresholds %}&no_thresholds=1{% endif %}{% for fid in selected_features %}&feature={{ fid }}{% endfor %}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
+                        <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if listing_type %}&type={{ listing_type }}{% endif %}{% if city %}&city={{ city }}{% endif %}{% if rooms %}&rooms={{ rooms }}{% endif %}{% if rooms_max %}&rooms_max={{ rooms_max }}{% endif %}{% if price_min %}&price_min={{ price_min }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if area_min %}&area_min={{ area_min }}{% endif %}{% if area_max %}&area_max={{ area_max }}{% endif %}{% if mobility %}&mobility={{ mobility }}{% endif %}{% if filter_lift %}&lift_80=1{% endif %}{% if filter_shower %}&shower_drain=1{% endif %}{% if filter_no_thresholds %}&no_thresholds=1{% endif %}{% if filter_turning %}&turning_radius=1{% endif %}{% if bathroom_type %}&bathroom_type={{ bathroom_type }}{% endif %}{% if filter_has_audit %}&has_audit=1{% endif %}{% if audit_score_min %}&audit_score_min={{ audit_score_min }}{% endif %}{% if filter_verified %}&verified=1{% endif %}{% for fid in selected_features %}&feature={{ fid }}{% endfor %}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
@@ -208,25 +248,30 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 {% endif %}
 <style>
-/* Пропорційність: селект сортування та кнопки Застосувати/Скинути — одна висота, шрифт, радіус */
-.filter-sort-col .filter-sort-select,
-.filter-actions-row .filter-action-btn {
-    height: 2.25rem;
-    min-height: 2.25rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    padding: 0.375rem 0.75rem;
-    line-height: 1.25;
+/* м’які тіні */
+/* Блок «Пошук і фільтри»: менш похмурий — більше повітря, м’якіший контур */
+.filter-block--airy.card { border-radius: 12px; }
+.filter-block--airy .card-header { padding: 0.875rem 1.25rem; }
+.filter-block--airy .card-body { padding: 1.25rem 1.5rem; background: var(--bg-card); }
+.filter-block--airy .form-control,
+.filter-block--airy .form-select { border-radius: 8px; }
+.filter-block--airy .form-label { margin-bottom: 0.35rem; }
+/* Вирівнювання сітки фільтрів: однакова висота полів, лейбли в один ряд */
+.filter-form-row .filter-field {
+    display: flex;
+    flex-direction: column;
 }
-.filter-sort-col .filter-sort-select { display: block; width: 100%; }
-.filter-actions-row .filter-action-btn { min-width: 7rem; text-align: center; }
-.filter-actions-row .btn-outline-secondary { border-width: 1px; }
-.filter-block .card-header { user-select: none; }
+.filter-form-row .filter-field .form-control,
+.filter-form-row .filter-field .form-select {
+    min-height: 2.25rem;
+    width: 100%;
+}
+.filter-form-row .filter-field .form-label {
+    flex-shrink: 0;
+    margin-bottom: 0.35rem;
+}
+/* Пропорційність: селект сортування та кнопки Застосувати/Скинути — одна висота, шрифт, радіус */
 .filter-block-icon { flex-shrink: 0; color: var(--accent); display: inline-flex; align-items: center; }
-.filter-block .accordion-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; }
-.filter-block .card-header[aria-expanded="true"] .accordion-collapse-icon,
-.filter-block .card-header.filter-expanded .accordion-collapse-icon { transform: rotate(180deg); }
 /* Однакова висота та оформлення карток оголошень */
 .listing-card-body { min-height: 0; }
 .listing-card-title {
@@ -253,6 +298,23 @@
 .listing-card-audit { min-height: 1.5em; }
 /* Стиль селекта «Рівень доступності»: обраний пункт — суцільний акцент */
 .filter-mobility-select option:checked { background: var(--accent); color: #fff; }
+.filter-sort-col .filter-sort-select,
+.filter-actions-row .filter-action-btn {
+    height: 2.25rem;
+    min-height: 2.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 0.375rem 0.75rem;
+    line-height: 1.25;
+}
+.filter-sort-col .filter-sort-select { display: block; width: 100%; }
+.filter-actions-row .filter-action-btn { min-width: 7rem; text-align: center; }
+.filter-actions-row .btn-outline-secondary { border-width: 1px; }
+.filter-block .card-header { user-select: none; }
+.filter-block .accordion-collapse-icon { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; }
+.filter-block .card-header[aria-expanded="true"] .accordion-collapse-icon,
+.filter-block .card-header.filter-expanded .accordion-collapse-icon { transform: rotate(180deg); }
 .filter-mobility-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 </style>
 {% endblock %}

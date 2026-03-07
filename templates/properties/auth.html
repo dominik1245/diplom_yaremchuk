@@ -4,12 +4,6 @@
 {% block content %}
 <div class="auth-page-wrap">
 <div class="auth-page-bg"></div>
-<nav aria-label="breadcrumb" class="auth-breadcrumb">
-    <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Вхід / Реєстрація</li>
-    </ol>
-</nav>
 <div class="auth-container">
     <div class="auth-card">
         <div class="auth-card-header">
@@ -49,13 +43,13 @@
                         </label>
                     </div>
                     <button type="submit" class="auth-btn-primary">Увійти</button>
-                    <p class="auth-forgot"><a href="#" class="auth-link">Забули пароль?</a></p>
+                    <p class="auth-forgot"><a href="{% url 'properties:password_reset' %}" class="auth-link">Забули пароль?</a></p>
                 </form>
                 <div class="auth-social">
                     <p class="auth-social-title small text-muted mb-2">Або увійти через</p>
-                    <a href="#" class="auth-social-btn" title="Скоро"><span class="auth-social-icon auth-social-google">G</span> Увійти через Google</a>
-                    <a href="#" class="auth-social-btn" title="Скоро"><span class="auth-social-icon auth-social-telegram">✈</span> Увійти через Telegram</a>
-                    <a href="#" class="auth-social-btn" title="Скоро"><span class="auth-social-icon auth-social-diia">Дія</span> Увійти через Дію</a>
+                    <a href="{% url 'properties:coming_soon' %}" class="auth-social-btn" title="Скоро"><span class="auth-social-icon auth-social-google">G</span> Увійти через Google</a>
+                    <a href="{% url 'properties:coming_soon' %}" class="auth-social-btn" title="Скоро"><span class="auth-social-icon auth-social-telegram">✈</span> Увійти через Telegram</a>
+                    <a href="{% url 'properties:coming_soon' %}" class="auth-social-btn" title="Скоро"><span class="auth-social-icon auth-social-diia">Дія</span> Увійти через Дію</a>
                 </div>
                 <p class="auth-switch-text">Немає облікового запису? <a href="#" class="auth-switch auth-link" data-tab="register">Зареєструватися на mobi home →</a></p>
             </div>
@@ -83,7 +77,6 @@
 <style>
 .auth-page-wrap { position: relative; min-height: 60vh; padding: 1rem 0 3rem; }
 .auth-page-bg { position: absolute; inset: 0; background: var(--section-alt); z-index: 0; }
-.auth-breadcrumb { position: relative; z-index: 1; margin-bottom: 1.5rem; }
 .auth-container { position: relative; z-index: 1; max-width: 440px; margin: 0 auto; }
 .auth-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
 .auth-card-header { display: flex; border-bottom: 1px solid var(--border); }

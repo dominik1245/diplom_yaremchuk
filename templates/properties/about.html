@@ -2,28 +2,23 @@
 {% block title %}Про компанію — mobi home{% endblock %}
 
 {% block content %}
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Про нас</li>
-    </ol>
-</nav>
+<div class="wrap about-page-wrap">
+<section class="about-intro-section mb-2">
+    <p class="about-intro-label">Наша історія</p>
+    <h1 class="about-intro-title">Про платформу mobi home</h1>
+    <p class="lead about-intro-lead">mobi home — платформа підбору та оголошень житла, придатного для людей з особливими потребами та їхніх родин по всій Україні.</p>
 
-<div class="row align-items-center mb-5">
-    <div class="col-lg-6 mb-4 mb-lg-0 animate-on-scroll">
-        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="Офіс та команда" class="img-fluid rounded-4 shadow" style="object-fit: cover; max-height: 400px; width: 100%;">
-    </div>
-    <div class="col-lg-6 animate-on-scroll animate-on-scroll-delay-1 about-intro">
-        <p class="section-label mb-2">Наша історія</p>
-        <h1 class="mb-4">Про платформу mobi home</h1>
-        <p class="lead text-muted">mobi home — платформа підбору та оголошень житла, придатного для людей з особливими потребами та їхніх родин по всій Україні.</p>
+    <figure class="about-intro-figure animate-on-scroll">
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400" alt="Офіс та команда" class="about-intro-img">
+    </figure>
+    <div class="about-intro-flow">
         <p>З 2019 року ми збираємо в одному каталозі квартири та будинки, перевірені за критеріями доступності: ширина ліфта, висота порогів, тип санвузлу, наявність радіусу для розвороту крісла колісного. Частина об'єктів має офіційний аудит — тоді в оголошенні вказано бал та рівень доступності.</p>
         <p>Ми описуємо житло за <strong>рівнями доступності</strong> (від базового до універсального безбар'єрного), без прив'язки до діагнозів. Користувач обирає підходящий рівень і фільтрує каталог за своїми потребами. Консультації та виїзди аудиторів допомагають оцінити об'єкт перед орендою або купівлею.</p>
         <p class="mb-0">Місія компанії — зробити пошук доступного житла прозорим і зручним: єдина методика оцінки, відкриті критерії та співпраця з ріелторами, застройниками та громадськими організаціями.</p>
     </div>
-</div>
+</section>
 
-<section class="py-5 about-values-section" style="background: var(--section-alt);">
+<section class="about-values-section" style="background: var(--section-alt);">
     <div class="wrap">
         <div class="row g-3 text-center mb-5 animate-on-scroll justify-content-center">
             <div class="col-4 col-md-2 animate-on-scroll"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">5+</span><span class="small text-muted">років на ринку</span></div>
@@ -112,22 +107,70 @@
 <div class="text-center mb-5">
     <a href="{% url 'properties:contact' %}" class="btn btn-primary btn-lg">Зв'язатися з нами</a>
 </div>
+</div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-.about-intro {
+/* Секція «Наша історія»: заголовки + лід зверху, фото float left, текст обтікає */
+.about-intro-section {
     font-size: 1.0625rem;
-    line-height: 1.75;
+    line-height: 1.7;
     letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
 }
-.about-intro .section-label { font-size: 0.9375rem; font-weight: 600; }
-.about-intro h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); line-height: 1.3; }
-.about-intro .lead { font-size: 1.125rem; line-height: 1.65; font-weight: 500; }
-.about-intro p { margin-bottom: 1rem; }
-.about-intro .text-muted { opacity: 0.95; }
+.about-intro-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+.about-intro-title {
+    font-size: clamp(1.625rem, 3.5vw, 2.125rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+.about-intro-lead {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+}
+.about-intro-figure {
+    float: left;
+    margin: 0 1.5rem 1rem 0;
+    width: 42%;
+    max-width: 380px;
+    line-height: 0;
+}
+.about-intro-figure .about-intro-img {
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.about-intro-flow p { margin-bottom: 0.875rem; }
+.about-intro-flow p:last-child { margin-bottom: 0; }
+@media (max-width: 767.98px) {
+    .about-intro-figure {
+        float: none;
+        width: 100%;
+        max-width: none;
+        margin: 0 0 1rem 0;
+    }
+    .about-intro-figure .about-intro-img { max-height: 320px; }
+}
 .about-team .about-team-row { --bs-gutter-x: 0.75rem; }
 .about-team .team-card { max-width: 260px; margin-left: auto; margin-right: auto; }
 .about-team .team-card-img {
@@ -137,7 +180,11 @@
 }
 .about-team .team-card-img--woman { object-position: 50% 20%; }
 /* Секція «Наші цінності»: без градієнта та без тіні на картках */
-.about-values-section { background: var(--section-alt) !important; }
+.about-values-section {
+    background: var(--section-alt) !important;
+    padding-top: 1.25rem;
+    padding-bottom: 3rem;
+}
 .about-values-card {
     box-shadow: none !important;
     border: 1px solid var(--border);
@@ -147,5 +194,8 @@
     border-color: var(--border);
 }
 .about-values-card .rounded-circle { box-shadow: none !important; }
+.about-page-wrap.wrap { padding-left: 0.5rem; padding-right: 0.5rem; }
+@media (min-width: 768px) { .about-page-wrap.wrap { padding-left: 1rem; padding-right: 1rem; } }
+.about-page-wrap { padding-top: 0.5rem; padding-bottom: 1.5rem; }
 </style>
 {% endblock %}

@@ -135,6 +135,34 @@ class PropertyPhoto(models.Model):
         return f'Фото #{self.order} — {self.property.name}'
 
 
+class PropertyFavorite(models.Model):
+    """Обране оголошення користувача."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='property_favorites',
+        verbose_name='Користувач',
+    )
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='favorited_by',
+        verbose_name='Оголошення',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Обране оголошення'
+        verbose_name_plural = 'Обрані оголошення'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'property'], name='unique_user_property_favorite'),
+        ]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user.username} — {self.property.name}'
+
+
 class EntranceStatus(models.TextChoices):
     """Статус доступності входу."""
     INACCESSIBLE = 'inaccessible', 'Недоступно'

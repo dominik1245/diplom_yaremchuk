@@ -3,13 +3,6 @@
 
 {% block content %}
 <div class="wrap">
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'properties:index' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'properties:home' %}">Каталог</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Форма аудитора</li>
-    </ol>
-</nav>
 <h1 class="mb-4">Форма аудитора</h1>
 {% if property %}
     <p class="mb-3">Об'єкт: <strong>{{ property.name }}</strong> ({{ property.address }})</p>
