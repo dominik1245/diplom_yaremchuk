@@ -53,7 +53,7 @@
                     </div>
                     <div class="mt-4 d-flex flex-wrap gap-2">
                         <button type="submit" class="btn btn-primary px-4 py-2">Оплатити {{ featured_price }} грн</button>
-                        <a href="{% url 'properties:payment' property.pk %}" class="btn btn-outline-secondary py-2">Назад</a>
+                        <a href="{% url 'properties:property_detail' property.pk %}#propertyContact" class="btn btn-outline-secondary py-2">Назад</a>
                     </div>
                     <p class="small text-muted mt-3 mb-0">Для прийому реальних платежів можна підключити <strong>LiqPay</strong> або <strong>Stripe</strong> через API мерчанта.</p>
                 </form>

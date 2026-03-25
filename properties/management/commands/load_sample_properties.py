@@ -2,16 +2,26 @@
 Команда: python manage.py load_sample_properties
 Додає прикладові оголошення та аудити для демонстрації роботи сайту.
 """
+
 from django.core.management.base import BaseCommand
+
 from properties.models import (
-    Property,
     AccessibilityAudit,
+    BathroomType,
     Feature,
     ListingType,
-    BathroomType,
+    Property,
 )
 
-DEFAULT_FEATURES = ['Паркінг', 'Балкон', 'Пандус', 'Безбар\'єрний вхід', 'Ліфт', 'Консьєрж', 'Відеодомофон']
+DEFAULT_FEATURES = [
+    "Паркінг",
+    "Балкон",
+    "Пандус",
+    "Безбар'єрний вхід",
+    "Ліфт",
+    "Консьєрж",
+    "Відеодомофон",
+]
 
 
 SAMPLE_PROPERTIES = [
@@ -406,18 +416,18 @@ class Command(BaseCommand):
                 audit = AccessibilityAudit(property=prop, **audit_data)
                 audit.save()
                 # Додаємо зручності для демо
-                lift_f = Feature.objects.filter(name='Ліфт').first()
-                ramp_f = Feature.objects.filter(name='Пандус').first()
+                lift_f = Feature.objects.filter(name="Ліфт").first()
+                ramp_f = Feature.objects.filter(name="Пандус").first()
                 if lift_f:
                     prop.features.add(lift_f)
                 if ramp_f:
                     prop.features.add(ramp_f)
                 if i % 3 == 0:
-                    balcony = Feature.objects.filter(name='Балкон').first()
+                    balcony = Feature.objects.filter(name="Балкон").first()
                     if balcony:
                         prop.features.add(balcony)
                 if i % 4 == 0:
-                    parking = Feature.objects.filter(name='Паркінг').first()
+                    parking = Feature.objects.filter(name="Паркінг").first()
                     if parking:
                         prop.features.add(parking)
                 self.stdout.write(f"  Додано: {prop.name}")
