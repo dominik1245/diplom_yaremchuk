@@ -1,144 +1,213 @@
 {% extends 'base.html' %}
-{% block title %}{{ property.name }} — mobi home{% endblock %}
+{% block title %}{{ property.name }} — mobi Home{% endblock %}
 
 {% block content %}
 <div class="wrap">
-<div class="property-detail-header mb-4">
-    <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-        {% if property.is_featured and featured_until_display %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
-        {% if property.is_verified %}<span class="badge bg-success">Перевірене оголошення</span>{% endif %}
-        {% if audit %}<span class="badge bg-info text-dark">Аудит проведено</span>{% endif %}
-        <span class="listing-badge {% if property.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ property.get_listing_type_display }}</span>
-        {% if property.city %}<span class="badge bg-secondary">{{ property.city }}</span>{% endif %}
-        {% if property.mobility_level %}<span class="badge bg-secondary">Рівень {{ property.mobility_level }}</span>{% endif %}
-        {% if audit and audit.total_score is not None %}<span class="badge badge-score-high">{{ audit.total_score|floatformat:0 }} балів</span>{% endif %}
+<div class="property-detail-header mb-4 mt-2">
+    <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+        <span class="listing-badge {% if property.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}" style="font-size: 0.85rem; padding: 0.35rem 0.8rem;">{{ property.get_listing_type_display }}</span>
+        {% if property.is_featured and featured_until_display %}<span class="listing-badge" style="background: var(--accent); color: var(--bg-card); font-size: 0.85rem; padding: 0.35rem 0.8rem;"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-star-fill me-1 mb-1" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>ТОП</span>{% endif %}
+        {% if property.is_verified %}<span class="listing-badge" style="background: rgba(25, 135, 84, 0.15); color: #198754; border: 1px solid rgba(25, 135, 84, 0.3); font-size: 0.85rem; padding: 0.35rem 0.8rem;"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-check-circle-fill me-1 mb-1" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>Перевірено</span>{% endif %}
+        {% if audit %}<span class="listing-badge" style="background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); font-size: 0.85rem; padding: 0.35rem 0.8rem;">Аудит проведено</span>{% endif %}
+        {% if audit and audit.total_score is not None %}<span class="listing-badge" style="background: var(--bg-card); color: var(--text); border: 1px solid var(--border); font-size: 0.85rem; padding: 0.35rem 0.8rem;"><strong>{{ audit.total_score|floatformat:0 }}</strong> / 10 балів</span>{% endif %}
+        {% if property.mobility_level %}<span class="listing-badge" style="background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border); font-size: 0.85rem; padding: 0.35rem 0.8rem;">Рівень {{ property.mobility_level }}</span>{% endif %}
     </div>
-    <h1 class="property-detail-title mb-2" style="color: var(--text);">{{ property.name }}</h1>
-    <p class="text-muted mb-3" style="color: var(--text-muted);">{{ property.address }}</p>
-    {% url 'properties:payment_paid' property.pk as payment_paid_url %}
-    <div class="property-detail-price-row d-flex flex-wrap align-items-center justify-content-between gap-3 mb-2" style="color: var(--text);">
-        <div class="property-detail-price-block">
+    
+    <div class="row align-items-end g-4 mb-4">
+        <div class="col-12 col-md-7">
+            <h1 class="property-detail-title mb-2 fw-bolder" style="color: var(--text); letter-spacing: -0.02em;">{{ property.name }}</h1>
+            <p class="text-muted mb-0 d-flex align-items-center gap-1" style="color: var(--text-muted); font-size: 1.05rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/><path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+                {% if property.city %}{{ property.city }}, {% endif %}{{ property.address }}
+            </p>
+        </div>
+        <div class="col-12 col-md-5 text-md-end">
             {% if property.price %}
-                <span class="property-detail-price fw-bold">{{ property.price|floatformat:0 }} грн{% if property.listing_type == 'rent' %}/міс{% endif %}</span>
+                <div class="property-detail-price fw-bold" style="color: var(--text); font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1;"><span id="priceValue">{{ property.price|floatformat:0 }}</span> <span class="fs-4 text-muted fw-normal">грн{% if property.listing_type == 'rent' %}/міс{% endif %}</span></div>
             {% endif %}
         </div>
+    </div>
+    
+    {% url 'properties:payment_paid' property.pk as payment_paid_url %}
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 py-3 border-top border-bottom" style="border-color: var(--border) !important;">
+        <div class="property-detail-meta d-flex flex-wrap gap-3" style="color: var(--text); font-size: 1.1rem;">
+            {% if property.rooms %}<span class="d-flex align-items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="var(--accent)" class="bi bi-door-open" viewBox="0 0 16 16"><path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/><path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5a.5.5 0 0 1 0 1h-1.114l-1.971-1.971c-.139-.139-.327-.183-.51-.128L2.708 2.057A.5.5 0 0 0 2 2.5V15a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.146-.354l-3-3a.5.5 0 0 0-.354-.146h-.672L8.5.122A.5.5 0 0 0 8 .5V1H7.5a.5.5 0 0 0 0 1h1.114l1.971 1.971c.139.139.327.183.51.128l5.197-1.732A.5.5 0 0 1 10.828.122zM3 15v-1h1v1H3zm2 0v-1h5v1H5zm6 0v-1h1v1h-1zM2 3.5v11h1v-11H2zm11 11V3.5h1v11h-1z"/></svg> <strong>{{ property.rooms }}</strong> кімн.</span>{% endif %}
+            {% if property.area_sqm %}<span class="d-flex align-items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="var(--accent)" class="bi bi-bounding-box" viewBox="0 0 16 16"><path d="M5 2V0H0v5h2v6H0v5h5v-2h6v2h5v-5h-2V5h2V0h-5v2H5zm6 1v2h2v6h-2v2H5v-2H3V5h2V3h6zm1-2h3v3h-3V1zm3 11v3h-3v-3h3zM4 15H1v-3h3v3zM1 4V1h3v3H1z"/></svg> <strong>{{ property.area_sqm }}</strong> м²</span>{% endif %}
+        </div>
+        
         <div class="property-detail-actions d-flex flex-wrap gap-2 align-items-center">
-            <button type="button" class="btn btn-outline-secondary btn-share rounded-pill px-3 py-2" title="Поділитися" aria-label="Поділитися оголошенням">
-                <svg class="me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            <button type="button" class="btn btn-outline-secondary btn-share px-4 py-2" style="border-radius: 8px; font-weight: 500;" title="Поділитися" data-bs-toggle="modal" data-bs-target="#shareModal">
+                <svg class="me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                 Поділитися
             </button>
             {% if user.is_authenticated %}
-            <button type="button" class="btn btn-outline-secondary btn-favorite rounded-pill px-3 py-2 {% if is_favorite %}btn-favorite--active{% endif %}" data-property-pk="{{ property.pk }}" data-in-favorites="{{ is_favorite|yesno:'true,false' }}" title="В обране" aria-label="Додати в обране">
+            <button type="button" class="btn btn-outline-secondary btn-favorite px-4 py-2 {% if is_favorite %}btn-favorite--active{% endif %}" style="border-radius: 8px; font-weight: 500;" data-property-pk="{{ property.pk }}" data-in-favorites="{{ is_favorite|yesno:'true,false' }}">
                 {% if is_favorite %}
-                <svg class="btn-favorite-icon btn-favorite-icon--outline me-1 d-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                <svg class="btn-favorite-icon btn-favorite-icon--fill me-1" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg class="btn-favorite-icon btn-favorite-icon--outline me-1 d-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg class="btn-favorite-icon btn-favorite-icon--fill me-1" width="18" height="18" viewBox="0 0 24 24" fill="var(--accent)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 {% else %}
-                <svg class="btn-favorite-icon btn-favorite-icon--outline me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                <svg class="btn-favorite-icon btn-favorite-icon--fill me-1 d-none" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg class="btn-favorite-icon btn-favorite-icon--outline me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg class="btn-favorite-icon btn-favorite-icon--fill me-1 d-none" width="18" height="18" viewBox="0 0 24 24" fill="var(--accent)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 {% endif %}
                 <span class="btn-favorite-text">В обране</span>
             </button>
             {% else %}
-            <a href="{% url 'properties:auth' %}?next={{ request.build_absolute_uri|urlencode }}" class="btn btn-outline-secondary rounded-pill px-3 py-2" title="В обране">
-                <svg class="me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <a href="{% url 'properties:auth' %}?next={{ request.build_absolute_uri|urlencode }}" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 8px; font-weight: 500;">
+                <svg class="me-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 В обране
             </a>
             {% endif %}
 
-            <div class="property-buy-rent d-flex flex-wrap gap-2">
-                {% if user.is_authenticated %}
-                    <a href="{{ payment_paid_url }}" class="btn btn-buy rounded-pill px-3 py-2{% if property.listing_type == 'sale' %} btn-buy--active{% else %} invisible pe-none{% endif %}" aria-label="Купити житло" {% if property.listing_type != 'sale' %}aria-hidden="true"{% endif %}>
-                        Купити
-                    </a>
-                    <a href="{{ payment_paid_url }}" class="btn btn-rent rounded-pill px-3 py-2{% if property.listing_type == 'rent' %} btn-rent--active{% else %} invisible pe-none{% endif %}" aria-label="Орендувати житло" {% if property.listing_type != 'rent' %}aria-hidden="true"{% endif %}>
-                        Орендувати
-                    </a>
-                {% else %}
-                    <a href="{% url 'properties:register' %}?next={{ payment_paid_url|urlencode }}" class="btn btn-buy rounded-pill px-3 py-2{% if property.listing_type == 'sale' %} btn-buy--active{% else %} invisible pe-none{% endif %}" aria-label="Купити житло" {% if property.listing_type != 'sale' %}aria-hidden="true"{% endif %}>
-                        Купити
-                    </a>
-                    <a href="{% url 'properties:register' %}?next={{ payment_paid_url|urlencode }}" class="btn btn-rent rounded-pill px-3 py-2{% if property.listing_type == 'rent' %} btn-rent--active{% else %} invisible pe-none{% endif %}" aria-label="Орендувати житло" {% if property.listing_type != 'rent' %}aria-hidden="true"{% endif %}>
-                        Орендувати
-                    </a>
-                {% endif %}
-            </div>
+            {% if user.is_authenticated %}
+                <a href="{{ payment_paid_url }}" class="btn px-5 py-2 d-inline-flex align-items-center gap-2 {% if property.listing_type != 'sale' and property.listing_type != 'rent' %}d-none{% endif %}" style="background-color: var(--accent); color: white; border-radius: 12px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 6px 20px rgba(0,0,0,0.25); border: none; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                    {% if property.listing_type == 'sale' %}Купити{% else %}Орендувати{% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'properties:register' %}?next={{ payment_paid_url|urlencode }}" class="btn px-5 py-2 d-inline-flex align-items-center gap-2 {% if property.listing_type != 'sale' and property.listing_type != 'rent' %}d-none{% endif %}" style="background-color: var(--accent); color: white; border-radius: 12px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 6px 20px rgba(0,0,0,0.25); border: none; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                    {% if property.listing_type == 'sale' %}Купити{% else %}Орендувати{% endif %}
+                </a>
+            {% endif %}
         </div>
-    </div>
-    <div class="property-detail-meta d-flex flex-wrap gap-3 mb-0" style="color: var(--text);">
-        {% if property.rooms %}<span><strong>Кімнат:</strong> {{ property.rooms }}</span>{% endif %}
-        {% if property.area_sqm %}<span><strong>Площа:</strong> {{ property.area_sqm }} м²</span>{% endif %}
-    </div>
 </div>
 
-<div class="card card-premium overflow-hidden mb-4">
-    <div class="row g-0">
-        <div class="col-lg-7 p-0">
-            <div class="property-gallery-wrapper">
-                {% if property_photos %}
-                <div id="propertyGallery" class="carousel slide carousel-fade property-gallery" data-bs-ride="carousel" data-bs-interval="5000">
-                    <div class="carousel-inner rounded-3 overflow-hidden shadow-lg">
-                        {% for photo_url in property_photos %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ photo_url }}" class="d-block w-100" alt="{{ property.name }}">
+<div class="row g-4 mb-5">
+    <div class="col-lg-8">
+        <div class="property-gallery-wrapper shadow-sm mb-4" style="border-radius: 16px; overflow: hidden; border: 1px solid var(--border);">
+            {% if property_photos %}
+            <div id="propertyGallery" class="carousel slide carousel-fade property-gallery" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-inner overflow-hidden">
+                    {% for photo_url in property_photos %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ photo_url }}" class="d-block w-100" alt="{{ property.name }}" style="max-height: 500px; object-fit: contain; background: #000;">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if property_photos|length > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#propertyGallery" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Попереднє</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#propertyGallery" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Наступне</span>
+                </button>
+                <div class="carousel-indicators">
+                    {% for _ in property_photos %}
+                    <button type="button" data-bs-target="#propertyGallery" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true"{% endif %}></button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="property-gallery property-gallery-placeholder overflow-hidden d-flex align-items-center justify-content-center" style="height: 400px; background: var(--bg);">
+                <span class="text-muted">Фото не додано</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="property-description-section mt-4 pt-2">
+            {% if property.description %}
+                <h2 class="h4 mb-3 fw-bold" style="color: var(--text);">Опис</h2>
+                <div class="property-detail-description fs-6 mb-4" style="color: var(--text); opacity: 0.9;">{{ property.description|linebreaks }}</div>
+            {% endif %}
+            
+            {% if property.features.exists %}
+                {% if property.features.all %}
+                    <h2 class="h4 mt-5 mb-4 fw-bold" style="color: var(--text);">Зручності</h2>
+                    <div class="row g-4">
+                        {% regroup property.features.all|dictsort:"category" by get_category_display as cat_features %}
+                        {% for group in cat_features %}
+                        <div class="col-12 col-md-6">
+                            <h3 class="h6 mb-3 text-muted fw-semibold">{{ group.grouper }}</h3>
+                            <ul class="list-unstyled mb-0 d-flex flex-column gap-2" style="color: var(--text);">
+                                {% for f in group.list %}
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--accent)" class="bi bi-check2" viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>
+                                    {{ f.name }}
+                                </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                         {% endfor %}
                     </div>
-                    {% if property_photos|length > 1 %}
-                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyGallery" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Попереднє</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#propertyGallery" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Наступне</span>
-                    </button>
-                    <div class="carousel-indicators">
-                        {% for _ in property_photos %}
-                        <button type="button" data-bs-target="#propertyGallery" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true"{% endif %}></button>
-                        {% endfor %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0" style="border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border) !important;">
+            <div class="card-body p-4">
+                <h3 class="h5 fw-bold mb-4" style="color: var(--text);">Контакти</h3>
+                
+                {% if property.owner %}
+                <div class="d-flex align-items-center gap-3 mb-4 pb-4 border-bottom" style="border-color: var(--border) !important;">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: var(--accent-soft); color: var(--accent); font-size: 1.25rem; font-weight: bold;">
+                        {{ property.owner.username|make_list|first|upper }}
                     </div>
-                    {% endif %}
+                    <div>
+                        <div class="fw-semibold" style="color: var(--text); font-size: 1.1rem;">{{ property.owner.username }}</div>
+                        <p class="small text-muted mb-0">Власник оголошення</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if property.contact_phone %}
+                <div class="d-flex flex-column gap-2 mb-4">
+                    <button type="button" class="btn btn-primary w-100 py-3 fw-bold d-flex align-items-center justify-content-center" style="border-radius: 8px;" onclick="this.classList.add('d-none'); document.getElementById('phone-display').classList.remove('d-none'); document.getElementById('phone-placeholder').classList.add('d-none');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-telephone me-2" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.394.33.92.01 1.313l-1.543 1.83a10.025 10.025 0 0 0 4.29 4.29l1.83-1.543a1.75 1.75 0 0 1 1.313-.01l2.304 1.794a1.745 1.745 0 0 1 .163 2.61l-3.32 3.32a2.3 2.3 0 0 1-2.5.53C5.61 16.1 2.05 12.3 1.05 7.64a2.3 2.3 0 0 1 .53-2.5z"/></svg>
+                        Показати телефон
+                    </button>
+                    <div id="phone-placeholder" class="text-center w-100 py-3" style="font-size: 1.15rem; font-weight: 600; color: var(--text); border: 1px solid var(--border); border-radius: 8px;">
+                        {{ property.contact_phone|slice:":7" }}*** ** **
+                    </div>
+                    <a href="tel:{{ property.contact_phone|cut:' ' }}" id="phone-display" class="btn btn-outline-primary w-100 py-3 fw-bold d-none d-flex align-items-center justify-content-center" style="border-radius: 8px; font-size: 1.15rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-telephone-fill me-2" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.394.33.92.01 1.313l-1.543 1.83a10.025 10.025 0 0 0 4.29 4.29l1.83-1.543a1.75 1.75 0 0 1 1.313-.01l2.304 1.794a1.745 1.745 0 0 1 .163 2.61l-3.32 3.32a2.3 2.3 0 0 1-2.5.53C5.61 16.1 2.05 12.3 1.05 7.64a2.3 2.3 0 0 1 .53-2.5z"/></svg>
+                        {{ property.contact_phone }}
+                    </a>
+                </div>
+                {% elif property.owner and property.owner.email %}
+                <div class="mb-4">
+                    <a href="mailto:{{ property.owner.email }}" class="btn btn-outline-primary w-100 py-3 fw-bold" style="border-radius: 8px;">Написати продавцю</a>
                 </div>
                 {% else %}
-                <div class="property-gallery property-gallery-placeholder rounded-3 overflow-hidden d-flex align-items-center justify-content-center" style="height: 280px; background: var(--border);">
-                    <span class="text-muted small">Фото не додано</span>
+                <div class="alert alert-secondary mb-4" style="background: var(--bg); border: none; color: var(--text-muted);">
+                    Зацікавило оголошення? Додайте контакт у описі або зв'яжіться з продавцем.
                 </div>
                 {% endif %}
-            </div>
-        </div>
-        <div class="col-lg-5">
-            <div class="card-body p-4">
-                {% if property.description %}
-                    <div class="mb-4" style="color: var(--text);">
-                        <h3 class="h6 mb-2" style="color: var(--text);">Опис</h3>
-                        <div class="property-detail-description">{{ property.description|linebreaks }}</div>
-                    </div>
+                
+                {% if property.owner %}
+                <a href="{% url 'properties:public_profile' property.owner.username %}" class="btn btn-outline-secondary btn-sm w-100 py-2" style="border-radius: 8px;">Всі оголошення автора</a>
                 {% endif %}
-                {% if property.features.exists %}
-                    <p class="mb-3" style="color: var(--text);"><strong>Зручності:</strong> {% for f in property.features.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-                {% endif %}
-                <div id="propertyContact" class="border-top pt-3 mt-3" style="border-color: var(--border) !important;">
-                    {% if property.contact_phone %}
-                    <p class="mb-2" style="color: var(--text);"><strong>Контакт продавця:</strong></p>
-                    <p class="mb-2">
-                        <a href="tel:{{ property.contact_phone|cut:' ' }}" class="btn btn-primary btn-sm me-2">Подзвонити</a>
-                        <span style="color: var(--text);">{{ property.contact_phone }}</span>
-                    </p>
-                    {% elif property.owner and property.owner.email %}
-                    <p class="mb-2" style="color: var(--text);"><strong>Написати продавцю:</strong></p>
-                    <a href="mailto:{{ property.owner.email }}" class="btn btn-outline-primary btn-sm">Написати на email</a>
-                    {% else %}
-                    <p class="text-muted small mb-0" style="color: var(--text-muted);">Зацікавило оголошення? Додайте контакт у описі або зв'яжіться з продавцем.</p>
-                    {% endif %}
-                    {% if can_edit_audit %}
-                    <div class="mt-3 pt-3 border-top d-flex flex-wrap gap-2 align-items-center" style="border-color: var(--border) !important;">
-                        {% if featured_until_display %}<span class="small text-muted">Реклама до: {{ featured_until_display|date:"d.m.Y" }}</span>{% endif %}
-                        {% if can_promote %}<a href="{% url 'properties:promote_listing' property.pk %}" class="btn btn-outline-primary btn-sm">Рекламувати оголошення</a>{% endif %}
-                        <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-outline-primary btn-sm">Редагувати аудит</a>
-                        <a href="{% url 'properties:delete_property' property.pk %}" class="btn btn-outline-danger btn-sm">Видалити оголошення</a>
+                
+                {% if can_edit_audit %}
+                <div class="mt-4 pt-4 border-top" style="border-color: var(--border) !important;">
+                    <p class="small text-muted mb-3">Керування оголошенням</p>
+                    <div class="d-flex flex-column gap-2">
+                        {% if can_promote %}
+                        <a href="{% url 'properties:promote_listing' property.pk %}" class="btn btn-light btn-sm py-2 text-start px-3 d-flex align-items-center gap-2 shadow-sm" style="border-radius: 8px; background: var(--bg); border: none;">
+                            <span style="color: var(--accent);">⭐</span> Рекламувати (ТОП)
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-light btn-sm py-2 text-start px-3 d-flex align-items-center gap-2 shadow-sm" style="border-radius: 8px; background: var(--bg); border: none;">
+                            <span style="color: #0dcaf0;">🛡️</span> Редагувати аудит
+                        </a>
+                        <a href="{% url 'properties:delete_property' property.pk %}" class="btn btn-light btn-sm py-2 text-start px-3 d-flex align-items-center gap-2 shadow-sm" style="border-radius: 8px; background: var(--bg); border: none; color: #dc3545;">
+                            <span style="color: #dc3545;">🗑️</span> Видалити оголошення
+                        </a>
                     </div>
-                    <p class="small text-muted mt-2 mb-0">Перегляди: <strong>{{ property.view_count }}</strong></p>
-                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between text-muted" style="border-color: var(--border) !important; font-size: 0.85rem;">
+                    <span>Перегляди: <strong style="color: var(--text);">{{ property.view_count }}</strong></span>
+                    {% if featured_until_display %}<span>ТОП до: <strong style="color: var(--text);">{{ featured_until_display|date:"d.m.y" }}</strong></span>{% endif %}
                 </div>
             </div>
         </div>
@@ -212,14 +281,55 @@
         </div>
     </div>
 {% else %}
-    <div class="card audit-card audit-card-empty card-body">
-        <p class="audit-label mb-2">Аудит доступності для цього об'єкта ще не проведено.</p>
-        {% if can_edit_audit %}
-        <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-primary btn-sm">Додати аудит</a>
-        {% endif %}
+    <div class="card border-0 shadow-sm mt-5 mb-4" style="border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border) !important;">
+        <div class="card-body p-4 p-md-5 d-flex flex-column align-items-center text-center">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px; background: var(--accent-soft);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="var(--accent)" class="bi bi-shield-check" viewBox="0 0 16 16"><path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .75 0q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.084.672c-.25.143-.542.276-.851.39a2 2 0 0 1-1.282 0c-.31-.114-.601-.247-.851-.39a7 7 0 0 1-1.084-.672 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg>
+            </div>
+            <h3 class="h4 fw-bold mb-3" style="color: var(--text);">Аудит доступності ще не проведено</h3>
+            <p class="text-muted mb-4" style="max-width: 600px;">Проведення аудиту доступності допомагає людям з інвалідністю дізнатися, наскільки об'єкт відповідає їхнім потребам. Оголошення з аудитом отримують більше довіри та переглядів.</p>
+            {% if can_edit_audit %}
+            <a href="{% url 'properties:auditor_form' property.pk %}" class="btn btn-primary px-5 py-3 fw-bold shadow-sm" style="border-radius: 8px;">
+                Додати аудит
+            </a>
+            {% endif %}
+        </div>
     </div>
 {% endif %}
 </div><!-- .wrap -->
+
+<!-- Модальне вікно Поділитися -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius: 20px; border: none; background: var(--bg-card); box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div class="modal-header border-0 pb-0 justify-content-center">
+                <h5 class="modal-title fw-bold" id="shareModalLabel" style="color: var(--text);">Поділитися</h5>
+                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-grid gap-2">
+                    <a href="#" id="share-telegram" target="_blank" class="btn d-flex align-items-center gap-3 py-2 px-3" style="border-radius: 12px; background: #24A1DE; color: white; border: none; transition: transform 0.2s;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telegram" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM12.191 5.235c-.13-.508-.43-.63-.873-.38L5.753 7.82c-.443.18-.372.43-.012.54l1.644.512 3.812-2.404c.18-.11.344-.05.209.07L8.27 9.17l-.06 2.308c.227 0 .327-.104.454-.227l1.09-1.06 2.268 1.676c.417.23.717.112.822-.38l1.48-6.974c.153-.612-.232-.89-.633-.74z"/></svg>
+                        Telegram
+                    </a>
+                    <a href="#" id="share-viber" target="_blank" class="btn d-flex align-items-center gap-3 py-2 px-3" style="border-radius: 12px; background: #7360f2; color: white; border: none; transition: transform 0.2s;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat-dots-fill" viewBox="0 0 16 16"><path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"/></svg>
+                        Viber
+                    </a>
+                    <a href="#" id="share-facebook" target="_blank" class="btn d-flex align-items-center gap-3 py-2 px-3" style="border-radius: 12px; background: #1877F2; color: white; border: none; transition: transform 0.2s;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
+                        Facebook
+                    </a>
+                    <hr class="my-2" style="color: var(--border);">
+                    <button type="button" id="copy-link-btn" class="btn d-flex align-items-center gap-3 py-2 px-3" style="border-radius: 12px; background: var(--section-alt); color: var(--text); border: none; transition: background 0.2s;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.002 4.002 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+                        <span id="copy-text">Копіювати посилання</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
 .property-detail-title { font-size: clamp(1.35rem, 2.5vw, 1.75rem); font-weight: 700; }
@@ -391,7 +501,6 @@
     color: var(--text);
     font-weight: 600;
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    flex: 1 1 0;               /* робимо кнопки однакової ширини */
     min-width: 0;
     display: inline-flex;
     align-items: center;
@@ -422,23 +531,41 @@
 {% block extra_js %}
 <script>
 (function() {
-  // Поділитися: Web Share API або копіювання посилання
+  // Функціонал "Поділитися"
   var shareBtn = document.querySelector('.btn-share');
   if (shareBtn) {
-    shareBtn.addEventListener('click', function() {
+    shareBtn.addEventListener('click', function(e) {
       var url = window.location.href;
-      var title = document.querySelector('.property-detail-title');
-      var text = title ? title.textContent.trim() : '';
-      if (navigator.share) {
-        navigator.share({ url: url, title: text, text: text }).catch(function() {});
-      } else {
-        navigator.clipboard.writeText(url).then(function() {
-          var label = shareBtn.querySelector('.btn-favorite-text') || shareBtn;
-          var orig = shareBtn.innerHTML;
-          shareBtn.innerHTML = '<span class="text-success small">Скопійовано</span>';
-          setTimeout(function() { shareBtn.innerHTML = orig; }, 1500);
-        });
+      var title = "{{ property.name|escapejs }} — mobi Home";
+      var text = "Подивіться це оголошення на mobi Home: " + title;
+      
+      // Налаштування посилань у модалці
+      document.getElementById('share-telegram').href = "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
+      document.getElementById('share-facebook').href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+      document.getElementById('share-viber').href = "viber://forward?text=" + encodeURIComponent(text + " " + url);
+      
+      // Спроба Web Share API (якщо доступно і це мобільний пристрій)
+      if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        e.preventDefault();
+        navigator.share({ url: url, title: title, text: text }).catch(function() {});
       }
+    });
+  }
+
+  // Копіювання посилання
+  var copyBtn = document.getElementById('copy-link-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function() {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var txt = document.getElementById('copy-text');
+        var old = txt.textContent;
+        txt.textContent = "Скопійовано!";
+        copyBtn.style.background = "var(--accent-soft)";
+        setTimeout(function() {
+          txt.textContent = old;
+          copyBtn.style.background = "var(--section-alt)";
+        }, 2000);
+      });
     });
   }
   // В обране: POST на toggle_favorite, оновлення кнопки
@@ -489,6 +616,17 @@
       });
     });
   });
+})();
+
+// Форматування ціни пробілами
+(function() {
+    var priceEl = document.getElementById('priceValue');
+    if (priceEl) {
+        var rawVal = parseInt(priceEl.innerText.replace(/\D/g, ''));
+        if (!isNaN(rawVal)) {
+            priceEl.innerText = rawVal.toLocaleString('ru-RU'); // Використовує пробіли як роздільник тисяч
+        }
+    }
 })();
 </script>
 {% endblock %}

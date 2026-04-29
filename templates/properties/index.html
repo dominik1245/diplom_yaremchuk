@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}mobi home — Житло без бар'єрів{% endblock %}
+{% block title %}mobi Home — Житло без бар'єрів{% endblock %}
 {% block main_class %}{% endblock %}
 
 {% block content %}
 <!-- Hero: фото будинку на фоні — позиціонування зберігає головний об'єкт у кадрі -->
-<section class="hero-block hero-bg overflow-hidden rounded-3 mx-3 mx-lg-0 mt-3 mt-lg-4 animate-on-scroll" style="min-height: 72vh; display: flex; align-items: center;">
-    <div class="wrap py-5 text-white hero-text">
+<section class="hero-block hero-bg overflow-hidden rounded-4 mx-3 mx-lg-0 animate-on-scroll position-relative" style="min-height: 70vh; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05);">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, rgba(5,23,17,0.92) 0%, rgba(5,23,17,0.7) 50%, rgba(5,23,17,0.3) 100%);"></div>
+    <div class="wrap py-5 text-white hero-text position-relative" style="z-index: 2;">
         <div class="row align-items-center">
-            <div class="col-lg-7">
-                <h1 class="text-white mb-3 hero-title">Житло, в якому кожен почувається вдома</h1>
-                <p class="mb-4 hero-desc">
-                    Підбір та аудит квартир і будинків за критеріями доступності — для людей на кріслі колісному та для всіх, хто потребує безбар'єрного середовища.
+            <div class="col-lg-8">
+                <h1 class="text-white mb-3 hero-title" style="font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.04em;">Житло, де немає перешкод</h1>
+                <p class="mb-5 hero-desc opacity-90" style="max-width: 520px; font-size: 1.125rem; font-weight: 400; line-height: 1.6;">
+                    Спеціалізована платформа для пошуку безбар'єрного житла в Україні. Обирайте дім за реальними параметрами доступності та результатами детального аудиту.
                 </p>
-                <a href="{% url 'properties:home' %}" class="btn btn-light btn-lg px-4" style="border-radius: var(--radius-sm); font-weight: 600;">Переглянути каталог</a>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'properties:home' %}" class="btn-hero-premium">
+                        Дивитися каталог
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -22,47 +27,63 @@
 <!-- Статистика: великі презентабельні цифри -->
 <section class="py-4">
     <div class="wrap">
-        <div class="row g-0 rounded-3 overflow-hidden animate-on-scroll stat-block">
-            <div class="col-4 stat-cell text-center">
-                <div class="stat-num" tabindex="0"><span data-count="{{ total_count }}">0</span></div>
-                <p class="stat-label mb-0">оголошень</p>
-            </div>
-            <div class="col-4 stat-cell text-center">
-                <div class="stat-num" tabindex="0"><span data-count="{{ cities_count }}">0</span></div>
-                <p class="stat-label mb-0">міст</p>
-            </div>
-            <div class="col-4 stat-cell text-center">
-                <div class="stat-num" tabindex="0">5</div>
-                <p class="stat-label mb-0">рівнів доступності</p>
+        <div class="stat-block-container animate-on-scroll">
+            <div class="row g-0 py-4 py-lg-5">
+                <div class="col-4 stat-cell">
+                    <div class="stat-num counter-value" data-target="{{ total_count }}">0</div>
+                    <div class="stat-label">Оголошень</div>
+                </div>
+                <div class="col-4 stat-cell">
+                    <div class="stat-num counter-value" data-target="50">0</div>
+                    <div class="stat-label">Параметрів аудиту</div>
+                </div>
+                <div class="col-4 stat-cell">
+                    <div class="stat-num counter-value" data-target="5">0</div>
+                    <div class="stat-label">Рівнів доступності</div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Наші переваги: сітка з 3 карток з іконками -->
-<section class="py-5 py-lg-6">
+<section class="py-4">
     <div class="wrap">
         <h2 class="section-heading-advantages text-center mb-4">Наші переваги</h2>
         <div class="row g-4 justify-content-center">
             <div class="col-md-4">
                 <div class="card-premium h-100 p-4 animate-on-scroll text-center">
-                    <div class="advantages-icon mb-3">✓</div>
-                    <h3 class="h5 mb-2">Перевірені оголошення</h3>
-                    <p class="text-muted small mb-0">Частина об'єктів має аудит доступності з балами та рекомендаціями за входом, ліфтом, санвузлом та порогами.</p>
+                    <div class="advantages-icon mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-rulers" viewBox="0 0 16 16">
+                          <path d="M1 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5v-1H2v-1h4v-1H2v-1h4v-1H2v-1h4V9H2V8h4V7H2V6h4V5H2V4h4V3H2V2h4V1a1 1 0 0 0-1-1H1z"/>
+                          <path d="M16 14v-2h-2v2h2zM14 11V9h2v2h-2zM16 8V6h-2v2h2zM14 5V3h2v2h-2zM16 2V1a1 1 0 0 0-1-1h-4v1h2v1h-2v1h2v1h-2v1h2v1h-2v1h2v1h-2v1h2v1h-2v2h5a1 1 0 0 0 1-1z"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 mb-2">Технічна точність</h3>
+                    <p class="text-muted small mb-0">Ми оцифровуємо складні норми ДБН у зрозумілі параметри: ширину прорізів, кути нахилу та габарити ліфтів для вашого комфорту.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card-premium h-100 p-4 animate-on-scroll text-center">
-                    <div class="advantages-icon mb-3">1–5</div>
-                    <h3 class="h5 mb-2">П'ять рівнів потреб</h3>
-                    <p class="text-muted small mb-0">Від сімей з малими дітьми до повного універсального дизайну. Фільтруйте каталог без прив'язки до діагнозів.</p>
+                    <div class="advantages-icon mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-bar-chart-steps" viewBox="0 0 16 16">
+                          <path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 mb-2">Рівні доступності</h3>
+                    <p class="text-muted small mb-0">Унікальна система оцінки від 1 до 5 дозволяє знайти житло під ваші конкретні потреби без зайвих уточнень.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card-premium h-100 p-4 animate-on-scroll text-center">
-                    <div class="advantages-icon advantages-icon--warm mb-3">◉</div>
-                    <h3 class="h5 mb-2">Консультації та аудит</h3>
-                    <p class="text-muted small mb-0">Допоможемо підібрати житло або провести аудит вашого об'єкта. Карта міст у каталозі.</p>
+                    <div class="advantages-icon advantages-icon--warm mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-heart-pulse" viewBox="0 0 16 16">
+                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a12.125 12.125 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                          <path d="M1 14h2l1-3 1 3h2"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 mb-2">Соціальна місія</h3>
+                    <p class="text-muted small mb-0">mobi Home — це не просто бізнес, а проект, що створює стандарт доступного житла для відновлення інклюзивної України.</p>
                 </div>
             </div>
         </div>
@@ -70,35 +91,75 @@
 </section>
 
 <!-- Оголошення: сітка карток (2–3 колонки) -->
-<section class="py-5 py-lg-6">
+<section class="py-4">
     <div class="wrap">
-        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div class="mb-4">
             <h2 class="mb-0" style="color: var(--text);">Останні оголошення</h2>
-            <a href="{% url 'properties:home' %}" class="btn btn-outline-primary">Весь каталог</a>
         </div>
         <div class="row g-4">
             {% for prop in featured %}
             <div class="col-sm-6 col-lg-4">
-                <a href="{% url 'properties:property_detail' prop.pk %}" class="card-premium text-decoration-none d-block h-100 animate-on-scroll" style="color: inherit;">
-                    <div class="listing-card-img-wrap position-relative overflow-hidden rounded-top">
+                <a href="{% url 'properties:property_detail' prop.pk %}" class="text-decoration-none d-block animate-on-scroll" style="color: inherit;">
+                    <div class="card card-premium h-100">
+                        <div class="listing-card-img-wrap position-relative overflow-hidden rounded-top">
                         {% if prop.photo %}
-                            <img src="{{ prop.photo.url }}" alt="{{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ prop.listing_photo_url }}';">
+                            <img src="{{ prop.photo.url }}" class="card-img-top" alt="{{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ prop.listing_photo_url }}';">
                         {% else %}
-                            <img src="{{ prop.listing_photo_url }}" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
+                            <img src="{{ prop.listing_photo_url }}" class="card-img-top" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
                         {% endif %}
-                        <div class="position-absolute top-0 start-0 p-2 d-flex gap-1 flex-wrap">
-                            {% if prop.featured_active %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
-                            <span class="listing-badge {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ prop.get_listing_type_display }}</span>
+                            <div class="position-absolute top-0 start-0 p-3 d-flex gap-2 flex-wrap w-100">
+                                <span class="listing-badge shadow-sm {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}" style="backdrop-filter: blur(4px);">{{ prop.get_listing_type_display }}</span>
+                                {% if prop.featured_active %}<span class="listing-badge shadow-sm listing-badge--featured ms-auto" style="backdrop-filter: blur(4px);">ТОП</span>{% endif %}
+                            </div>
+                            {% if prop.price %}
+                            <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-5" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);">
+                                <h3 class="h5 mb-0 text-white fw-bold">{{ prop.price|floatformat:0 }} грн{% if prop.listing_type == 'rent' %}<span class="fs-6 fw-normal text-white-50"> / міс</span>{% endif %}</h3>
+                            </div>
+                            {% endif %}
                         </div>
-                    </div>
-                    <div class="card-body p-3 p-lg-4">
-                        <h3 class="h6 mb-1">{{ prop.name }}</h3>
-                        {% if prop.city %}<p class="small text-muted mb-2">{{ prop.city }}</p>{% endif %}
-                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                            {% if prop.price %}<strong class="text-accent" style="color: var(--accent);">{{ prop.price|floatformat:0 }} грн{% if prop.listing_type == 'rent' %}/міс{% endif %}</strong>{% endif %}
-                            <span class="small text-muted">{% if prop.rooms %}{{ prop.rooms }} кімн.{% endif %} {% if prop.area_sqm %}{{ prop.area_sqm }} м²{% endif %}</span>
+                        <div class="card-body d-flex flex-column listing-card-body p-3 p-md-4">
+                            <h2 class="h6 card-title mb-2 listing-card-title fw-bold" style="color: var(--text);">{{ prop.name }}</h2>
+                            
+                            <p class="card-text small mb-3 listing-card-address d-flex align-items-center gap-1" style="color: var(--text-muted);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/><path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+                                <span class="text-truncate">{% if prop.city %}{{ prop.city }}, {% endif %}{{ prop.address }}</span>
+                            </p>
+                            
+                            <div class="d-flex flex-wrap gap-3 small mb-3 pb-3 border-bottom" style="border-color: var(--border) !important; color: var(--text);">
+                                {% if prop.rooms %}
+                                <div class="d-flex align-items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-door-open" viewBox="0 0 16 16"><path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/><path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5a.5.5 0 0 1 0 1h-1.114l-1.971-1.971c-.139-.139-.327-.183-.51-.128L2.708 2.057A.5.5 0 0 0 2 2.5V15a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.146-.354l-3-3a.5.5 0 0 0-.354-.146h-.672L8.5.122A.5.5 0 0 0 8 .5V1H7.5a.5.5 0 0 0 0 1h1.114l1.971 1.971c.139.139.327.183.51.128l5.197-1.732A.5.5 0 0 1 10.828.122zM3 15v-1h1v1H3zm2 0v-1h5v1H5zm6 0v-1h1v1h-1zM2 3.5v11h1v-11H2zm11 11V3.5h1v11h-1z"/></svg>
+                                    <span>{{ prop.rooms }} кімн.</span>
+                                </div>
+                                {% endif %}
+                                {% if prop.area_sqm %}
+                                <div class="d-flex align-items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-bounding-box" viewBox="0 0 16 16"><path d="M5 2V0H0v5h2v6H0v5h5v-2h6v2h5v-5h-2V5h2V0h-5v2H5zm6 1v2h2v6h-2v2H5v-2H3V5h2V3h6zm1-2h3v3h-3V1zm3 11v3h-3v-3h3zM4 15H1v-3h3v3zM1 4V1h3v3H1z"/></svg>
+                                    <span>{{ prop.area_sqm }} м²</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mt-auto">
+                                {% if prop.audit or prop.mobility_level %}
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if prop.audit and prop.audit.total_score is not None %}
+                                            <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill" style="background: var(--accent-soft); color: var(--accent); font-size: 0.8rem; font-weight: 600;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-shield-check" viewBox="0 0 16 16"><path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/></svg>
+                                                Аудит: {{ prop.audit.total_score|floatformat:0 }}
+                                            </div>
+                                        {% endif %}
+                                        {% if prop.mobility_level %}
+                                            <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill" style="background: var(--bg); color: var(--text-muted); font-size: 0.8rem;">
+                                                Рівень {{ prop.mobility_level }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="px-2 py-1 rounded-pill d-inline-block" style="background: var(--bg); color: var(--text-muted); font-size: 0.8rem;">Без аудиту</div>
+                                {% endif %}
+                            </div>
                         </div>
-                        {% if prop.audit or prop.mobility_level %}<p class="listing-card-audit-line mb-0 small">{% if prop.audit and prop.audit.total_score is not None %}Аудит: {{ prop.audit.total_score|floatformat:0 }} балів{% if prop.mobility_level %} · Рівень {{ prop.mobility_level }}{% endif %}{% elif prop.mobility_level %}Рівень доступності {{ prop.mobility_level }}{% endif %}</p>{% endif %}
                     </div>
                 </a>
             </div>
@@ -114,17 +175,9 @@
     </div>
 </section>
 
-<!-- CTA: під дизайн і кольори сайту -->
-<section class="cta-block py-5 py-lg-6 rounded-3 mx-3 mx-lg-0 mb-3 mb-lg-4 animate-on-scroll">
-    <div class="wrap text-center">
-        <h2 class="cta-block__title">Потрібна допомога з вибором житла?</h2>
-        <p class="cta-block__text mb-4">Наші консультанти підберуть варіанти за вашими критеріями доступності та бюджетом.</p>
-        <a href="{% url 'properties:contact' %}" class="btn cta-block__btn btn-lg px-4">Зв'язатися з нами</a>
-    </div>
-</section>
 
 <!-- Питання та відповіді (в кінці головної) -->
-<section class="py-5 py-lg-6">
+<section class="py-4">
     <div class="wrap">
         <div class="text-center mb-4">
             <h2 class="mb-2" style="color: var(--text);">Питання та відповіді</h2>
@@ -135,66 +188,42 @@
                 <div class="accordion" id="faqAccordionHome">
                     <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
                         <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome1" aria-expanded="false" aria-controls="faqHome1" style="color: var(--text);">Що таке «рівень доступності» і як його обрати?</button>
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome1" aria-expanded="false" aria-controls="faqHome1" style="color: var(--text);">Що таке платформа "mobi Home"?</button>
                         </h3>
                         <div id="faqHome1" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Рівні доступності — це п'ять типів потреб (від «майже без обмежень» до «потрібен повний безбар'єрний простір»). На сторінці <a href="{% url 'properties:accessibility_levels' %}">Рівні доступності</a> описано, кому підходить кожен рівень. У каталозі можна фільтрувати оголошення за обраним рівнем.</div>
+                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">mobi Home — це спеціалізована екосистема нерухомості, створена для того, щоб зробити пошук безбар'єрного житла в Україні прозорим та швидким. Ми об'єднуємо детальний аудит фізичної доступності з сучасним сервісом підбору нерухомості.</div>
                         </div>
                     </div>
                     <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
                         <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome2" aria-expanded="false" aria-controls="faqHome2" style="color: var(--text);">Як потрапляють оголошення в каталог?</button>
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome2" aria-expanded="false" aria-controls="faqHome2" style="color: var(--text);">Як працює аудит доступності?</button>
                         </h3>
                         <div id="faqHome2" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Оголошення додаються через адмін-панель платформи. Частина об'єктів надходить від партнерів-ріелторів та застройників, частину додають наші консультанти. Кожен об'єкт може мати прив'язаний аудит доступності.</div>
+                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">До кожного об'єкта можна додати результати спеціального аудиту. Цей аудит оцінює найкритичніші зони: вхід у будівлю, ліфт, пороги у квартирі та ширину дверей санвузла. Оцінка (бал з 10) допомагає зрозуміти загальний рівень безбар'єрності житла ще до його перегляду.</div>
                         </div>
                     </div>
                     <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
                         <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome3" aria-expanded="false" aria-controls="faqHome3" style="color: var(--text);">Що означає бал аудиту (наприклад, 8/10)?</button>
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome3" aria-expanded="false" aria-controls="faqHome3" style="color: var(--text);">Хто може додати оголошення?</button>
                         </h3>
                         <div id="faqHome3" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Аудит оцінює вхід, ліфт, санвузол, пороги та радіус для розвороту. Загальний бал — усереднена оцінка. 9–10 — дуже добре пристосований об'єкт, 6–8 — прийнятно з обмеженнями, нижче — потребує змін.</div>
+                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Будь-який власник, орендодавець або рієлтор. Важливо, щоб ви могли чесно відповісти на запитання щодо наявності сходів або ширини дверей під час створення оголошення. Якщо у вас універсальний дизайн або перший поверх — обов'язково публікуйте, таке житло дуже затребуване!</div>
                         </div>
                     </div>
                     <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
                         <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome4" aria-expanded="false" aria-controls="faqHome4" style="color: var(--text);">Як замовити аудит для своєї квартири?</button>
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome4" aria-expanded="false" aria-controls="faqHome4" style="color: var(--text);">Чи можу я фільтрувати оголошення за специфічними потребами?</button>
                         </h3>
                         <div id="faqHome4" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Якщо об'єкт вже в каталозі — на сторінці оголошення натисніть «Додати аудит» або «Редагувати аудит». Якщо немає — напишіть через <a href="{% url 'properties:contact' %}">Контакти</a>, ми додамо об'єкт та узгодимо виїзд.</div>
+                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Так, у нашому каталозі є детальні фільтри. Ви можете відфільтрувати квартири, де ліфт не менше 80 см, душ не має піддону (душ-трап) і відсутні високі пороги. Це економить ваш час.</div>
                         </div>
                     </div>
                     <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
                         <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome5" aria-expanded="false" aria-controls="faqHome5" style="color: var(--text);">Чи є платним підбір житла та консультації?</button>
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome5" aria-expanded="false" aria-controls="faqHome5" style="color: var(--text);">Що таке "Рівень доступності"?</button>
                         </h3>
                         <div id="faqHome5" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Перегляд каталогу та фільтри — безкоштовні. Консультація та індивідуальний підбір можуть бути платними. Деталі та вартість аудиту обговорюються при зверненні.</div>
-                        </div>
-                    </div>
-                    <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome6" aria-expanded="false" aria-controls="faqHome6" style="color: var(--text);">Чому ви використовуєте «рівні доступності», а не діагнози?</button>
-                        </h3>
-                        <div id="faqHome6" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Ми описуємо потреби в доступному середовищі, а не медичні мітки. Це зручніше для пошуку і поважає право не розголошувати діагноз.</div>
-                        </div>
-                    </div>
-                    <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome7" aria-expanded="false" aria-controls="faqHome7" style="color: var(--text);">Чи можна додати своє оголошення в каталог?</button>
-                        </h3>
-                        <div id="faqHome7" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Так. Через <a href="{% url 'properties:register' %}">Реєстрацію</a> можна додати оголошення та після оплати воно з’явиться в каталозі. За бажанням можна замовити аудит — тоді оголошення отримає бал.</div>
-                        </div>
-                    </div>
-                    <div class="accordion-item border rounded-3 mb-2 overflow-hidden" style="border-color: var(--border) !important; background: var(--bg-card);">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqHome8" aria-expanded="false" aria-controls="faqHome8" style="color: var(--text);">Що таке «критичні точки» у фільтрі (ліфт 80 см, душ-трап, без порогів)?</button>
-                        </h3>
-                        <div id="faqHome8" class="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
-                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Це параметри, важливі для пересування на кріслі колісному: ліфт понад 80 см, душ-трап у санвузлі, відсутність високих порогів. Якщо оберете ці чекбокси, каталог покаже лише оголошення з аудитом, де умови виконані.</div>
+                            <div class="accordion-body text-muted" style="color: var(--text-muted) !important;">Для спрощення ми розробили 5 рівнів. Від Рівня 1 (об'єкт повністю безбар'єрний, підходить для користувачів електричних крісел) до Рівня 5 (базове житло, підходить людям без порушень опорно-рухового апарату, але не адаптоване). Це допомагає швидко орієнтуватись.</div>
                         </div>
                     </div>
                 </div>
@@ -311,18 +340,130 @@
 [data-theme="dark"] .card-premium:hover .advantages-icon--warm {
     box-shadow: 0 6px 22px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.18);
 }
-[data-theme="dark"] .stat-block { background: var(--section-alt); border-left-color: var(--accent); }
+.stat-block-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.6s var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+}
+.stat-block-container:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+    border-color: var(--accent);
+}
+.stat-cell {
+    text-align: center;
+    position: relative;
+    padding: 1rem 0;
+}
+.stat-cell:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border), transparent);
+}
+.stat-num {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+    transition: all 0.3s ease;
+}
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+[data-theme="dark"] .stat-block-container {
+    background: rgba(21, 31, 28, 0.4);
+    backdrop-filter: blur(16px);
+}
 
+/* Floating анімація для Hero */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
 /* Герой: текст без тіні */
-.hero-text { text-shadow: none; }
+.hero-text { text-shadow: none; animation: float 5s ease-in-out infinite; }
 .hero-title { text-shadow: none; }
 .hero-desc { font-size: 1.0625rem; line-height: 1.6; max-width: 420px; color: #fff; text-shadow: none; }
 
-/* Фон головної: фото не обрізає головний об'єкт (будинок/людину) — центр по вертикалі зміщений */
+/* Преміальна кнопка Hero: теплий акцентний колір, висока читабельність */
+.btn-hero-premium {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-warm); /* Теплий бежевий з палітри сайту */
+    color: #051711 !important; /* Глибокий темний колір для максимальної читабельності */
+    font-weight: 600;
+    padding: 1.1rem 3.5rem;
+    border-radius: 16px;
+    text-decoration: none !important;
+    transition: all 0.4s var(--ease-smooth);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: none;
+}
+.btn-hero-premium:hover {
+    background-color: #c9baab; /* Трохи світліший при наведенні */
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+/* Фон головної: більш лаконічне та преміальне фото */
 .hero-bg {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0.4) 100%), url('{% static "img/hero.png" %}') no-repeat;
+    background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80') no-repeat;
     background-size: cover;
-    background-position: 50% 45%;
+    background-position: center 60%;
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.counter-value');
+    const speed = 200;
+
+    const animateCounters = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText.replace('+', '');
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        const nextVal = Math.ceil(count + inc);
+                        counter.innerText = (entry.target.getAttribute('data-target') == '50' && nextVal >= 50) ? '50+' : nextVal;
+                        setTimeout(updateCount, 1);
+                    } else {
+                        counter.innerText = (entry.target.getAttribute('data-target') == '50') ? '50+' : target;
+                    }
+                };
+                updateCount();
+                observer.unobserve(counter);
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(animateCounters, {
+        threshold: 0.5
+    });
+
+    counters.forEach(counter => observer.observe(counter));
+});
+</script>
 {% endblock %}

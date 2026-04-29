@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import AccessibilityAudit, Feature, Property
+from .models import AccessibilityAudit, Feature, Property, ProfileReview
 
 
 @admin.register(Feature)
@@ -46,3 +46,10 @@ class AccessibilityAuditAdmin(admin.ModelAdmin):
     )
     list_filter = ("bathroom_type", "turning_radius_exists")
     raw_id_fields = ("property",)
+
+
+@admin.register(ProfileReview)
+class ProfileReviewAdmin(admin.ModelAdmin):
+    list_display = ("author", "target_user", "rating", "created_at")
+    list_filter = ("rating",)
+    search_fields = ("author__username", "target_user__username", "text")

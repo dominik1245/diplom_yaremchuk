@@ -57,7 +57,10 @@ urlpatterns = [
     path("add-listing/", views.add_listing, name="add_listing"),
     path("logout/", views.logout_view, name="logout"),
     path("profile/", views.profile, name="profile"),
+    path("profile/<str:username>/", views.public_profile, name="public_profile"),
     path("payment/<int:pk>/", views.payment, name="payment"),
     path("payment/<int:pk>/paid/", views.payment_paid, name="payment_paid"),
     path("property/<int:pk>/promote/", views.promote_listing, name="promote_listing"),
+    path("privacy-policy/", views.privacy_policy, name="privacy_policy"),
+    path("terms-of-service/", views.terms_of_service, name="terms_of_service"),
 ]

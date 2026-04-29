@@ -1,38 +1,78 @@
 {% extends 'base.html' %}
-{% block title %}Рівні доступності — mobi home{% endblock %}
+{% block title %}Рівні доступності — mobi Home{% endblock %}
 
 {% block content %}
-<div class="wrap">
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-    <h1 class="mb-0" style="color: var(--text);">Рівні доступності</h1>
-    <a href="{% url 'properties:home' %}" class="btn btn-primary btn-sm">Перейти до каталогу</a>
-</div>
-<p class="text-muted small mb-4" style="max-width: 640px;">П'ять рівнів за типами потреб — без прив'язки до діагнозів. Оберіть рівень і фільтруйте <a href="{% url 'properties:home' %}" style="color: var(--accent);">каталог</a>.</p>
+<div class="wrap py-4 py-lg-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-5 animate-on-scroll">
+        <div>
+            <h1 class="mb-2" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em;">Рівні доступності</h1>
+            <p class="text-muted mb-0" style="max-width: 640px; font-size: 1.05rem;">П'ять рівнів за типами потреб — без прив'язки до діагнозів. Оберіть ваш рівень для швидкого пошуку ідеального житла.</p>
+        </div>
+        <a href="{% url 'properties:home' %}" class="btn px-4 py-2" style="background-color: var(--accent); color: white; border-radius: 24px; font-weight: 600; box-shadow: 0 4px 12px rgba(90, 124, 89, 0.3);">Перейти до каталогу</a>
+    </div>
 
-<div class="row g-4 mb-4">
-{% for level in mobility_levels %}
-    <div class="col-12 col-md-6 col-lg-4">
-        <div class="card card-premium h-100 overflow-hidden">
-            <div class="level-card-img-wrap" style="height: 140px; background: var(--border); overflow: hidden;">
-                <img src="{{ level.image_url|default:'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400' }}" alt="Рівень {{ level.id }}" class="w-100 h-100" style="object-fit: cover;" loading="lazy">
-            </div>
-            <div class="card-header card-header-premium py-2 px-3 d-flex justify-content-between align-items-center">
-                <span class="fw-600" style="color: var(--footer-text);">Рівень {{ level.id }}</span>
-                <a href="{% url 'properties:home' %}?mobility={{ level.id }}" class="btn btn-level-action btn-sm py-1 px-2">Шукати</a>
-            </div>
-            <div class="card-body py-3">
-                <p class="fw-600 mb-1" style="color: var(--text); font-size: 0.95rem;">{{ level.short }}</p>
-                <p class="small text-muted mb-2">{{ level.best_for }}</p>
-                <p class="small mb-2 text-muted" style="opacity: 0.9;">{{ level.filter_help }}</p>
-                <p class="small mb-0" style="color: var(--text-muted);"><strong style="color: var(--text);">Приклад:</strong> {{ level.example }}</p>
+    <div class="row g-4 mb-5 justify-content-center">
+    {% for level in mobility_levels %}
+        <div class="col-12 col-md-6 col-lg-4 animate-on-scroll" style="animation-delay: {{ forloop.counter0 }}00ms;">
+            <div class="card card-premium level-card h-100 overflow-hidden border-0 position-relative">
+                <div class="level-card-img-wrap position-relative" style="height: 190px; overflow: hidden;">
+                    <img src="{{ level.image_url|default:'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400' }}" alt="Рівень {{ level.id }}" class="w-100 h-100 level-img" style="object-fit: cover;" loading="lazy">
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);"></div>
+                    
+                    <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex justify-content-between align-items-end">
+                        <span class="badge" style="background-color: rgba(15, 25, 20, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1rem; padding: 0.5rem 0.85rem; border-radius: 12px; font-weight: 600;">Рівень {{ level.id }}</span>
+                        <a href="{% url 'properties:home' %}?mobility={{ level.id }}" class="btn btn-primary btn-sm px-4 py-2 shadow-sm" style="border-radius: 12px; font-weight: 600;">Шукати</a>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4 d-flex flex-column">
+                    <h3 class="fw-bold mb-3" style="color: var(--text); font-size: 1.15rem; min-height: 2.8rem; display: flex; align-items: center;">{{ level.short }}</h3>
+                    <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6; min-height: 3rem;">{{ level.best_for }}</p>
+                    
+                    <div class="flex-grow-1">
+                        <div class="p-3 mb-4 rounded-3 h-100" style="background-color: var(--section-alt); border-left: 3px solid var(--color-sage); min-height: 100px;">
+                            <p class="small mb-0 text-muted" style="opacity: 0.9;">
+                                <i class="bi bi-info-circle me-1" style="color: var(--accent);"></i>
+                                {{ level.filter_help }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <p class="small mb-0" style="color: var(--text-muted);">
+                            <strong style="color: var(--text); font-weight: 600;">Приклад:</strong> {{ level.example }}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
+    {% endfor %}
     </div>
-{% endfor %}
+
+    <div class="text-center mt-5">
+        <a href="{% url 'properties:home' %}" class="btn btn-outline-secondary px-5 py-2" style="border-radius: 24px; font-weight: 500;">← Повернутися до каталогу</a>
+    </div>
 </div>
 
-<p class="mb-0">
-    <a href="{% url 'properties:home' %}" class="btn btn-outline-primary btn-sm">← Каталог</a>
-</p>
-</div>
+<style>
+.level-card {
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    background-color: var(--bg-card);
+}
+
+.level-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.12);
+}
+
+.level-img {
+    transition: transform 0.6s ease;
+}
+
+.level-card:hover .level-img {
+    transform: scale(1.08);
+}
+</style>
 {% endblock %}

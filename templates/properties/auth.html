@@ -63,6 +63,11 @@
                     {% for field in register_form %}
                     <div class="auth-field-wrap">
                         {{ field }}
+                        {% if 'password' in field.name %}
+                        <button type="button" class="auth-input-icon auth-toggle-pwd" aria-label="Показати пароль" title="Показати пароль" onclick="togglePwd(this, '{{ field.id_for_label }}')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                        {% endif %}
                     </div>
                     {% if field.errors %}<div class="auth-error">{{ field.errors.0 }}</div>{% endif %}
                     {% endfor %}
@@ -86,11 +91,11 @@
 .auth-card-body { padding: 1.75rem 1.5rem; }
 .auth-title { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 1.25rem; }
 .auth-form .auth-field-wrap { margin-bottom: 1rem; position: relative; }
-.auth-input { width: 100%; padding: 0.75rem 2.75rem 0.75rem 1rem; font-size: 1rem; color: var(--text); background: var(--section-alt); border: 1px solid transparent; border-radius: var(--radius-sm); transition: border-color 0.2s, background 0.2s; }
-.auth-input:focus { outline: none; border-color: var(--accent); background: var(--bg-card); }
+.auth-input { width: 100%; padding: 0.75rem 2.75rem 0.75rem 1rem; font-size: 1rem; color: var(--text); background: var(--section-light); border: 1px solid var(--border); border-radius: var(--radius-sm); transition: border-color 0.2s, background 0.2s; }
+.auth-input:focus { outline: none; border-color: var(--accent); background: var(--bg-card); box-shadow: 0 0 0 4px var(--accent-soft); }
 .auth-input::placeholder { color: var(--text-muted); }
-.auth-input-icon { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); background: rgba(0,0,0,0.06); pointer-events: none; }
-.auth-toggle-pwd { pointer-events: auto; cursor: pointer; border: none; background: rgba(0,0,0,0.06); color: var(--text-muted); padding: 0; }
+.auth-input-icon { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); background: var(--section-light); border: 1px solid var(--border); pointer-events: none; }
+.auth-toggle-pwd { pointer-events: auto; cursor: pointer; border: 1px solid var(--border); background: var(--section-light); color: var(--text-muted); padding: 0; }
 .auth-toggle-pwd:hover { color: var(--accent); }
 .auth-field-wrap .auth-input { padding-right: 2.75rem; }
 .auth-error { font-size: 0.8125rem; color: var(--accent); margin-top: -0.5rem; margin-bottom: 0.5rem; }
@@ -140,7 +145,7 @@
         a.addEventListener('click', function(e) { e.preventDefault(); show(a.getAttribute('data-tab')); });
     });
     var pwdInput = document.getElementById('id_password_login');
-    var toggleBtn = document.querySelector('.auth-toggle-pwd');
+    var toggleBtn = document.querySelector('#auth-panel-login .auth-toggle-pwd');
     if (pwdInput && toggleBtn) {
         toggleBtn.addEventListener('click', function() {
             var type = pwdInput.getAttribute('type');
@@ -150,5 +155,15 @@
         });
     }
 })();
+
+function togglePwd(btn, inputId) {
+    var pwdInput = document.getElementById(inputId);
+    if (pwdInput) {
+        var type = pwdInput.getAttribute('type');
+        pwdInput.setAttribute('type', type === 'password' ? 'text' : 'password');
+        btn.setAttribute('title', type === 'password' ? 'Приховати пароль' : 'Показати пароль');
+        btn.setAttribute('aria-label', type === 'password' ? 'Приховати пароль' : 'Показати пароль');
+    }
+}
 </script>
 {% endblock %}

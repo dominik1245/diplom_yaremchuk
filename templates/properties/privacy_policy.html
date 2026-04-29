@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Політика конфіденційності — mobi Home{% endblock %}
+
+{% block content %}
+<div class="wrap py-5">
+    <div class="card card-premium p-4 p-md-5 animate-on-scroll">
+        <h1 class="mb-4" style="color: var(--text);">Політика конфіденційності</h1>
+        <p class="text-muted small mb-4">Останнє оновлення: {% now "d.m.Y" %}</p>
+        
+        <div class="privacy-content" style="color: var(--text); line-height: 1.8;">
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">1. Загальні положення</h2>
+                <p>Ця Політика конфіденційності діє для всієї інформації, яку платформа mobi Home може отримати про Користувача під час використання сайту.</p>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">2. Збір персональних даних</h2>
+                <p>Ми збираємо наступні дані:</p>
+                <ul>
+                    <li>Прізвище, ім'я та по батькові;</li>
+                    <li>Контактний номер телефону;</li>
+                    <li>Адреса електронної пошти;</li>
+                    <li>Інформація про об'єкти нерухомості (для орендодавців).</li>
+                </ul>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">3. Мета збору даних</h2>
+                <p>Персональні дані Користувача використовуються для:</p>
+                <ul>
+                    <li>Ідентифікації Користувача на сайті;</li>
+                    <li>Надання доступу до персоналізованих ресурсів;</li>
+                    <li>Встановлення зворотного зв'язку, включаючи надсилання повідомлень про стан оголошень.</li>
+                </ul>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">4. Захист інформації</h2>
+                <p>Ми вживаємо всіх необхідних організаційних та технічних заходів для захисту персональної інформації Користувача від неправомірного або випадкового доступу, знищення, перекручення, блокування, копіювання, поширення.</p>
+            </section>
+        </div>
+        
+        <div class="mt-5">
+            <a href="{% url 'properties:index' %}" class="btn btn-outline-primary">Повернутися на головну</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

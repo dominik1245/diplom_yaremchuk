@@ -316,3 +316,34 @@ class AccessibilityAuditForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class UserProfileForm(forms.ModelForm):
+    """Форма редагування профілю."""
+    
+    first_name = forms.CharField(label="Ім'я", required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    last_name = forms.CharField(label="Прізвище", required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(label="Email", required=False, widget=forms.EmailInput(attrs={"class": "form-control"}))
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
+
+class ReviewForm(forms.ModelForm):
+    """Форма для залишення відгуку."""
+    
+    rating = forms.ChoiceField(
+        label="Оцінка",
+        choices=[(i, str(i)) for i in range(5, 0, -1)],
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
+    text = forms.CharField(
+        label="Відгук",
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Напишіть свій відгук..."})
+    )
+
+    class Meta:
+        from .models import ProfileReview
+        model = ProfileReview
+        fields = ["rating", "text"]

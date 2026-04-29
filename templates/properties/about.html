@@ -1,70 +1,76 @@
 {% extends 'base.html' %}
-{% block title %}Про компанію — mobi home{% endblock %}
+{% load static %}
+{% block title %}Про компанію — mobi Home{% endblock %}
 
 {% block content %}
 <div class="wrap about-page-wrap">
 <section class="about-intro-section mb-2">
     <p class="about-intro-label">Наша історія</p>
-    <h1 class="about-intro-title">Про платформу mobi home</h1>
-    <p class="lead about-intro-lead">mobi home — платформа підбору та оголошень житла, придатного для людей з особливими потребами та їхніх родин по всій Україні.</p>
+    <h1 class="about-intro-title">Про платформу mobi Home</h1>
+    <p class="lead about-intro-lead">Ми допомагаємо знайти житло, де справді зручно кожному. Просто, чесно та без зайвих бар'єрів.</p>
 
     <div class="about-intro-media">
         <figure class="about-intro-figure animate-on-scroll">
             <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400" alt="Офіс та команда" class="about-intro-img">
         </figure>
         <div class="about-intro-flow">
-            <p>З 2025 року ми збираємо в одному каталозі квартири та будинки, перевірені за критеріями доступності: ширина ліфта, висота порогів, тип санвузлу, наявність радіусу для розвороту крісла колісного. Частина об'єктів має офіційний аудит — тоді в оголошенні вказано бал та рівень доступності.</p>
-            <p>Ми описуємо житло за <strong>рівнями доступності</strong> (від базового до універсального безбар'єрного), без прив'язки до діагнозів. Користувач обирає підходящий рівень і фільтрує каталог за своїми потребами. Консультації та виїзди аудиторів допомагають оцінити об'єкт перед орендою або купівлею.</p>
-            <p class="mb-0">Місія компанії — зробити пошук доступного житла прозорим і зручним: єдина методика оцінки, відкриті критерії та співпраця з ріелторами, застройниками та громадськими організаціями.</p>
+            <p><strong>mobi Home</strong> з'явився у 2026 році. Ми побачили, що знайти квартиру, де зручно пересуватися на візку або з дитячою коляскою — це цілий квест. Тому ми вирішили це змінити.</p>
+            <p>Ми не просто публікуємо оголошення. Ми самі перевіряємо будинки за зрозумілою системою. Ми міряємо ширину дверей, дивимось на пороги, перевіряємо ліфти та пандуси. Все це ми оцінюємо по 10-бальній шкалі, щоб ви не витрачали час на огляди варіантів, які вам не підходять.</p>
+            <p class="mb-0">Для нас головне — щоб ви знайшли дім, де будете почуватися вільно. Без зайвої науки та складних термінів, просто людський підхід до пошуку житла.</p>
         </div>
     </div>
 </section>
 
-<section class="about-values-section" style="background: var(--section-alt);">
+<section class="about-values-section py-5" style="background: var(--section-alt);">
     <div class="wrap">
-        <div class="row g-3 text-center mb-5 animate-on-scroll justify-content-center">
-            <div class="col-4 col-md-2 animate-on-scroll"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">5+</span><span class="small text-muted">років на ринку</span></div>
-            <div class="col-4 col-md-2 animate-on-scroll animate-on-scroll-delay-1"><span class="d-block fw-bold fs-4" style="color: var(--color-accent);">5</span><span class="small text-muted">рівнів доступності</span></div>
-            <div class="col-4 col-md-2 animate-on-scroll animate-on-scroll-delay-2"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">10+</span><span class="small text-muted">міст України</span></div>
-            <div class="col-4 col-md-2"><span class="d-block fw-bold fs-4" style="color: var(--color-accent);">100%</span><span class="small text-muted">відкрита методика</span></div>
-            <div class="col-4 col-md-2"><span class="d-block fw-bold fs-4" style="color: var(--color-sage);">24/7</span><span class="small text-muted">каталог онлайн</span></div>
-        </div>
-        <h2 class="text-center mb-5 animate-on-scroll">Наші цінності</h2>
-        <div class="row g-4 about-values-cards">
-            <div class="col-md-6 col-lg-6">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll about-values-card">
-                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="background: rgba(90, 124, 89, 0.2);">
-                        <span class="about-values-icon">♿</span>
+        <h2 class="text-center mb-5 animate-on-scroll fw-bold">Наші принципи</h2>
+        <div class="row g-4 about-values-cards justify-content-center">
+            <!-- Реальна зручність -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card value-modern-card p-4 h-100 animate-on-scroll">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="value-dot" style="background: var(--accent);"></div>
+                        <h3 class="h5 mb-0 fw-bold">Реальна зручність</h3>
                     </div>
-                    <h3 class="h5">Доступність</h3>
-                    <p class="small text-muted mb-0">Житло має відповідати реальним потребам людей з особливими потребами, а не лише на папері.</p>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                        Ми не віримо забудовникам на слово. Кожен об'єкт ми перевіряємо самі: міряємо ширину прорізів, кут нахилу пандусів та висоту порогів. Якщо ми кажемо, що там зручно — значить, так воно і є.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-6">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-1 about-values-card">
-                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="background: rgba(90, 124, 89, 0.2);">
-                        <span class="about-values-icon">✓</span>
+            <!-- Повна прозорість -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card value-modern-card p-4 h-100 animate-on-scroll">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="value-dot" style="background: #c9a227;"></div>
+                        <h3 class="h5 mb-0 fw-bold">Повна прозорість</h3>
                     </div>
-                    <h3 class="h5">Чесність</h3>
-                    <p class="small text-muted mb-0">Аудит проводимо за єдиними критеріями. Результати не прикрашаємо.</p>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                        Ми показуємо все як є. Якщо в квартирі вузький коридор чи незручний санвузол — ви дізнаєтесь про це з опису та фото ще до поїздки на огляд. Жодних сюрпризів на місці.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-6">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-2 about-values-card">
-                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="background: rgba(201, 162, 39, 0.2);">
-                        <span class="about-values-icon">🤝</span>
+            <!-- Простий вибір -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card value-modern-card p-4 h-100 animate-on-scroll">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="value-dot" style="background: #0d6efd;"></div>
+                        <h3 class="h5 mb-0 fw-bold">Простий вибір</h3>
                     </div>
-                    <h3 class="h5">Партнерство</h3>
-                    <p class="small text-muted mb-0">Працюємо з застройниками, ріелторами та громадськими організаціями для розширення пропозиції доступного житла.</p>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                        Ми розробили 5 рівнів доступності, щоб ви могли за секунду відфільтрувати те, що підходить саме вам. Більше не потрібно гортати сотні оголошень, шукаючи потрібне фото ліфта.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-6">
-                <div class="card card-premium card-body text-center h-100 py-4 animate-on-scroll animate-on-scroll-delay-3 about-values-card">
-                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="background: rgba(90, 124, 89, 0.15);">
-                        <span class="about-values-icon">🏠</span>
+            <!-- Свобода руху -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card value-modern-card p-4 h-100 animate-on-scroll">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="value-dot" style="background: #198754;"></div>
+                        <h3 class="h5 mb-0 fw-bold">Свобода руху</h3>
                     </div>
-                    <h3 class="h5">Гідність</h3>
-                    <p class="small text-muted mb-0">Кожна людина має право на комфортне та безпечне житло. Наша мова та підхід відображають цю цінність.</p>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                        Ми віримо, що кожен має право жити там, де хоче, а не там, де дозволяють архітектурні бар'єри. Наша робота — прибрати ці перешкоди з вашого шляху до нового дому.
+                    </p>
                 </div>
             </div>
         </div>
@@ -74,41 +80,53 @@
 <section class="py-5 about-team">
     <div class="container">
         <h2 class="text-center mb-5">Команда</h2>
-        <div class="row g-2 g-md-3 justify-content-center about-team-row">
-            <div class="col-sm-6 col-md-6 col-lg-4">
-                <div class="card card-premium overflow-hidden team-card">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400" alt="Олег Шевченко" class="card-img-top team-card-img">
-                    <div class="card-body text-center">
-                        <h3 class="h6 mb-1">Олег Шевченко</h3>
-                        <p class="small text-muted mb-0">Експерт з доступності</p>
+        <div class="row g-4 justify-content-center about-team-row mb-5">
+            <div class="col-sm-6 col-md-4">
+                <div class="card border-1 h-100 team-card p-4" style="border-radius: 16px; border: 1px solid var(--border) !important; background: var(--bg-card); transition: transform 0.3s ease;">
+                    <div class="team-img-wrap mb-3 position-relative overflow-hidden rounded-4" style="aspect-ratio: 4/5;">
+                        <img src="{% static 'img/dominik.png.jpg' %}" alt="Домінік Яремчук" class="w-100 h-100" style="object-fit: cover;">
+                    </div>
+                    <div class="card-body p-0">
+                        <h3 class="h5 mb-1 fw-bold" style="color: var(--text);">Домінік Яремчук</h3>
+                        <p class="small mb-2" style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Засновник & CEO</p>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem; line-height: 1.5;">Створив mobi Home, щоб змінити ринок нерухомості України. Особисто контролює якість аудитів та розвиває ідею інклюзивності.</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-4">
-                <div class="card card-premium overflow-hidden team-card">
-                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Марія Петренко" class="card-img-top team-card-img team-card-img--woman">
-                    <div class="card-body text-center">
-                        <h3 class="h6 mb-1">Марія Петренко</h3>
-                        <p class="small text-muted mb-0">Консультант з нерухомості</p>
+            <div class="col-sm-6 col-md-4">
+                <div class="card border-1 h-100 team-card p-4" style="border-radius: 16px; border: 1px solid var(--border) !important; background: var(--bg-card); transition: transform 0.3s ease;">
+                    <div class="team-img-wrap mb-3 position-relative overflow-hidden rounded-4" style="aspect-ratio: 4/5;">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop" alt="Юлія Коваль" class="w-100 h-100" style="object-fit: cover;">
+                    </div>
+                    <div class="card-body p-0">
+                        <h3 class="h5 mb-1 fw-bold" style="color: var(--text);">Юлія Коваль</h3>
+                        <p class="small mb-2" style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Операційний директор</p>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem; line-height: 1.5;">Керує всіма внутрішніми процесами компанії. Організовує роботу відділів та піклується про те, щоб кожен клієнт залишився задоволеним.</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-4">
-                <div class="card card-premium overflow-hidden team-card">
-                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" alt="Дмитро Мельник" class="card-img-top team-card-img">
-                    <div class="card-body text-center">
-                        <h3 class="h6 mb-1">Дмитро Мельник</h3>
-                        <p class="small text-muted mb-0">Аудитор доступності</p>
+            <div class="col-sm-6 col-md-4">
+                <div class="card border-1 h-100 team-card p-4" style="border-radius: 16px; border: 1px solid var(--border) !important; background: var(--bg-card); transition: transform 0.3s ease;">
+                    <div class="team-img-wrap mb-3 position-relative overflow-hidden rounded-4" style="aspect-ratio: 4/5;">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&h=800&fit=crop" alt="Андрій Мороз" class="w-100 h-100" style="object-fit: cover;">
+                    </div>
+                    <div class="card-body p-0">
+                        <h3 class="h5 mb-1 fw-bold" style="color: var(--text);">Андрій Мороз</h3>
+                        <p class="small mb-2" style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Технічний директор</p>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem; line-height: 1.5;">Відповідає за технологічну частину платформи. Розробляє алгоритми оцінки доступності та робить пошук на сайті миттєвим.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-<div class="text-center mb-5">
-    <a href="{% url 'properties:contact' %}" class="btn btn-primary btn-lg">Зв'язатися з нами</a>
-</div>
+        <div class="text-center mt-5 py-4 position-relative">
+            <div class="mx-auto" style="max-width: 600px;">
+                <p class="fs-5 italic mb-2" style="font-style: italic; color: var(--text); font-weight: 400; line-height: 1.6; opacity: 0.9;">
+                    &ldquo;Ми будуємо світ, де кожен дім — це простір свободи та рівних можливостей для кожного.&rdquo;
+                </p>
+                <p class="small fw-bold text-uppercase" style="letter-spacing: 0.1em; color: var(--accent); font-size: 0.75rem;">— Домінік Яремчук, CEO mobi Home</p>
+            </div>
+        </div>
 </div>
 {% endblock %}
 
@@ -192,47 +210,28 @@
 .about-team .team-card .card-body { padding: 1.25rem 1rem; }
 .about-team .team-card p.small { font-size: 0.95rem; }
 .about-team .team-card h3.h6 { font-size: 1.1rem; }
-/* Секція «Наші цінності»: без градієнта та без тіні на картках */
+/* Секція «Наші цінності»: новий лаконічний дизайн */
 .about-values-section {
     background: var(--section-alt) !important;
-    padding-top: 1.25rem;
-    padding-bottom: 3rem;
 }
-.about-values-card {
-    box-shadow: none !important;
+.value-modern-card {
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
 }
-.about-values-card .rounded-circle {
-    width: 64px;
-    height: 64px;
-    background: rgba(90, 124, 89, 0.2);
-    margin: 0 auto;
+.value-modern-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    border-color: var(--accent);
 }
-.about-values-card .about-values-icon {
-    font-size: 1.75rem;
-    line-height: 1;
-    transform: translateY(-1px); /* невелике вирівнювання іконок в центрі кола */
+.value-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
-.about-values-card h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-}
-.about-values-card p {
-    flex: 1 1 auto; /* вирівнює “низ” тексту між картками, коли контент коротший за min-height */
-}
-.about-values-card {
-    min-height: 260px;
-}
-.about-values-card:hover {
-    box-shadow: none !important;
-    border-color: var(--border);
-}
-.about-values-card .rounded-circle { box-shadow: none !important; }
 .about-page-wrap.wrap { padding-left: 0.5rem; padding-right: 0.5rem; }
 @media (min-width: 768px) { .about-page-wrap.wrap { padding-left: 1rem; padding-right: 1rem; } }
 .about-page-wrap { padding-top: 0.5rem; padding-bottom: 1.5rem; }

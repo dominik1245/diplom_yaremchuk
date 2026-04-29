@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}mobi home{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Система підбору та оголошень доступного житла. Знайдіть квартиру без бар'єрів — mobi home.{% endblock %}">
+    <title>{% block title %}mobi Home{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Система підбору та оголошень доступного житла. Знайдіть квартиру без бар'єрів — mobi Home.{% endblock %}">
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Палітра з дизайну: #D9E2E6, #B7A798, #6C696A, #334655, #051711 */
@@ -32,7 +32,7 @@
             --radius-sm: 10px;
             --shadow: 0 4px 24px rgba(5, 23, 17, 0.06);
             --shadow-hover: 0 12px 40px rgba(5, 23, 17, 0.1);
-            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font: 'Outfit', -apple-system, sans-serif;
             --ease: cubic-bezier(0.4, 0, 0.2, 1);
             --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1.15);
             --section-alt: #D9E2E6;
@@ -71,30 +71,71 @@
         body { font-family: var(--font); font-size: 1rem; line-height: 1.65; color: var(--text); background: var(--bg); margin: 0; -webkit-font-smoothing: antialiased; }
         h1, h2, h3, h4, h5, h6, p, span, a, label, .btn, .breadcrumb, .nav-link, .card-title, .card-text { text-shadow: none !important; }
         h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 { color: var(--text) !important; }
-        h1, .h1 { font-size: clamp(2rem, 4.5vw, 2.75rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
-        h2, .h2 { font-size: clamp(1.5rem, 2.5vw, 1.875rem); font-weight: 600; letter-spacing: -0.01em; }
-        h3, .h3 { font-size: 1.125rem; font-weight: 600; }
+        h1, .h1 { font-size: clamp(2rem, 4.5vw, 2.5rem); font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; }
+        h2, .h2 { font-size: clamp(1.5rem, 2.5vw, 1.75rem); font-weight: 600; letter-spacing: -0.015em; }
+        h3, .h3 { font-size: 1.1rem; font-weight: 600; }
         main, main p, main .lead { color: var(--text); }
         main p { font-size: 1rem; line-height: 1.65; }
         .card-text, .card-body p, main .text-muted { font-size: 1rem; line-height: 1.6; }
         small, .small { font-size: 0.9375rem; line-height: 1.5; }
         /* Читабельність у формах і анкетах */
         .form-label { font-size: 1rem; font-weight: 500; color: var(--text) !important; }
-        .form-control { font-size: 1rem; color: var(--text); background: var(--bg-card); border-color: var(--border); line-height: 1.5; }
-        .form-select {
-            font-size: 1rem; color: var(--text); border-color: var(--border); line-height: 1.5;
+        /* Сучасні поля вводу та випадайки */
+        .form-control, .form-select {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: var(--text);
             background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.625rem 1rem;
+            transition: all 0.2s var(--ease);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent);
+            outline: 0;
+            box-shadow: 0 0 0 4px var(--accent-soft);
+            background-color: var(--bg-card);
+            color: var(--text);
+        }
+
+        /* Виправлення білого фону при автозаповненні браузером */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset !important;
+            -webkit-text-fill-color: var(--text) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        .form-select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23334655'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1rem 0.75rem;
-            padding-right: 2.25rem;
+            background-position: right 1rem center;
+            background-size: 14px 10px;
+            padding-right: 2.5rem;
+            cursor: pointer;
         }
         [data-theme="dark"] .form-select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%239ca3a6'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
         }
-        .form-control::placeholder { color: var(--text-muted); opacity: 0.9; }
-        textarea.form-control { line-height: 1.6; min-height: 2.5rem; }
+        .form-control::placeholder { color: var(--text-muted); opacity: 0.7; }
+        
+        /* Приховуємо стандартні стрілочки в полях типу number, щоб вони не створювали білих плям */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+            display: none;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            background: var(--bg-card);
+        }
+
+        textarea.form-control { line-height: 1.6; min-height: 5rem; }
         main a:not(.btn) { color: var(--accent); }
         main a:not(.btn):hover { color: var(--accent-hover); }
         .card-premium .card-title, .card-premium .card-text, .card-premium .card-body { color: var(--text) !important; }
@@ -199,6 +240,20 @@
         }
         .theme-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
 
+        .btn-nav-buy {
+            background-color: var(--accent);
+            color: white !important;
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 0.5rem 1.5rem !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(51, 70, 85, 0.15);
+        }
+        .btn-nav-buy:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(51, 70, 85, 0.25);
+        }
         main { min-height: 50vh; padding: 1.5rem 0 2.5rem; }
         .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
         @media (min-width: 768px) { .wrap { padding-left: 2rem; padding-right: 2rem; } }
@@ -207,12 +262,16 @@
         .card-premium {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
             overflow: hidden;
-            transition: box-shadow 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth), border-color 0.5s var(--ease-smooth);
+            transition: all 0.4s var(--ease-smooth);
         }
-        .card-premium:hover { box-shadow: var(--shadow-hover); border-color: var(--accent-soft); }
+        .card-premium:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.06); transform: translateY(-4px); }
+        .team-card { transition: all 0.4s var(--ease-smooth); }
+        .team-card:hover { transform: scale(1.02) translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn { transition: all 0.3s var(--ease); }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         [data-theme="dark"] .card-premium:hover { box-shadow: var(--shadow-hover), 0 0 0 1px rgba(212, 146, 120, 0.2); }
         .card-premium img { transition: transform 0.6s var(--ease-smooth); }
         .card-premium:hover img { transform: scale(1.05); }
@@ -379,23 +438,22 @@
         {% url 'properties:add_listing' as add_listing_url %}
         <div class="wrap d-flex flex-wrap align-items-center justify-content-between gap-3">
             <a class="brand d-flex align-items-center gap-2" href="{% url 'properties:index' %}">
-                <img src="{% static 'img/logo.png' %}" alt="mobi home" height="52" class="site-logo flex-shrink-0" style="width: auto;">
-                <span>mobi home</span>
+                <img src="{% static 'img/logo.png' %}" alt="mobi Home" height="52" class="site-logo flex-shrink-0" style="width: auto;">
+                <span>mobi Home</span>
             </a>
             <nav class="d-none d-lg-flex align-items-center flex-wrap gap-1">
                 <a class="nav-link{% if current_url_name == 'index' %} active{% endif %}" href="{% url 'properties:index' %}">Головна</a>
-                <a class="nav-link{% if current_url_name == 'about' %} active{% endif %}" href="{% url 'properties:about' %}">Про нас</a>
                 <a class="nav-link{% if current_url_name == 'home' %} active{% endif %}" href="{% url 'properties:home' %}">Каталог</a>
-                <a class="nav-link{% if current_url_name == 'services' %} active{% endif %}" href="{% url 'properties:services' %}">Послуги</a>
                 <a class="nav-link{% if current_url_name == 'accessibility_levels' %} active{% endif %}" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
-                <a class="nav-link{% if current_url_name == 'contact' %} active{% endif %}" href="{% url 'properties:contact' %}">Контакти</a>
+                <a class="nav-link{% if current_url_name == 'services' %} active{% endif %}" href="{% url 'properties:services' %}">Послуги</a>
+                <a class="nav-link{% if current_url_name == 'about' %} active{% endif %}" href="{% url 'properties:about' %}">Про нас</a>
                 {% if user.is_authenticated %}
                 <a class="nav-link{% if current_url_name == 'profile' %} active{% endif %}" href="{% url 'properties:profile' %}">Профіль</a>
-                <a class="nav-link{% if current_url_name == 'add_listing' %} active{% endif %}" href="{% url 'properties:add_listing' %}">Додати оголошення</a>
                 <a class="nav-link" href="{% url 'properties:logout' %}">Вихід</a>
+                <a class="btn btn-nav-buy ms-2" href="{% url 'properties:home' %}?type=sale">Купити</a>
                 {% else %}
                 <a class="nav-link{% if current_url_name == 'auth' or current_url_name == 'login' or current_url_name == 'register' %} active{% endif %}" href="{% url 'properties:auth' %}">Увійти / Реєстрація</a>
-                <a class="nav-link{% if current_url_name == 'add_listing' %} active{% endif %}" href="{% url 'properties:auth' %}?next={{ add_listing_url|urlencode }}">Додати оголошення</a>
+                <a class="btn btn-nav-buy ms-2" href="{% url 'properties:home' %}?type=sale">Купити</a>
                 {% endif %}
             </nav>
             <button class="navbar-toggler d-lg-none border-0 p-2 ms-auto rounded-2" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse" aria-controls="navCollapse" aria-expanded="false" aria-label="Меню" style="background: var(--accent-soft);">
@@ -405,18 +463,17 @@
         <div class="collapse d-lg-none" id="navCollapse">
             <div class="wrap py-3 border-top" style="border-color: var(--border) !important;">
                 <a class="d-block py-2 nav-link{% if current_url_name == 'index' %} active{% endif %}" href="{% url 'properties:index' %}">Головна</a>
-                <a class="d-block py-2 nav-link{% if current_url_name == 'about' %} active{% endif %}" href="{% url 'properties:about' %}">Про нас</a>
                 <a class="d-block py-2 nav-link{% if current_url_name == 'home' %} active{% endif %}" href="{% url 'properties:home' %}">Каталог</a>
-                <a class="d-block py-2 nav-link{% if current_url_name == 'services' %} active{% endif %}" href="{% url 'properties:services' %}">Послуги</a>
                 <a class="d-block py-2 nav-link{% if current_url_name == 'accessibility_levels' %} active{% endif %}" href="{% url 'properties:accessibility_levels' %}">Рівні</a>
-                <a class="d-block py-2 nav-link{% if current_url_name == 'contact' %} active{% endif %}" href="{% url 'properties:contact' %}">Контакти</a>
+                <a class="d-block py-2 nav-link{% if current_url_name == 'services' %} active{% endif %}" href="{% url 'properties:services' %}">Послуги</a>
+                <a class="d-block py-2 nav-link{% if current_url_name == 'about' %} active{% endif %}" href="{% url 'properties:about' %}">Про нас</a>
                 {% if user.is_authenticated %}
                 <a class="d-block py-2 nav-link{% if current_url_name == 'profile' %} active{% endif %}" href="{% url 'properties:profile' %}">Профіль</a>
-                <a class="d-block py-2 nav-link{% if current_url_name == 'add_listing' %} active{% endif %}" href="{% url 'properties:add_listing' %}">Додати оголошення</a>
                 <a class="d-block py-2 nav-link" href="{% url 'properties:logout' %}">Вихід</a>
+                <a class="btn btn-nav-buy mt-2 w-100" href="{% url 'properties:home' %}?type=sale">Купити</a>
                 {% else %}
                 <a class="d-block py-2 nav-link{% if current_url_name == 'auth' or current_url_name == 'login' or current_url_name == 'register' %} active{% endif %}" href="{% url 'properties:auth' %}">Увійти / Реєстрація</a>
-                <a class="d-block py-2 nav-link" href="{% url 'properties:auth' %}?next={{ add_listing_url|urlencode }}">Додати оголошення</a>
+                <a class="btn btn-nav-buy mt-2 w-100" href="{% url 'properties:home' %}?type=sale">Купити</a>
                 {% endif %}
             </div>
         </div>
@@ -436,27 +493,104 @@
 
     <footer>
         <div class="wrap">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="brand text-white mb-2" style="font-size: 1.125rem;">mobi home</div>
-                    <p class="small mb-0 opacity-80">Система підбору та оголошень житла без бар'єрів.</p>
+            <div class="row g-5">
+                <!-- Колонна 1: Про проект -->
+                <div class="col-lg-4 col-md-12">
+                    <div class="brand text-white">mobi Home</div>
+                    <p class="mb-4 opacity-70" style="max-width: 320px; line-height: 1.6;">
+                        Ваш надійний провідник у світі безбар'єрної нерухомості. Ми оцифровуємо доступність, щоб кожен міг знайти свій ідеальний дім.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="https://facebook.com/mobi.home.ua" class="social-link opacity-60 hover-opacity-100" target="_blank" rel="noopener">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
+                        </a>
+                        <a href="https://instagram.com/mobi.home.ua" class="social-link opacity-60 hover-opacity-100" target="_blank" rel="noopener">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.282.11-.705.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <p class="small mb-2 fw-600 opacity-80">Розділи</p>
-                    <a href="{% url 'properties:index' %}" class="d-block small mb-1">Головна</a>
-                    <a href="{% url 'properties:about' %}" class="d-block small mb-1">Про нас</a>
-                    <a href="{% url 'properties:home' %}" class="d-block small mb-1">Каталог</a>
-                    <a href="{% url 'properties:contact' %}" class="d-block small mb-1">Контакти</a>
+
+                <!-- Колонна 2: Навігація -->
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="footer-title">Навігація</div>
+                    <ul class="list-unstyled d-grid gap-2">
+                        <li><a href="{% url 'properties:index' %}">Головна</a></li>
+                        <li><a href="{% url 'properties:home' %}">Каталог</a></li>
+                        <li><a href="{% url 'properties:services' %}">Послуги</a></li>
+                        <li><a href="{% url 'properties:about' %}">Про нас</a></li>
+                    </ul>
                 </div>
-                <div class="col-md-4">
-                    <p class="small mb-2 fw-600 opacity-80">Контакти</p>
-                    <p class="small mb-1">м. Київ, вул. Хрещатик, 1</p>
-                    <p class="small mb-0"><a href="tel:+380441234567">+38 (044) 123-45-67</a></p>
+
+                <!-- Колонна 3: Нерухомість -->
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="footer-title">Нерухомість</div>
+                    <ul class="list-unstyled d-grid gap-2">
+                        <li><a href="{% url 'properties:home' %}?type=sale">Купити</a></li>
+                        <li><a href="{% url 'properties:home' %}?type=rent">Орендувати</a></li>
+                        <li><a href="{% url 'properties:accessibility_levels' %}">Рівні доступності</a></li>
+                        <li><a href="{% url 'properties:home' %}?has_audit=1">Об'єкти з аудитом</a></li>
+                    </ul>
+                </div>
+
+                <!-- Колонна 4: Контакти -->
+                <div class="col-lg-4 col-md-4">
+                    <div class="footer-title">Контакти</div>
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--accent-warm)" class="bi bi-geo-alt" viewBox="0 0 16 16"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/><path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+                        <span>м. Київ, Україна</span>
+                    </div>
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--accent-warm)" class="bi bi-telephone" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.884.511z"/></svg>
+                        <a href="tel:+380991234567" style="opacity: 0.8;">+38 (099) 123-45-67</a>
+                    </div>
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--accent-warm)" class="bi bi-envelope" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/></svg>
+                        <a href="mailto:info@mobi-home.ua" style="opacity: 0.8;">info@mobi-home.ua</a>
+                    </div>
                 </div>
             </div>
-            <p class="small mt-4 mb-0 opacity-60">&copy; {% now "Y" %} mobi home</p>
+            <div class="mt-5 pt-4 border-top d-flex flex-wrap justify-content-between gap-3" style="border-color: rgba(255,255,255,0.05) !important;">
+                <p class="small mb-0 opacity-40">&copy; {% now "Y" %} mobi Home. Платформа інклюзивної нерухомості.</p>
+                <div class="d-flex gap-4">
+                    <a href="{% url 'properties:privacy_policy' %}" class="small opacity-40">Політика конфіденційності</a>
+                    <a href="{% url 'properties:terms_of_service' %}" class="small opacity-40">Правила сервісу</a>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Віджет допомоги -->
+    <div id="supportWidget" class="support-widget" style="position: fixed; bottom: 30px; right: 30px; z-index: 1050; display: flex; flex-direction: column; align-items: flex-end;">
+        <!-- Expanded state (Popup Card) -->
+        <div id="supportWidgetPopup" class="card shadow-lg support-widget-popup mb-3" style="width: 320px; display: none; border-radius: 16px; border: 1px solid var(--border); background: var(--bg-card); opacity: 0; transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); transform: translateY(20px) scale(0.95); transform-origin: bottom right;">
+            <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold" style="color: var(--text);">Потрібна допомога?</h5>
+                <button type="button" class="btn-close" id="supportWidgetClose" aria-label="Закрити"></button>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3" style="line-height: 1.5;">Наші консультанти підберуть варіанти за вашими критеріями доступності та бюджетом.</p>
+                <div class="d-flex flex-column gap-2 mb-3">
+                    <a href="tel:+380991234567" class="btn btn-light d-flex justify-content-start align-items-center gap-2" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; padding: 0.6rem 1rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--accent)" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/></svg>
+                        +38 (099) 123-45-67
+                    </a>
+                    <a href="mailto:support@mobi-home.ua" class="btn btn-light d-flex justify-content-start align-items-center gap-2" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; padding: 0.6rem 1rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--accent)" viewBox="0 0 16 16"><path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/></svg>
+                        support@mobi-home.ua
+                    </a>
+                </div>
+                <a href="{% url 'properties:contact' %}" class="btn btn-primary w-100 py-2" style="border-radius: 12px; font-weight: 600;">Написати нам</a>
+            </div>
+        </div>
+
+        <!-- Collapsed state (Phone Icon) -->
+        <button id="supportWidgetBtn" class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center p-0" style="width: 60px; height: 60px; background-color: #25D366; color: white; border: none; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" style="color: white !important;" class="bi bi-telephone-fill phone-ring-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/></svg>
+            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" id="supportWidgetDot" style="display: none;">
+                <span class="visually-hidden">Нові повідомлення</span>
+            </span>
+        </button>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -495,6 +629,79 @@
         c.forEach(function(el){ io.observe(el); });
     })();
     </script>
+    <script>
+    (function(){
+        // Support Widget Logic
+        var supportBtn = document.getElementById('supportWidgetBtn');
+        var supportPopup = document.getElementById('supportWidgetPopup');
+        var supportClose = document.getElementById('supportWidgetClose');
+        var supportDot = document.getElementById('supportWidgetDot');
+        var hasOpened = false;
+        
+        function openSupport() {
+            supportPopup.style.display = 'block';
+            // Trigger reflow
+            void supportPopup.offsetWidth;
+            supportPopup.style.opacity = '1';
+            supportPopup.style.transform = 'translateY(0) scale(1)';
+            supportBtn.style.transform = 'scale(0.85)';
+            supportDot.style.display = 'none';
+            hasOpened = true;
+        }
+
+        function closeSupport() {
+            supportPopup.style.opacity = '0';
+            supportPopup.style.transform = 'translateY(20px) scale(0.95)';
+            supportBtn.style.transform = 'scale(1)';
+            setTimeout(function() {
+                supportPopup.style.display = 'none';
+            }, 400);
+        }
+
+        supportBtn.addEventListener('click', function() {
+            if (supportPopup.style.opacity === '1') {
+                closeSupport();
+            } else {
+                openSupport();
+            }
+        });
+
+        supportClose.addEventListener('click', closeSupport);
+
+        // Auto open after 1 minute (60000 ms)
+        setTimeout(function() {
+            if (!hasOpened && supportPopup.style.display !== 'block') {
+                // Play notification sound or animation
+                supportBtn.style.animation = 'pulse 1.5s infinite';
+                supportDot.style.display = 'inline-block';
+                openSupport();
+                setTimeout(function() {
+                    supportBtn.style.animation = 'none';
+                }, 3000);
+            }
+        }, 60000);
+    })();
+    </script>
+    <style>
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        @keyframes ring {
+            0% { transform: rotate(0); }
+            10% { transform: rotate(15deg); }
+            20% { transform: rotate(-10deg); }
+            30% { transform: rotate(15deg); }
+            40% { transform: rotate(-10deg); }
+            50% { transform: rotate(0); }
+            100% { transform: rotate(0); }
+        }
+        .phone-ring-icon {
+            animation: ring 2s infinite ease-in-out;
+            transform-origin: center center;
+        }
+    </style>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -2,108 +2,281 @@
 {% block title %}Оплата підвищеної видимості — mobi home{% endblock %}
 
 {% block content %}
-<div class="wrap">
-<div class="row g-4">
-    <div class="col-lg-5">
-        <div class="card card-premium mb-4">
-            <div class="card-body p-4">
-                <h1 class="h5 mb-2" style="color: var(--text);">Підвищена видимість</h1>
-                <p class="text-muted small mb-2">Оголошення: <strong style="color: var(--text);">{{ property.name }}</strong></p>
-                <p class="small mb-3">Оголошення буде опубліковано та показуватиметься <strong>вище в каталозі</strong>.</p>
-                <div class="d-flex align-items-baseline gap-2">
-                    <span class="payment-price" style="font-size: 1.75rem; font-weight: 700; color: var(--accent);">{{ featured_price }} грн</span>
-                    <span class="text-muted small">одноразово</span>
+<style>
+/* PayPal Layout fitted to Site Theme */
+.paypal-card {
+    background-color: var(--bg-card);
+    color: var(--text);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+    text-align: left;
+}
+.paypal-card hr {
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+    opacity: 1;
+}
+.paypal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2.5rem 0;
+}
+.paypal-header .price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+}
+.paypal-body {
+    padding: 0 2.5rem 2.5rem;
+}
+.paypal-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+.paypal-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+/* Inputs */
+.paypal-card .form-floating > .form-control,
+.paypal-card .form-floating > .form-select {
+    height: 3.5rem;
+    line-height: 1.25;
+    background-color: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+.paypal-card .form-floating > .form-control:focus,
+.paypal-card .form-floating > .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+.paypal-card .form-floating > label {
+    color: var(--text-muted);
+    padding: 1rem 0.75rem;
+}
+.paypal-card .form-floating > .form-control:focus ~ label,
+.paypal-card .form-floating > .form-control:not(:placeholder-shown) ~ label,
+.paypal-card .form-floating > .form-select ~ label {
+    opacity: 1;
+    color: var(--text-muted) !important;
+    transform: scale(.85) translateY(-.6rem) translateX(.15rem);
+    background-color: transparent !important;
+}
+.paypal-card .form-floating > label::after {
+    background-color: transparent !important;
+}
+/* Fix Chrome autofill background in dark mode */
+.paypal-card .form-control:-webkit-autofill,
+.paypal-card .form-control:-webkit-autofill:hover, 
+.paypal-card .form-control:-webkit-autofill:focus, 
+.paypal-card .form-control:-webkit-autofill:active,
+.paypal-card .form-select:-webkit-autofill,
+.paypal-card .form-select:-webkit-autofill:hover, 
+.paypal-card .form-select:-webkit-autofill:focus, 
+.paypal-card .form-select:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--bg-card) inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+.paypal-card .card-logos {
+    background-color: var(--bg-body);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1rem;
+}
+.paypal-card .card-logos img {
+    height: 22px;
+    border-radius: 2px;
+}
+.paypal-btn {
+    background-color: #0070ba;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.85rem 1.5rem;
+    width: 100%;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+}
+.paypal-btn:hover {
+    background-color: #005ea6;
+}
+.paypal-form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+.form-check-label {
+    font-size: 0.95rem;
+    color: var(--text);
+}
+.form-check-input:checked {
+    background-color: #0070ba;
+    border-color: #0070ba;
+}
+.paypal-input-icon {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+</style>
+
+<div class="wrap paypal-checkout-bg">
+<div class="row justify-content-center m-0">
+    <div class="col-12 col-md-10 col-lg-7 col-xl-6">
+        <div class="card paypal-card">
+            
+            <div class="paypal-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="28" alt="PayPal">
+                <div class="price">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-cart3 me-1" viewBox="0 0 16 16" style="vertical-align: -0.15em;">
+                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg> {{ featured_price }},00 UAH <i class="bi bi-chevron-down" style="font-size: 0.8rem; color: #6c7378;"></i>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-lg-7">
-        <div class="card card-premium">
-            <div class="card-body p-4">
-                <h2 class="h6 mb-3" style="color: var(--text);">Дані картки</h2>
-                <form method="post" action="" id="paymentForm" class="payment-form">
+            
+            <hr>
+            
+            <div class="paypal-body">
+                <h1 class="paypal-title">Оплатити банківською карткою</h1>
+                <p class="paypal-subtitle">Ваші фінансові дані не розкриваються продавцю.</p>
+                
+                <form method="post" action="">
                     {% csrf_token %}
-                    {% if form.non_field_errors %}<div class="alert alert-danger py-2 small mb-3">{{ form.non_field_errors.0 }}</div>{% endif %}
-                    <div class="mb-3">
-                        <label for="id_card_holder" class="form-label small" style="color: var(--text);">{{ form.card_holder.label }} *</label>
-                        {{ form.card_holder }}
-                        {% if form.card_holder.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.card_holder.errors.0 }}</div>{% endif %}
+                    
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="countrySelect">
+                            <option selected>Україна</option>
+                            <option>Польща</option>
+                            <option>США</option>
+                        </select>
+                        <label for="countrySelect">Країна/регіон</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="id_card_number" class="form-label small" style="color: var(--text);">{{ form.card_number.label }} *</label>
-                        {{ form.card_number }}
-                        {% if form.card_number.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.card_number.errors.0 }}</div>{% endif %}
+                    
+                    <div class="card-logos d-flex align-items-center" style="gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60" width="36" height="24" style="background:#fff;border-radius:3px;padding:2px; border: 1px solid var(--border);">
+                            <circle cx="34" cy="30" r="20" fill="#EB001B"/>
+                            <circle cx="66" cy="30" r="20" fill="#F79E1B"/>
+                            <path d="M50 18A20 20 0 0 0 50 42 20 20 0 0 0 50 18Z" fill="#FF5F00"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 120" width="36" height="24" style="background:#fff;border-radius:3px;padding:2px 4px; border: 1px solid var(--border);">
+                            <path fill="#1434CB" d="M141.5 3h-34.4L88.2 117h35.8l18.8-114zm110 0h-27.4c-6.8 0-12.7 3.8-15.5 9.7L181.8 117h37.4l7.4-20.7h44.9l4.3 20.7h35L290.7 3h-39.2zm8.5 45.4l11.1-30 6.3 30h-17.4zM96.7 3H50.5L30 83 23 16C21.7 6.4 14.2 3 6.9 3H0l1.4 6.7c7 .2 15 2 19.8 4.7 3 1.6 4.7 3.8 5.6 7.4L44.7 117h37.7L117.8 3H96.7z M384 3h-28l-18 63.8c-2 6-4.6 11-8.3 14.8-4.2 4-10 6.3-17 6.3h-10l-1.3 6.5c8.6 0 17-2.3 23.6-6.8 6.4-4.4 10-10.7 12.3-18L384 3z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60" width="36" height="24" style="background:#2671B9;border-radius:3px;padding:2px; border: 1px solid var(--border);">
+                            <text x="50%" y="56%" font-family="Arial, sans-serif" font-weight="bold" font-size="28" fill="#fff" text-anchor="middle" dominant-baseline="middle" letter-spacing="-1">AMEX</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60" width="36" height="24" style="background:#fff;border-radius:3px;padding:2px; border: 1px solid var(--border);">
+                            <circle cx="34" cy="30" r="20" fill="#0064C8"/>
+                            <circle cx="66" cy="30" r="20" fill="#EB001B"/>
+                            <path d="M50 18A20 20 0 0 0 50 42 20 20 0 0 0 50 18Z" fill="#818285"/>
+                        </svg>
                     </div>
-                    <div class="row g-2">
-                        <div class="col-4">
-                            <label for="id_expiry_month" class="form-label small" style="color: var(--text);">{{ form.expiry_month.label }} *</label>
-                            {{ form.expiry_month }}
-                            {% if form.expiry_month.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.expiry_month.errors.0 }}</div>{% endif %}
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="cardNumber" placeholder="Номер картки" required autocomplete="off">
+                        <label for="cardNumber">Номер картки</label>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="cardExpiry" placeholder="Дійсна до" required autocomplete="off">
+                                <label for="cardExpiry">Дійсна до</label>
+                            </div>
                         </div>
-                        <div class="col-4">
-                            <label for="id_expiry_year" class="form-label small" style="color: var(--text);">{{ form.expiry_year.label }} *</label>
-                            {{ form.expiry_year }}
-                            {% if form.expiry_year.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.expiry_year.errors.0 }}</div>{% endif %}
-                        </div>
-                        <div class="col-4">
-                            <label for="id_cvc" class="form-label small" style="color: var(--text);">{{ form.cvc.label }} *</label>
-                            {{ form.cvc }}
-                            {% if form.cvc.errors %}<div class="invalid-feedback d-block small" style="color: var(--accent);">{{ form.cvc.errors.0 }}</div>{% endif %}
+                        <div class="col-6">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control" id="cardCVC" placeholder="Код безпеки" required autocomplete="off">
+                                <label for="cardCVC">Код безпеки</label>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-credit-card-2-front paypal-input-icon" viewBox="0 0 16 16">
+                                  <path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"/>
+                                  <path d="M2 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-4 d-flex flex-wrap gap-2">
-                        <button type="submit" class="btn btn-primary px-4 py-2">Оплатити {{ featured_price }} грн</button>
-                        <a href="{% url 'properties:property_detail' property.pk %}#propertyContact" class="btn btn-outline-secondary py-2">Назад</a>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastName" placeholder="Прізвище" required>
+                                <label for="lastName">Прізвище</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstName" placeholder="Ім'я" required>
+                                <label for="firstName">Ім'я</label>
+                            </div>
+                        </div>
                     </div>
-                    <p class="small text-muted mt-3 mb-0">Для прийому реальних платежів можна підключити <strong>LiqPay</strong> або <strong>Stripe</strong> через API мерчанта.</p>
+                    
+                    <h3 class="paypal-form-section-title">Адреса для виставлення рахунків</h3>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="address" placeholder="Вулиця, будинок, квартира" required>
+                        <label for="address">Вулиця, будинок, квартира</label>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="city" placeholder="Населений пункт (місто, село)" required>
+                        <label for="city">Населений пункт (місто, село)</label>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="state" placeholder="Область, район" required>
+                                <label for="state">Область, район</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="zip" placeholder="Індекс" required>
+                                <label for="zip">Індекс</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating mb-4">
+                        <input type="text" class="form-control" id="phone" placeholder="Номер мобільного телефону" required>
+                        <label for="phone">Номер мобільного телефону</label>
+                    </div>
+                    
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" value="" id="shippingAddressCheck" checked style="width: 1.25rem; height: 1.25rem; margin-top: 0.15rem;">
+                        <label class="form-check-label ms-2" for="shippingAddressCheck">
+                            Зберегти інформацію для наступних платежів
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="paypal-btn">Продовжити</button>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'properties:property_detail' property.pk %}#propertyContact" class="text-decoration-none" style="color: #0070ba; font-weight: 600; font-size: 0.9rem;">Скасувати та повернутися на сайт</a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 </div>
-
-<script>
-(function() {
-    var form = document.getElementById('paymentForm');
-    if (!form) return;
-    var cardNumber = form.querySelector('#id_card_number');
-    var expiryMonth = form.querySelector('#id_expiry_month');
-    var expiryYear = form.querySelector('#id_expiry_year');
-    var cvc = form.querySelector('#id_cvc');
-
-    if (cardNumber) {
-        cardNumber.addEventListener('input', function() {
-            var v = this.value.replace(/\D/g, '');
-            if (v.length > 16) v = v.slice(0, 16);
-            var parts = [];
-            for (var i = 0; i < v.length; i += 4) parts.push(v.slice(i, i + 4));
-            this.value = parts.join(' ');
-        });
-    }
-    if (expiryMonth) {
-        expiryMonth.addEventListener('input', function() {
-            var v = parseInt(this.value, 10);
-            if (v > 12) this.value = 12;
-            if (v < 1 && this.value !== '') this.value = 1;
-        });
-        expiryMonth.setAttribute('max', '12');
-        expiryMonth.setAttribute('min', '1');
-    }
-    if (expiryYear) {
-        expiryYear.addEventListener('input', function() {
-            var v = parseInt(this.value, 10);
-            var y = new Date().getFullYear();
-            if (this.value.length === 4 && v < y) this.value = y;
-            if (v > 2040) this.value = 2040;
-        });
-        if (!expiryYear.getAttribute('min')) expiryYear.setAttribute('min', new Date().getFullYear());
-    }
-    if (cvc) {
-        cvc.addEventListener('input', function() {
-            this.value = this.value.replace(/\D/g, '').slice(0, 4);
-        });
-    }
-})();
-</script>
 {% endblock %}

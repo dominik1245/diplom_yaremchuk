@@ -10,13 +10,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
-from django.db.models import Case, Count, IntegerField, Q, Value, When
+from django.db.models import Avg, Case, Count, IntegerField, Q, Value, When
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
-from .forms import AccessibilityAuditForm, AddListingForm, PaymentForm, RegisterForm
+from .forms import AccessibilityAuditForm, AddListingForm, PaymentForm, RegisterForm, UserProfileForm, ReviewForm
 from .mobility import MOBILITY_LEVELS
 from .models import (
     AccessibilityAudit,
@@ -27,6 +28,7 @@ from .models import (
     Property,
     PropertyFavorite,
     PropertyPhoto,
+    ProfileReview,
     score_to_status,
 )
 
@@ -41,6 +43,7 @@ CITY_COORDINATES = {
     "Вінниця": (49.2328, 28.4681),
     "Чернівці": (48.2917, 25.9352),
     "Івано-Франківськ": (48.9226, 24.7111),
+    "Долобів": (49.6365, 23.4728),
 }
 
 PROPERTIES_PER_PAGE = 9
@@ -106,6 +109,16 @@ def contact(request):
         )
         return redirect("properties:contact")
     return render(request, "properties/contact.html")
+
+
+def privacy_policy(request):
+    """Сторінка політики конфіденційності."""
+    return render(request, "properties/privacy_policy.html")
+
+
+def terms_of_service(request):
+    """Сторінка правил сервісу."""
+    return render(request, "properties/terms_of_service.html")
 
 
 def home(request):
@@ -462,40 +475,33 @@ def property_detail(request, pk):
 
         rows = [
             (
-                "Вхід",
-                audit.entrance_access,
+                "Вхід до будинку (пандус, сходи)",
+                f"{audit.entrance_access}/10" if audit.entrance_access else "—",
                 get_status_display(audit.entrance_access),
                 audit.entrance_comment,
             ),
             (
-                "Ліфт (ширина см)",
-                audit.lift_width_cm,
-                f"{audit.lift_score}/10" if audit.lift_score is not None else "—",
+                "Ширина дверного прорізу ліфта",
+                f"{audit.lift_width_cm} см" if audit.lift_width_cm else "—",
+                get_status_display(audit.lift_score),
                 audit.lift_comment,
             ),
-            ("Статус ліфта", audit.lift_score, get_status_display(audit.lift_score), ""),
             (
-                "Тип санвузлу",
+                "Зручність санвузлу",
                 audit.get_bathroom_type_display() if audit.bathroom_type else "—",
-                "—",
+                "Ідеально" if audit.bathroom_type == BathroomType.SHOWER_DRAIN else ("Потребує покращення" if audit.bathroom_type else "—"),
                 audit.bathroom_comment,
             ),
             (
-                "Пороги (макс. см)",
-                audit.thresholds_max_height_cm,
+                "Висота порогів у приміщенні",
+                f"{audit.thresholds_max_height_cm} см" if audit.thresholds_max_height_cm is not None else "—",
                 get_status_display(audit.thresholds_score),
                 audit.thresholds_comment,
             ),
             (
-                "Статус порогів",
-                audit.thresholds_score,
-                get_status_display(audit.thresholds_score),
-                "",
-            ),
-            (
-                "Радіус для розвороту",
-                "Так" if audit.turning_radius_exists else "Ні",
-                "—",
+                "Простір для розвороту на візку",
+                "Достатньо" if audit.turning_radius_exists else "Обмежений",
+                "Ідеально" if audit.turning_radius_exists else "Важкодоступно",
                 audit.turning_comment,
             ),
         ]
@@ -539,8 +545,15 @@ def delete_property(request, pk):
     return render(request, "properties/property_confirm_delete.html", {"property": prop})
 
 
+@login_required(login_url="/auth/")
 def auditor_form(request, pk=None):
     """Форма аудитора для додавання/редагування результатів перевірки."""
+    if not request.user.is_staff:
+        messages.error(request, "Форму аудиту може заповнювати тільки адміністратор.")
+        if pk:
+            return redirect("properties:property_detail", pk=pk)
+        return redirect("properties:home")
+
     if pk:
         prop = get_object_or_404(Property, pk=pk)
         audit = getattr(prop, "audit", None)
@@ -649,9 +662,10 @@ def register(request):
     if request.user.is_authenticated:
         return redirect("properties:add_listing")
     next_url = request.GET.get("next", "")
-    return redirect(
-        "properties:auth" + ("?tab=register&next=" + next_url if next_url else "?tab=register")
-    )
+    url = reverse("properties:auth")
+    if next_url:
+        return redirect(f"{url}?tab=register&next={next_url}")
+    return redirect(f"{url}?tab=register")
 
 
 def login_view(request):
@@ -659,7 +673,8 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect("properties:add_listing")
     qs = request.GET.urlencode()
-    return redirect("properties:auth" + ("?" + qs) if qs else "properties:auth")
+    url = reverse("properties:auth")
+    return redirect(f"{url}?{qs}" if qs else url)
 
 
 @login_required(login_url="/auth/")
@@ -681,7 +696,40 @@ def add_listing(request):
             messages.error(request, "Виправте помилки у формі.")
     else:
         form = AddListingForm()
-    return render(request, "properties/add_listing.html", {"form": form})
+        
+    # Групування зручностей для шаблону
+    from .models import Feature
+    features = Feature.objects.all().order_by('category', 'name')
+    raw_groups = {}
+    for feature in features:
+        cat = feature.category or 'other'
+        if cat not in raw_groups:
+            raw_groups[cat] = []
+        raw_groups[cat].append(feature)
+        
+    ordered_groups = []
+    category_names = {
+        'apartment': 'В квартирі',
+        'building': 'В будинку та на території',
+        'rules': 'Правила проживання',
+    }
+    for cat_key in ['apartment', 'building', 'rules', 'other']:
+        if cat_key in raw_groups:
+            ordered_groups.append({
+                'name': category_names.get(cat_key, 'Інше'),
+                'features': raw_groups[cat_key]
+            })
+            
+    # Список вибраних зручностей (для збереження стану при помилках валідації)
+    checked_features = form['features'].value() or []
+    checked_features = [str(x) for x in checked_features]
+
+    context = {
+        "form": form,
+        "grouped_features": ordered_groups,
+        "checked_features": checked_features,
+    }
+    return render(request, "properties/add_listing.html", context)
 
 
 def logout_view(request):
@@ -717,14 +765,76 @@ def toggle_favorite(request, pk):
 @login_required(login_url="/auth/")
 def profile(request):
     """Сторінка профілю: дані користувача, його оголошення та обрані."""
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Профіль оновлено.")
+            return redirect("properties:profile")
+    else:
+        form = UserProfileForm(instance=request.user)
+
     user_listings = Property.objects.filter(owner=request.user).order_by("-created_at")
     favorite_listings = (
         Property.objects.filter(favorited_by__user=request.user)
         .order_by("-favorited_by__created_at")
         .distinct()
     )
-    context = {"user_listings": user_listings, "favorite_listings": favorite_listings}
+    
+    reviews = ProfileReview.objects.filter(target_user=request.user)
+    avg_rating = reviews.aggregate(Avg("rating"))["rating__avg"]
+
+    context = {
+        "user_listings": user_listings, 
+        "favorite_listings": favorite_listings,
+        "form": form,
+        "reviews": reviews,
+        "avg_rating": avg_rating,
+    }
     return render(request, "properties/profile.html", context)
+
+
+def public_profile(request, username):
+    """Публічний профіль користувача для перегляду та оцінки."""
+    target_user = get_object_or_404(User, username=username)
+    user_listings = Property.objects.filter(owner=target_user, is_published=True).order_by("-created_at")
+    reviews = ProfileReview.objects.filter(target_user=target_user)
+    avg_rating = reviews.aggregate(Avg("rating"))["rating__avg"]
+
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.error(request, "Увійдіть, щоб залишити відгук.")
+            return redirect("properties:public_profile", username=username)
+        if request.user == target_user:
+            messages.error(request, "Ви не можете оцінювати самі себе.")
+            return redirect("properties:public_profile", username=username)
+            
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.author = request.user
+            review.target_user = target_user
+            existing = ProfileReview.objects.filter(author=request.user, target_user=target_user).first()
+            if existing:
+                existing.rating = review.rating
+                existing.text = review.text
+                existing.save()
+                messages.success(request, "Ваш відгук оновлено.")
+            else:
+                review.save()
+                messages.success(request, "Ваш відгук додано.")
+            return redirect("properties:public_profile", username=username)
+    else:
+        form = ReviewForm()
+
+    context = {
+        "target_user": target_user,
+        "user_listings": user_listings,
+        "reviews": reviews,
+        "avg_rating": avg_rating,
+        "form": form,
+    }
+    return render(request, "properties/public_profile.html", context)
 
 
 def payment(request, pk):
@@ -809,27 +919,23 @@ def payment_paid(request, pk):
     )
     FEATURED_PRICE = 99
     if request.method == "POST":
-        form = PaymentForm(request.POST)
-        if form.is_valid():
-            now = timezone.now()
-            promo_days = 30
-            # Після оплати даємо оголошенню підвищену видимість (а користувача перекидаємо до контактів продавця).
-            if prop.featured_until and prop.featured_until > now:
-                prop.featured_until = prop.featured_until + timedelta(days=promo_days)
-            else:
-                prop.featured_until = now + timedelta(days=promo_days)
-            prop.is_published = True
-            prop.is_featured = True
-            prop.save(update_fields=["is_published", "is_featured", "featured_until"])
-            messages.success(
-                request, f"Оплата {FEATURED_PRICE} грн прийнята. Доступ до контактів надається."
-            )
-            return redirect(property_detail_url)
-        messages.error(request, "Перевірте дані картки.")
-    else:
-        form = PaymentForm()
+        now = timezone.now()
+        promo_days = 30
+        # Після оплати даємо оголошенню підвищену видимість (а користувача перекидаємо до контактів продавця).
+        if prop.featured_until and prop.featured_until > now:
+            prop.featured_until = prop.featured_until + timedelta(days=promo_days)
+        else:
+            prop.featured_until = now + timedelta(days=promo_days)
+        prop.is_published = True
+        prop.is_featured = True
+        prop.save(update_fields=["is_published", "is_featured", "featured_until"])
+        messages.success(
+            request, f"Оплата {FEATURED_PRICE} грн через PayPal прийнята. Доступ до контактів надається."
+        )
+        return redirect(property_detail_url)
+
     return render(
         request,
         "properties/payment_paid.html",
-        {"property": prop, "featured_price": FEATURED_PRICE, "form": form},
+        {"property": prop, "featured_price": FEATURED_PRICE},
     )

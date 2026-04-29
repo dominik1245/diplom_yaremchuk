@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Правила сервісу — mobi Home{% endblock %}
+
+{% block content %}
+<div class="wrap py-5">
+    <div class="card card-premium p-4 p-md-5 animate-on-scroll">
+        <h1 class="mb-4" style="color: var(--text);">Правила сервісу</h1>
+        <p class="text-muted small mb-4">Останнє оновлення: {% now "d.m.Y" %}</p>
+        
+        <div class="terms-content" style="color: var(--text); line-height: 1.8;">
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">1. Прийняття умов</h2>
+                <p>Використовуючи платформу mobi Home, ви погоджуєтеся з цими Правилами сервісу. Якщо ви не згодні з будь-якою частиною цих умов, ви не можете використовувати наш сервіс.</p>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">2. Обов'язки користувача</h2>
+                <p>Користувач зобов'язується:</p>
+                <ul>
+                    <li>Надавати правдиву інформацію про об'єкти нерухомості;</li>
+                    <li>Не публікувати контент, що порушує законодавство України;</li>
+                    <li>Не використовувати сервіс для шахрайських дій.</li>
+                </ul>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">3. Відповідальність</h2>
+                <p>mobi Home є платформою для розміщення оголошень. Ми не несемо відповідальності за зміст оголошень, розміщених користувачами, проте залишаємо за собою право видаляти оголошення, що порушують правила або мають ознаки шахрайства.</p>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3" style="color: var(--accent);">4. Платні послуги</h2>
+                <p>Платні послуги (підвищення видимості оголошень) надаються на умовах повної передоплати. Повернення коштів за активовані послуги не здійснюється.</p>
+            </section>
+        </div>
+        
+        <div class="mt-5">
+            <a href="{% url 'properties:index' %}" class="btn btn-outline-primary">Повернутися на головну</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

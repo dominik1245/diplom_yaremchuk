@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Каталог — mobi home{% endblock %}
+{% block title %}Каталог — mobi Home{% endblock %}
 
 {% block content %}
 <div class="wrap">
@@ -76,23 +76,18 @@
         </div>
         <div class="col-12">
             <label class="form-label small mb-1 d-block" style="color: var(--text);">Доступність</label>
-            <div class="d-flex flex-wrap gap-3">
-                <div class="form-check mb-0">
-                <input class="form-check-input" type="checkbox" name="lift_80" value="1" id="lift_80" {% if filter_lift %}checked{% endif %}>
-                    <label class="form-check-label" for="lift_80" style="color: var(--text);">Ліфт &gt; 80 см</label>
-            </div>
-                <div class="form-check mb-0">
-                <input class="form-check-input" type="checkbox" name="shower_drain" value="1" id="shower_drain" {% if filter_shower %}checked{% endif %}>
-                    <label class="form-check-label" for="shower_drain" style="color: var(--text);">Душ-трап</label>
-            </div>
-                <div class="form-check mb-0">
-                <input class="form-check-input" type="checkbox" name="no_thresholds" value="1" id="no_thresholds" {% if filter_no_thresholds %}checked{% endif %}>
-                    <label class="form-check-label" for="no_thresholds" style="color: var(--text);">Без порогів</label>
-                </div>
-                <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" name="turning_radius" value="1" id="turning_radius" {% if filter_turning %}checked{% endif %}>
-                    <label class="form-check-label" for="turning_radius" style="color: var(--text);">Радіус для розвороту</label>
-                </div>
+            <div class="d-flex flex-wrap gap-2">
+                <input class="btn-check" type="checkbox" name="lift_80" value="1" id="lift_80" {% if filter_lift %}checked{% endif %}>
+                <label class="filter-chip" for="lift_80">Ліфт &gt; 80 см</label>
+
+                <input class="btn-check" type="checkbox" name="shower_drain" value="1" id="shower_drain" {% if filter_shower %}checked{% endif %}>
+                <label class="filter-chip" for="shower_drain">Душ-трап</label>
+
+                <input class="btn-check" type="checkbox" name="no_thresholds" value="1" id="no_thresholds" {% if filter_no_thresholds %}checked{% endif %}>
+                <label class="filter-chip" for="no_thresholds">Без порогів</label>
+
+                <input class="btn-check" type="checkbox" name="turning_radius" value="1" id="turning_radius" {% if filter_turning %}checked{% endif %}>
+                <label class="filter-chip" for="turning_radius">Радіус для розвороту</label>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-3 filter-field">
@@ -115,28 +110,29 @@
             </select>
         </div>
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-3 align-items-center">
-                <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" name="has_audit" value="1" id="has_audit" {% if filter_has_audit %}checked{% endif %}>
-                    <label class="form-check-label" for="has_audit" style="color: var(--text);">Лише з проведеним аудитом</label>
-                </div>
-                <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" name="verified" value="1" id="verified" {% if filter_verified %}checked{% endif %}>
-                    <label class="form-check-label" for="verified" style="color: var(--text);">Перевірені оголошення</label>
-                </div>
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <input class="btn-check" type="checkbox" name="has_audit" value="1" id="has_audit" {% if filter_has_audit %}checked{% endif %}>
+                <label class="filter-chip" for="has_audit">Лише з проведеним аудитом</label>
+
+                <input class="btn-check" type="checkbox" name="verified" value="1" id="verified" {% if filter_verified %}checked{% endif %}>
+                <label class="filter-chip" for="verified">Перевірені оголошення</label>
             </div>
         </div>
         {% if features %}
-        <div class="col-12">
-            <label class="form-label small mb-1 d-block" style="color: var(--text);">Зручності</label>
-            <div class="d-flex flex-wrap gap-2">
-                {% for f in features %}
-                    <div class="form-check mb-0">
-                        <input class="form-check-input" type="checkbox" name="feature" value="{{ f.id }}" id="f{{ f.id }}" {% if f.id in selected_features %}checked{% endif %}>
-                        <label class="form-check-label" for="f{{ f.id }}" style="color: var(--text);">{{ f.name }}</label>
-                    </div>
-                {% endfor %}
+        <div class="col-12 mt-2">
+            <h6 class="mb-3" style="color: var(--text);">Зручності</h6>
+            {% regroup features|dictsort:"category" by get_category_display as categorized_features %}
+            {% for group in categorized_features %}
+            <div class="mb-3">
+                <label class="form-label small mb-2 d-block fw-semibold" style="color: var(--text-muted) !important;">{{ group.grouper }}</label>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for f in group.list %}
+                        <input class="btn-check" type="checkbox" name="feature" value="{{ f.id }}" id="f{{ f.id }}" {% if f.id in selected_features %}checked{% endif %}>
+                        <label class="filter-chip" for="f{{ f.id }}">{{ f.name }}</label>
+                    {% endfor %}
+                </div>
             </div>
+            {% endfor %}
         </div>
         {% endif %}
         <div class="col-12 col-md-4 col-lg-2 filter-sort-col">
@@ -171,47 +167,94 @@
                     {% else %}
                         <img src="{{ prop.listing_photo_url }}" class="card-img-top" alt="Фото квартири — {{ prop.name }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600';">
                     {% endif %}
-                        <div class="position-absolute top-0 start-0 p-2 d-flex gap-1 flex-wrap">
-                            {% if prop.featured_active %}<span class="listing-badge listing-badge--featured">Підвищена видимість</span>{% endif %}
-                            <span class="listing-badge {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}">{{ prop.get_listing_type_display }}</span>
+                        <div class="position-absolute top-0 start-0 p-3 d-flex gap-2 flex-wrap w-100">
+                            <span class="listing-badge shadow-sm {% if prop.listing_type == 'sale' %}listing-badge--sale{% else %}listing-badge--rent{% endif %}" style="backdrop-filter: blur(4px);">{{ prop.get_listing_type_display }}</span>
+                            {% if prop.featured_active %}<span class="listing-badge shadow-sm listing-badge--featured ms-auto" style="backdrop-filter: blur(4px);">ТОП</span>{% endif %}
                         </div>
-                    </div>
-                    <div class="card-body d-flex flex-column listing-card-body">
-                        <h2 class="h5 card-title mb-1 listing-card-title">{{ prop.name }}</h2>
-                        {% if prop.city %}<p class="card-text small text-muted mb-1">{{ prop.city }}</p>{% endif %}
-                        <p class="card-text small text-muted mb-2 listing-card-address">{{ prop.address|truncatewords:8 }}</p>
-                        <div class="d-flex flex-wrap gap-2 small mb-2 align-items-center">
-                            {% if prop.rooms %}<span>{{ prop.rooms }} кімн.</span>{% endif %}
-                            {% if prop.area_sqm %}<span>{{ prop.area_sqm }} м²</span>{% endif %}
-                            {% if prop.price %}
-                                <strong class="ms-auto">{{ prop.price|floatformat:0 }} грн{% if prop.listing_type == 'rent' %}/міс{% endif %}</strong>
-                            {% endif %}
+                        {% if prop.price %}
+                        <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-5" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);">
+                            <h3 class="h5 mb-0 text-white fw-bold">{{ prop.price|floatformat:0 }} грн{% if prop.listing_type == 'rent' %}<span class="fs-6 fw-normal text-white-50"> / міс</span>{% endif %}</h3>
                         </div>
-                        <div class="listing-card-features small text-muted mb-2">
-                        {% if prop.features.exists %}
-                                {% for f in prop.features.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                            {% else %}
-                                <span class="text-muted">—</span>
-                            {% endif %}
-                            </div>
-                        <div class="listing-card-audit mt-auto pt-2">
-                            {% if prop.audit or prop.mobility_level %}
-                                <p class="listing-card-audit-line mb-0 small">{% if prop.audit and prop.audit.total_score is not None %}Аудит: {{ prop.audit.total_score|floatformat:0 }} балів{% if prop.mobility_level %} · Рівень {{ prop.mobility_level }}{% endif %}{% elif prop.mobility_level %}Рівень доступності {{ prop.mobility_level }}{% endif %}</p>
-                            {% else %}
-                                <p class="listing-card-audit-line mb-0 small text-muted">—</p>
                         {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column listing-card-body p-3 p-md-4">
+                        <h2 class="h6 card-title mb-2 listing-card-title fw-bold" style="color: var(--text);">{{ prop.name }}</h2>
+                        
+                        <p class="card-text small mb-3 listing-card-address d-flex align-items-center gap-1" style="color: var(--text-muted);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16"><path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/><path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+                            <span class="text-truncate">{% if prop.city %}{{ prop.city }}, {% endif %}{{ prop.address }}</span>
+                        </p>
+                        
+                        <div class="d-flex flex-wrap gap-3 small mb-3 pb-3 border-bottom" style="border-color: var(--border) !important; color: var(--text);">
+                            {% if prop.rooms %}
+                            <div class="d-flex align-items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-door-open" viewBox="0 0 16 16"><path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/><path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5a.5.5 0 0 1 0 1h-1.114l-1.971-1.971c-.139-.139-.327-.183-.51-.128L2.708 2.057A.5.5 0 0 0 2 2.5V15a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.146-.354l-3-3a.5.5 0 0 0-.354-.146h-.672L8.5.122A.5.5 0 0 0 8 .5V1H7.5a.5.5 0 0 0 0 1h1.114l1.971 1.971c.139.139.327.183.51.128l5.197-1.732A.5.5 0 0 1 10.828.122zM3 15v-1h1v1H3zm2 0v-1h5v1H5zm6 0v-1h1v1h-1zM2 3.5v11h1v-11H2zm11 11V3.5h1v11h-1z"/></svg>
+                                <span>{{ prop.rooms }} кімн.</span>
+                            </div>
+                            {% endif %}
+                            {% if prop.area_sqm %}
+                            <div class="d-flex align-items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-bounding-box" viewBox="0 0 16 16"><path d="M5 2V0H0v5h2v6H0v5h5v-2h6v2h5v-5h-2V5h2V0h-5v2H5zm6 1v2h2v6h-2v2H5v-2H3V5h2V3h6zm1-2h3v3h-3V1zm3 11v3h-3v-3h3zM4 15H1v-3h3v3zM1 4V1h3v3H1z"/></svg>
+                                <span>{{ prop.area_sqm }} м²</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="listing-card-features small text-muted mb-3 d-flex flex-wrap gap-1">
+                            {% if prop.features.exists %}
+                                {% for f in prop.features.all|slice:":4" %}
+                                    <span style="background: var(--bg); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">{{ f.name }}</span>
+                                {% endfor %}
+                                {% if prop.features.count > 4 %}
+                                    <span style="background: var(--bg); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">+{{ prop.features.count|add:"-4" }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span>Немає даних про зручності</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-auto">
+                            {% if prop.audit or prop.mobility_level %}
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if prop.audit and prop.audit.total_score is not None %}
+                                        <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill" style="background: var(--accent-soft); color: var(--accent); font-size: 0.8rem; font-weight: 600;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-shield-check" viewBox="0 0 16 16"><path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/></svg>
+                                            Аудит: {{ prop.audit.total_score|floatformat:0 }}
+                                        </div>
+                                    {% endif %}
+                                    {% if prop.mobility_level %}
+                                        <div class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill" style="background: var(--bg); color: var(--text-muted); font-size: 0.8rem;">
+                                            Рівень {{ prop.mobility_level }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="px-2 py-1 rounded-pill d-inline-block" style="background: var(--bg); color: var(--text-muted); font-size: 0.8rem;">Без аудиту</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </a>
         </div>
-    {% empty %}
-        <div class="col-12">
-            <div class="card card-premium card-body text-center py-5">
-                <p class="text-muted mb-0">За вашими критеріями нічого не знайдено. Змініть фільтри або <a href="{% url 'properties:home' %}">скиньте їх</a>.</p>
+{% endfor %}
+</div>
+
+{% if not properties %}
+    <div class="d-flex justify-content-center mt-5 mb-5 animate-on-scroll">
+        <div class="card border-0 text-center shadow-lg" style="max-width: 420px; border-radius: 28px; background: var(--bg-card); border: 1px solid var(--border) !important;">
+            <div class="card-body p-4 p-md-5">
+                <div class="mb-4 mx-auto d-flex align-items-center justify-content-center shadow-sm" style="width: 76px; height: 76px; background: var(--section-light); color: var(--accent); border-radius: 22px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-search-heart" viewBox="0 0 16 16"><path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018Z"/><path d="M13 6.5a6.471 6.471 0 0 1-1.258 3.844c.04.03.078.062.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1.007 1.007 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5ZM6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"/></svg>
+                </div>
+                <h3 class="h4 fw-bold mb-3" style="color: var(--text);">Нічого не знайдено</h3>
+                <p class="text-muted mb-4 small" style="line-height: 1.6; opacity: 0.8;">За вашими критеріями наразі немає оголошень. Спробуйте змінити фільтри пошуку.</p>
+                <a href="{% url 'properties:home' %}" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 16px;">
+                    Скинути всі фільтри
+                </a>
             </div>
         </div>
-    {% endfor %}
+    </div>
+{% endif %}
 </div>
 
 {% if page_obj.has_other_pages %}
@@ -230,23 +273,12 @@
     </nav>
 {% endif %}
 
-{% if map_cities %}
-<div class="card card-premium mt-4">
-    <div class="card-header card-header-premium py-3">
-        <h2 class="h6 mb-0">Карта: де є оголошення</h2>
-    </div>
-    <div class="card-body p-0">
-        <div id="map" style="height: 320px; width: 100%;"></div>
-    </div>
-</div>
-{% endif %}
+
 </div>
 {% endblock %}
 
 {% block extra_css %}
-{% if map_cities %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-{% endif %}
+
 <style>
 /* м’які тіні */
 /* Блок «Пошук і фільтри»: менш похмурий — більше повітря, м’якіший контур */
@@ -273,6 +305,63 @@
 /* Пропорційність: селект сортування та кнопки Застосувати/Скинути — одна висота, шрифт, радіус */
 .filter-block-icon { flex-shrink: 0; color: var(--accent); display: inline-flex; align-items: center; }
 /* Однакова висота та оформлення карток оголошень */
+.card-premium { transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.15), box-shadow 0.3s ease; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--bg-card); }
+.card-premium:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: var(--accent-soft); }
+/* Сучасна пагінація: без рамок, м’які кола, акцентні кольори */
+.pagination {
+    gap: 0.5rem;
+}
+.page-item {
+    border: none;
+}
+.page-link {
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 0.6rem 1rem;
+    min-width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s var(--ease-smooth);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.page-link:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.page-item.active .page-link {
+    background: var(--accent) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 16px rgba(51, 70, 85, 0.25);
+}
+[data-theme="dark"] .page-link {
+    background: #1a2622;
+    color: #9ca3a6;
+}
+[data-theme="dark"] .page-link:hover {
+    background: #253340;
+    color: #fff;
+}
+
+.listing-card-img-wrap {
+    aspect-ratio: 4 / 3;
+    background: var(--bg);
+}
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.card-premium:hover .card-img-top { transform: scale(1.05); }
+
 .listing-card-body { min-height: 0; }
 .listing-card-title {
     overflow: hidden;
@@ -281,6 +370,7 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
+    line-height: 1.4;
 }
 .listing-card-address {
     overflow: hidden;
@@ -288,12 +378,8 @@
     white-space: nowrap;
 }
 .listing-card-features {
-    min-height: 2.75em;
+    min-height: 1.8em;
     overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
 }
 .listing-card-audit { min-height: 1.5em; }
 /* Стиль селекта «Рівень доступності»: обраний пункт — суцільний акцент */
@@ -316,40 +402,43 @@
 .filter-block .card-header[aria-expanded="true"] .accordion-collapse-icon,
 .filter-block .card-header.filter-expanded .accordion-collapse-icon { transform: rotate(180deg); }
 .filter-mobility-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* Custom filter chips */
+.filter-chip {
+    display: inline-block;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text) !important;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8125rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    margin-bottom: 0;
+}
+.filter-chip:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-soft);
+}
+.btn-check:focus + .filter-chip {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+.btn-check:checked + .filter-chip {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border-color: var(--accent) !important;
+    font-weight: 500;
+}
+[data-theme="dark"] .btn-check:checked + .filter-chip {
+    color: #0d1412 !important;
+    font-weight: 600;
+}
 </style>
 {% endblock %}
 
 {% block extra_js %}
-{% if map_cities %}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script>
-(function() {
-    var mapCities = {{ map_cities_json|safe }};
-    var mapCenter = {{ map_center_json|safe }};
-    var mapZoom = {{ map_zoom|default:6 }};
-    var mapEl = document.getElementById('map');
-    if (!mapCities || !mapEl) return;
-    var latLng = Array.isArray(mapCenter) && mapCenter.length >= 2 ? [mapCenter[0], mapCenter[1]] : [49.0, 32.0];
-    var map = L.map('map').setView(latLng, mapZoom);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-    var bounds = null;
-    mapCities.forEach(function(item) {
-        var lat = item.lat, lng = item.lng;
-        var msg = item.city + ': ' + item.count + ' оголошень';
-        L.marker([lat, lng]).addTo(map).bindPopup(msg);
-        if (bounds) { bounds.extend([lat, lng]); } else { bounds = L.latLngBounds([lat, lng], [lat, lng]); }
-    });
-    if (bounds && bounds.isValid()) {
-        if (mapCities.length === 1) {
-            map.setView([mapCities[0].lat, mapCities[0].lng], 11);
-        } else {
-            map.fitBounds(bounds, { padding: [24, 24], maxZoom: 12 });
-        }
-    }
-    window.addEventListener('load', function() { map.invalidateSize(); });
-})();
-</script>
-{% endif %}
+
 <script>
 (function() {
     var form = document.querySelector('.filter-block form[method="get"]');

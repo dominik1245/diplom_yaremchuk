@@ -37,9 +37,15 @@ class ListingType(models.TextChoices):
 
 class Feature(models.Model):
     """Фішка / зручність об'єкта (балкон, паркінг, пандус тощо)."""
+    CATEGORY_CHOICES = [
+        ('apartment', 'В квартирі'),
+        ('building', 'В будинку та на території'),
+        ('rules', 'Правила проживання'),
+    ]
 
     name = models.CharField("Назва", max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
+    category = models.CharField("Категорія", max_length=20, choices=CATEGORY_CHOICES, default='apartment')
 
     class Meta:
         verbose_name = "Зручність"
@@ -49,8 +55,10 @@ class Feature(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             from django.utils.text import slugify
-
+            import uuid
             self.slug = slugify(self.name, allow_unicode=True)
+            if not self.slug:
+                self.slug = str(uuid.uuid4())[:8]
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -312,3 +320,38 @@ class AccessibilityAudit(models.Model):
         if self.property_id:
             self.property.mobility_level = self.compute_mobility_level()
             self.property.save(update_fields=["mobility_level"])
+
+
+class ProfileReview(models.Model):
+    """Відгук на користувача (профіль)."""
+
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="given_reviews",
+        verbose_name="Автор відгуку",
+    )
+    target_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_reviews",
+        verbose_name="Оцінюваний користувач",
+    )
+    rating = models.PositiveSmallIntegerField(
+        "Оцінка", validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    text = models.TextField("Відгук")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Відгук профілю"
+        verbose_name_plural = "Відгуки профілів"
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["author", "target_user"], name="unique_profile_review"
+            ),
+        ]
+
+    def __str__(self):
+        return f"Відгук {self.author.username} -> {self.target_user.username} ({self.rating}/5)"

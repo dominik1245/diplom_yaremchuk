@@ -83,9 +83,23 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-8 col-lg-9 amenities-col">
-                    <label class="form-label small d-block mb-2" style="color: var(--text); border: none; background: transparent;">Зручності</label>
-                    <div class="amenities-horizontal">
-                        {{ form.features }}
+                    <label class="form-label small d-block mb-3" style="color: var(--text); border: none; background: transparent;">Зручності</label>
+                    <div class="amenities-horizontal d-flex flex-column gap-4">
+                        {% for group in grouped_features %}
+                        <div class="amenity-category w-100">
+                            <h6 class="small text-muted mb-3 text-uppercase fw-bold" style="letter-spacing: 0.5px;">{{ group.name }}</h6>
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                {% for feature in group.features %}
+                                <div class="form-check p-0 m-0 custom-chip-checkbox">
+                                    <input class="form-check-input d-none" type="checkbox" name="features" value="{{ feature.id }}" id="id_features_{{ feature.id }}" {% if feature.id|stringformat:"s" in checked_features %}checked{% endif %}>
+                                    <label class="form-check-label m-0" for="id_features_{{ feature.id }}">
+                                        {{ feature.name }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -102,42 +116,57 @@
 </div>
 </div>
 <style>
+.add-listing-block { animation: addListingSlideUp 0.6s ease forwards; opacity: 0; transform: translateY(30px); }
+@keyframes addListingSlideUp { to { opacity: 1; transform: translateY(0); } }
 .add-listing-block .add-listing-header { user-select: none; }
 .add-listing-header-desc { font-size: 0.8125rem; line-height: 1.4; max-width: 420px; }
 .add-listing-icon { flex-shrink: 0; color: var(--accent); display: inline-flex; align-items: center; }
 .add-listing-chevron { display: inline-block; width: 0; height: 0; border-left: 0.35rem solid transparent; border-right: 0.35rem solid transparent; border-top: 0.4rem solid currentColor; transition: transform 0.25s ease; opacity: 0.8; }
 .add-listing-header[aria-expanded="true"] .add-listing-chevron { transform: rotate(180deg); }
-.amenities-horizontal,
-.amenities-horizontal ul,
-.amenities-horizontal #id_features,
-#id_features { border: none !important; border-top: none !important; box-shadow: none !important; outline: none !important; }
-.amenities-horizontal ul,
-.amenities-horizontal #id_features,
-#id_features { display: flex !important; flex-wrap: wrap !important; flex-direction: row !important; gap: 0.75rem 1rem !important; list-style: none !important; padding-left: 0 !important; margin: 0 !important; width: 100%; align-items: center; }
-.amenities-horizontal ul li,
-.amenities-horizontal #id_features li,
-#id_features li { display: inline-flex !important; margin: 0 !important; flex-shrink: 0; border: none !important; min-width: min-content; }
-.amenities-horizontal label,
-.amenities-horizontal .form-check,
-#id_features label { margin-bottom: 0 !important; cursor: pointer; color: var(--text); display: inline-flex !important; align-items: center; gap: 0.35rem; white-space: nowrap; border: none !important; overflow: visible; }
-.amenities-horizontal .form-check-input { flex-shrink: 0; margin-top: 0; }
-.add-listing-form .amenities-horizontal .form-check { padding: 0.35rem 0; margin: 0; position: relative; isolation: isolate; }
-.add-listing-form .amenities-horizontal .form-check-input:focus { box-shadow: 0 0 0 0.2rem var(--accent-soft); outline: none; }
-.add-listing-form .amenities-horizontal .form-check-input { transition: none; }
-.add-listing-form .amenities-horizontal .form-check label { cursor: pointer; }
+
+/* Styles for custom chip checkboxes */
+.custom-chip-checkbox label {
+    margin-bottom: 0;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    background: transparent;
+    user-select: none;
+}
+.custom-chip-checkbox label:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+}
+.custom-chip-checkbox input[type="checkbox"]:checked + label {
+    background-color: var(--accent);
+    color: #fff !important;
+    border-color: var(--accent);
+    font-weight: 500;
+}
+[data-theme="dark"] .custom-chip-checkbox input[type="checkbox"]:checked + label {
+    color: #0d1412 !important;
+    font-weight: 600;
+}
+.custom-chip-checkbox input[type="checkbox"]:focus + label {
+    box-shadow: 0 0 0 0.2rem var(--accent-soft);
+    outline: none;
+}
+
 /* прибрати білу смугу, не обрізати контент зручностей */
 .add-listing-form .row-photo-amenities { border: none !important; overflow: visible; }
 .add-listing-form .row-photo-amenities .photo-col { overflow: hidden; min-width: 0; max-width: 100%; }
 .add-listing-form .row-photo-amenities .photo-col input[type="file"] { max-width: 100%; width: 100%; background: var(--bg-card) !important; }
 .add-listing-form .row-photo-amenities .amenities-col { overflow: visible; min-width: 0; }
 .add-listing-form .row-photo-amenities .amenities-col { border: none !important; background: transparent !important; position: relative; z-index: 1; }
-.add-listing-form .amenities-horizontal { overflow: visible !important; }
 .add-listing-form .amenities-col .form-label { border: none !important; box-shadow: none !important; background: transparent !important; }
-.add-listing-form .amenities-col .amenities-horizontal { background: transparent !important; }
-.add-listing-form .amenities-col .amenities-horizontal::before,
-.add-listing-form .amenities-col .amenities-horizontal::after { display: none !important; content: none !important; }
-#id_features::before, #id_features::after { display: none !important; content: none !important; }
-#id_features { background: transparent !important; }
 .photo-drop-zone.dragover { border-color: var(--accent) !important; background: var(--accent-soft) !important; }
 </style>
 <script>
